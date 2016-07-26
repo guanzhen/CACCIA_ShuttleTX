@@ -1,0 +1,16 @@
+
+/* These selectors does not work for CACCIA */
+/* div[attr=test1]*/
+
+/* These CSS selectors work for CACCIA */
+/* div#test1 {font-size:15pt;} */
+body { margin:0px; }
+html { background-color : silver; width :800px; height:600px;}
+
+iframe {border: 0px; width :100%; height:100%;}
+
+#tabbar_main {
+  margin:1%;
+  width:100%; 
+  height:75%;
+  }
