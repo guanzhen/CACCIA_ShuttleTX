@@ -4,7 +4,8 @@ Option Explicit
 #include <PTKL_c.h>
 Sub OnLoadFrame()
 InitCAN
-System.Start("CanMgr1")
+Visual.Select("MessageLog").Style.Display = "block"
+REM System.Start("CanMgr1")
 End Sub
 
 Sub OnUnloadFrame()
@@ -47,29 +48,47 @@ Next
 
 End Function
 
-Function CanMgr1
-  Dim exitcondition
-  Dim CanManager1
-  Dim CanReadArg
-
-  Set CanManager1 = Memory.CanManager.Clone
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+REM Function CanMgr1
+  REM Dim exitcondition
+  REM Dim CanManager1
+  REM Dim CanReadArg
   
-  CanManager1.ChangeFunnel "0x408,0x008", True
-  CanManager1.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS
+  REM Set CanManager1 = Memory.CanManager.Clone
+  REM Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  REM CanManager1.ChangeFunnel "0x408,0x008", True
+  REM CanManager1.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS
     
-  exitcondition = 0
+  REM exitcondition = 0
 
-  Do
-    If CanManager1.PeekMessage (CanReadArg, 100) Then
-        MsgBox "CanMgr1 " & CanReadArg.Format(CFM_SHORT)
-    End If
+  REM Do
+    REM If CanManager1.PeekMessage (CanReadArg, 100) Then
+        REM MsgBox "CanMgr1 " & CanReadArg.Format(CFM_SHORT)
+    REM End If
 
-  Loop Until exitcondition = 1
-End Function
+  REM Loop Until exitcondition = 1
+REM End Function
 
 Function CanMgr2
 
 End Function
 Function CanMgr3
 End Function
+
+Sub initDataGrid()
+    'Initialisation of LogGrid
+    With Visual.Script( "LogGrid" )
+        .setHeader "Date,Time,Information"
+        .setImagePath "../../../codebase/grid/imgs/"
+        .setInitWidths "100,100,*"
+        .setColAlign "center,center,left"
+        .setColTypes "ro,ro,ro"
+        .setColSorting "na,na,na"
+        .setSkin "red_gray"
+        .enableTooltips "true,true,true"
+        .enableResizing "false,false,false"
+        .enableMultiselect 0
+        .enableAutoWidth true
+        .init   
+    End With
+End Sub

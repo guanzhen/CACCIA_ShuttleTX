@@ -25,3 +25,8 @@ function doOnLoad_dhtmlx40() {
     });
     //tabbar.cells(0).attachObject("iframe_tab1");
 };
+
+function load_messagebox()
+{
+  var LogGrid  = new dhtmlXGridObject("MessageLog");
+}
