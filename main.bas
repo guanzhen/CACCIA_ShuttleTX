@@ -4,7 +4,10 @@ Option Explicit
 #include <PTKL_c.h>
 Sub OnLoadFrame()
 InitCAN
+
 Visual.Select("MessageLog").Style.Display = "block"
+Visual.Select("div_LogGrid").Style.Display = "block"
+'initDataGrid
 REM System.Start("CanMgr1")
 End Sub
 
@@ -48,6 +51,23 @@ Next
 
 End Function
 
+Function OnClick_btnLogGridClear( Reason )
+  LogAdd "Test"
+End Function
+
+
+Function LogAdd ( sMessage )
+  Dim Gridobj  
+  Set Gridobj = Visual.Script("LogGrid")
+  Dim MsgId
+  MsgId = Gridobj.uid()
+  If NOT(sMessage = "") Then
+    Gridobj.addRow MsgId, ""& FormatDateTime(Date, vbShortDate) &","& FormatDateTime(Time, vbShortTime)&":"& String.Format("%02d ", Second(Time)) &","& sMessage
+    'Wish of SCM (automatically scroll to newest Msg)
+    Gridobj.showRow( MsgId )
+  End If  
+End Function 
+
 REM Function CanMgr1
   REM Dim exitcondition
   REM Dim CanManager1
@@ -74,21 +94,3 @@ Function CanMgr2
 End Function
 Function CanMgr3
 End Function
-
-Sub initDataGrid()
-    'Initialisation of LogGrid
-    With Visual.Script( "LogGrid" )
-        .setHeader "Date,Time,Information"
-        .setImagePath "../../../codebase/grid/imgs/"
-        .setInitWidths "100,100,*"
-        .setColAlign "center,center,left"
-        .setColTypes "ro,ro,ro"
-        .setColSorting "na,na,na"
-        .setSkin "red_gray"
-        .enableTooltips "true,true,true"
-        .enableResizing "false,false,false"
-        .enableMultiselect 0
-        .enableAutoWidth true
-        .init   
-    End With
-End Sub

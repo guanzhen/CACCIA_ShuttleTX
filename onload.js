@@ -1,3 +1,5 @@
+var LogGrid  = new dhtmlXGridObject('divdiv_LogGrid');
+
 function loadtabs() {
     var tabbar = new dhtmlXTabBar("tabbar_main","top");
     tabbar.setImagePath("../../../codebase/tabbar/imgs/");
@@ -26,7 +28,19 @@ function doOnLoad_dhtmlx40() {
     //tabbar.cells(0).attachObject("iframe_tab1");
 };
 
-function load_messagebox()
-{
-  var LogGrid  = new dhtmlXGridObject("MessageLog");
+function load_messagebox2()
+{  
+  LogGrid.setHeader("Date,Time,Information");
+  LogGrid.setImagePath("../../../codebase/grid/imgs/");
+  LogGrid.setInitWidths( "100,100,*");
+  LogGrid.setColAlign ("center,center,left");
+  LogGrid.setColTypes ("ro,ro,ro");
+  LogGrid.setColSorting ("na,na,na");
+  LogGrid.setSkin ("red_gray");
+  LogGrid.enableTooltips ("true,true,true");
+  LogGrid.enableResizing ("false,false,false");
+  LogGrid.enableMultiselect(false);
+  LogGrid.enableAutoWidth (true);
+  LogGrid.init();
+  
 }

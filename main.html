@@ -11,15 +11,15 @@
   <!-- <link rel="stylesheet" type="text/css" href="../../Caccia.css" /> -->
   <link rel="stylesheet" type="text/css" href="../../../codebase/tabbar/dhtmlxtabbar.css">
   <script src="../../../codebase/dhtmlxcommon.js"></script>		
-  <script src="../../../codebase/tabbar/dhtmlxtabbar.js">></script> 
+  <script src="../../../codebase/tabbar/dhtmlxtabbar.js"></script> 
  
   
+	<link rel="stylesheet" type="text/css" href="../../../codebase/grid/skins/dhtmlxgrid_dhx_skyblue.css">
+	<link rel="stylesheet" type="text/css" href="../../../codebase/grid/dhtmlxgrid.css">
   <script src="../../../codebase/grid/dhtmlxgrid.js"></script>
   <script src="../../../codebase/grid/dhtmlxgridcell.js"></script>
 	<script src="../../../codebase/grid/ext/dhtmlxgrid_data.js"></script>
-	<link rel="stylesheet" type="text/css" href="../../../codebase/grid/dhtmlxgrid.css">
-	<link rel="stylesheet" type="text/css" href="../../../codebase/grid/skins/dhtmlxgrid_dhx_skyblue.css">
-	<script src="../../../codebase/grid/excells/dhtmlxgrid_excell_link.js" "></script>
+	<script src="../../../codebase/grid/excells/dhtmlxgrid_excell_link.js"</script>
  <!--   For message Box
    -->
   
@@ -30,7 +30,8 @@
 
 
 	<!-- <body onload="loadtabs();"> -->
-	<body onload="load_messagebox()">
+	<body onload="load_messagebox();">
+  <!-- <body> -->
 
   <div id="Layer_TabStrip">
     <div id="tabbar_main">
@@ -44,8 +45,40 @@
     </div>
     </div>
   </div>
-  <div id="MessageLog">
+  <div id="MessageLog" >
+  <div id="div_LogGrid"> </div>
+  <button id="btnLogGridClear">Clear</button>
   </div>
-
+<script>
+  function load_messagebox() 
+  {
+    var LogGrid  = new dhtmlXGridObject('div_LogGrid');  
+    LogGrid.setHeader("Date,Time,Information");
+    LogGrid.setImagePath("../../../codebase/grid/imgs/");
+    LogGrid.setInitWidths( "100,100,*");
+    LogGrid.setColAlign ("center,center,left");
+    LogGrid.setColTypes ("ro,ro,ro");
+    LogGrid.setColSorting ("na,na,na");
+    LogGrid.setSkin ("red_gray");
+    LogGrid.enableTooltips ("true,true,true");
+    LogGrid.enableResizing ("false,false,false");
+    LogGrid.enableMultiselect(false);
+    LogGrid.enableAutoWidth (true);
+    LogGrid.init();
+  };
+  function loadtabs() 
+  {
+    var tabbar = new dhtmlXTabBar("tabbar_main","top");
+    tabbar.setImagePath("../../../codebase/tabbar/imgs/");
+    tabbar.addTab("main_tab1","Tab1");
+    tabbar.addTab("main_tab2","Tab2");
+    tabbar.addTab("main_tab3","Tab3");
+    tabbar.setContent( "main_tab1", iframe_tab1);
+    tabbar.setContent( "main_tab2", iframe_tab2);
+    tabbar.setContent( "main_tab3", iframe_tab3);
+    tabbar.setTabActive("main_tab1");
+    Layer_TabStrip.style.display = "block";
+  };
+</script>
 	</body>
 </html>
