@@ -3,6 +3,7 @@ Option Explicit
 #include <Can.bas>
 #include <SubCommon.bas>
 #include <PTKL_c.h>
+#include <Ptkl_shuttle.h>
 #include "Can.bas"
 #include "IOs.bas"
 '#include "MessageLog.bas"
@@ -101,8 +102,11 @@ Function OnClick_Send( Reason )
   Next
 End Function
 
-
 Function OnClick_Send2( Reason )
-  DebugMessage "Set Toggle Cover On"
-  IO_setToggle"ledStartButton"
+  DebugMessage "Init IOs"
+  Init_IOs
+End Function
+
+Function OnClick_Send3( Reason )
+  IO_setToggle IO_I_EmergencyStop
 End Function

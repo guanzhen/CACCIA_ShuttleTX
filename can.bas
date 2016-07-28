@@ -39,6 +39,11 @@ End Function
 
 Function CanManagerPUB_Deliver( ByVal CanReadArg )
   DebugMessage "CanMgrRXDeliver" & CanReadArg.Format(CFM_SHORT)  
+  
+  'If Prepare ID = 0, meaning it is a spontanous public message, we handle the message
+  If CanReadArg.Data(2) = 0 Then 
+    PUB_Handler CanReadArg
+  End If
 End Function
 
 Sub CANSend ( CanSendArg, CanManager )
@@ -52,7 +57,18 @@ Sub CANSend ( CanSendArg, CanManager )
   
 End Sub
 
-Function PUB_Handler ( CanReadArg)
+Function PUB_Handler ( CanReadArg )
+Dim command
+DebugMessage "Spontanous Public Message RX"
+Select Case  CanReadArg.Data(3)
+  case $(PUB_MSG_ERR_PARAM):  
+      DebugMessage "Additonal Error Parameters"
+      LogAdd "Pub Msg: Additonal Error Parameters"
+    case $(PUB_MSG_IO_STATE):
+      DebugMessage "IO State"
+      LogAdd "Pub Msg: IO State"    
+  
+End Select
 
 End Function
 
