@@ -1,0 +1,14 @@
+html {outline-color:red;outline-style:solid;outline:2px;}
+
+body { 
+background-color: grey; 
+margin: 10px;
+width :100%;  
+height:100%;
+display: block;
+}
+
+div#test1 {font-size:15pt;}
+div#test2 {font-size:20pt;}
+div#test3 {font-size:30pt;}
+

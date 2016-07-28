@@ -1,0 +1,30 @@
+
+If 
+CanEvent = True
+CanManager.SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
+
+CanMgr gets 0408
+Candelivery gets 0008
+
+
+If 
+CanEvent = True
+CanManager.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS
+
+CanMgr gets 0408,0008
+Candelivery gets none
+
+
+If 
+CanEvent = true
+No SetArbitrationOrder 
+CanDeliver gets all messages
+
+If CanEvent = false
+No SetArbitrationOrder
+CanManager gets all messages
+
+If CanEvent = false
+SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
+CanManager gets 0408
+CanDeliver gets 0008
