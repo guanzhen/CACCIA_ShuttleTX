@@ -3,56 +3,54 @@
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />  
   <link rel="stylesheet" type="text/css" href="main.css">
   
-  <!-- For dhtmlx 4.0 -->
-<!--   <script src="../../../DHtmlx/codebase/dhtmlx.js">></script>
-  <script src="../../../DHtmlx/sources/dhtmlxTabbar/codebase/dhtmlxtabbar.js">></script>  
-  -->
+<!-- For dhtmlx 4.0 -->
+<!--   
+    <script src="../../../DHtmlx/codebase/dhtmlx.js">></script>
+    <script src="../../../DHtmlx/sources/dhtmlxTabbar/codebase/dhtmlxtabbar.js">></script>  
+-->
   
-  <!-- <link rel="stylesheet" type="text/css" href="../../Caccia.css" /> -->
-  <link rel="stylesheet" type="text/css" href="../../../codebase/tabbar/dhtmlxtabbar.css">
-  <script src="../../../codebase/dhtmlxcommon.js"></script>		
-  <script src="../../../codebase/tabbar/dhtmlxtabbar.js"></script> 
- 
-  
-	<link rel="stylesheet" type="text/css" href="../../../codebase/grid/skins/dhtmlxgrid_dhx_skyblue.css">
-	<link rel="stylesheet" type="text/css" href="../../../codebase/grid/dhtmlxgrid.css">
-  <script src="../../../codebase/grid/dhtmlxgrid.js"></script>
-  <script src="../../../codebase/grid/dhtmlxgridcell.js"></script>
-	<script src="../../../codebase/grid/ext/dhtmlxgrid_data.js"></script>
+    <!-- <link rel="stylesheet" type="text/css" href="../../Caccia.css" /> -->
+    <link rel="stylesheet" type="text/css" href="../../../codebase/tabbar/dhtmlxtabbar.css">
+    <script src="../../../codebase/dhtmlxcommon.js"></script>		
+    <script src="../../../codebase/tabbar/dhtmlxtabbar.js"></script> 
+   
+    <link rel="stylesheet" type="text/css" href="../../../codebase/grid/skins/dhtmlxgrid_dhx_skyblue.css">
+    <link rel="stylesheet" type="text/css" href="../../../codebase/grid/dhtmlxgrid.css">
+    <script src="../../../codebase/grid/dhtmlxgrid.js"></script>
+    <script src="../../../codebase/grid/dhtmlxgridcell.js"></script>
+    <script src="../../../codebase/grid/ext/dhtmlxgrid_data.js"></script>
 	<script src="../../../codebase/grid/excells/dhtmlxgrid_excell_link.js"</script>
- <!--   For message Box
-   -->
-  
-  <script src="onload.js" ></script>
+ 
+  <script src="onload.js" >  </script>
   
   <title> Shuttle TX Control</title>
 </head>
 
 
 	<!-- <body onload="loadtabs();"> -->
-	<body onload="load_messagebox();">
+	<body onload="load_messagebox();loadtabs();">
   <!-- <body> -->
 
   <div id="Layer_TabStrip">
     <div id="tabbar_main">
-    <div>
-        <button id ="Send"> Send
-        </button>
-<!--     <div id="iframe_tab1"><iframe src="tab1.html" ></iframe></div>
-    <div id="iframe_tab2"><iframe src="tab1.html" ></iframe></div>
-    <div id="iframe_tab3"><iframe src="tab1.html" ></iframe></div>
- -->    
-    </div>
+      <div>        
+        <div id="iframe_tab1" scrolling = "no"><iframe src="testing.html" ></iframe></div>
+        <div id="iframe_tab2"><iframe src="dummy.html" ></iframe></div>
+        <div id="iframe_tab3"><iframe src="dummy.html" ></iframe></div>    
+      </div>
     </div>
   </div>
-  <div id="MessageLog" >
-  <div id="div_LogGrid"> </div>
-  <button id="btnLogGridClear">Clear</button>
+  <div id="Layer_MessageLog" >
+    <div id="MessageLogObj"> </div>
+    
+    <button id="btnLogGridClear">Clear</button>
   </div>
 <script>
+  var LogGrid
+  var tabbar
   function load_messagebox() 
   {
-    var LogGrid  = new dhtmlXGridObject('div_LogGrid');  
+    LogGrid = new dhtmlXGridObject('MessageLogObj');  
     LogGrid.setHeader("Date,Time,Information");
     LogGrid.setImagePath("../../../codebase/grid/imgs/");
     LogGrid.setInitWidths( "100,100,*");
@@ -65,10 +63,10 @@
     LogGrid.enableMultiselect(false);
     LogGrid.enableAutoWidth (true);
     LogGrid.init();
-  };
+  };  
   function loadtabs() 
   {
-    var tabbar = new dhtmlXTabBar("tabbar_main","top");
+    tabbar = new dhtmlXTabBar("tabbar_main","top");
     tabbar.setImagePath("../../../codebase/tabbar/imgs/");
     tabbar.addTab("main_tab1","Tab1");
     tabbar.addTab("main_tab2","Tab2");
@@ -79,6 +77,8 @@
     tabbar.setTabActive("main_tab1");
     Layer_TabStrip.style.display = "block";
   };
-</script>
+
+</script>  
+
 	</body>
 </html>

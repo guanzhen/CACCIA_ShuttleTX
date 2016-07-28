@@ -1,6 +1,4 @@
-var LogGrid  = new dhtmlXGridObject('divdiv_LogGrid');
-
-function loadtabs() {
+function loadtabs2() {
     var tabbar = new dhtmlXTabBar("tabbar_main","top");
     tabbar.setImagePath("../../../codebase/tabbar/imgs/");
     tabbar.addTab("main_tab1","Tab1");
@@ -14,7 +12,8 @@ function loadtabs() {
 };
 
 
-function doOnLoad_dhtmlx40() {
+function doOnLoad_dhtmlx40() 
+{
     var tabbar = new dhtmlXTabBar({
     parent: "tabbar_main",
     skin:   "dhx_web",
@@ -29,7 +28,8 @@ function doOnLoad_dhtmlx40() {
 };
 
 function load_messagebox2()
-{  
+{
+  LogGrid = new dhtmlXGridObject('div_LogGrid');  
   LogGrid.setHeader("Date,Time,Information");
   LogGrid.setImagePath("../../../codebase/grid/imgs/");
   LogGrid.setInitWidths( "100,100,*");
@@ -41,6 +41,5 @@ function load_messagebox2()
   LogGrid.enableResizing ("false,false,false");
   LogGrid.enableMultiselect(false);
   LogGrid.enableAutoWidth (true);
-  LogGrid.init();
-  
-}
+  LogGrid.init(); 
+};

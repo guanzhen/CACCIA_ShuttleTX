@@ -1,96 +1,130 @@
 Option Explicit
+
 #include <Can.bas>
 #include <SubCommon.bas>
 #include <PTKL_c.h>
-Sub OnLoadFrame()
-InitCAN
+#include "constants.bas"
+'#include "messagelog.bas"
 
-Visual.Select("MessageLog").Style.Display = "block"
-Visual.Select("div_LogGrid").Style.Display = "block"
-'initDataGrid
-REM System.Start("CanMgr1")
+Sub OnLoadFrame()
+  InitWindows
+  InitCAN
+  REM System.Start("CanMgr1")
 End Sub
 
 Sub OnUnloadFrame()
+
 End Sub
 
 Sub InitCAN 
-Dim CanManager
-
+  Dim CanManager
   DeleteCanManager 0,True
   Set CanManager = LaunchCanManager( 0, "1000" )
-  CanManager.Events = False
+  CanManager.Events = True
   CanManager.Deliver = True
   CanManager.Platform = 3
   CanManager.ChangeFunnel "0x408,0x008", True
-  'CanManager.SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
   CanManager.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
-  'WithEvents.ConnectObject CanManager, "CanManager_"
+  WithEvents.ConnectObject CanManager, "CanManager_"  
+  InitCANMgr2
+End Sub
+
+Sub InitCANMgr2 
+  Dim CanManagerPUB
+  Set CanManagerPUB = Memory.CanManager.Clone
+  CanManagerPUB.Events = True
+  CanManagerPUB.Deliver = True
+  CanManagerPUB.Platform = 3
+  CanManagerPUB.ChangeFunnel "0x408,0x008", True
+  CanManagerPUB.SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
+  'CanManagerPUB.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
+  WithEvents.ConnectObject CanManagerPUB, "CanManagerPUB_"
+End Sub
+
+Function CanManagerPUB_Deliver( CanReadArg )
+  DebugMessage "CanMgrRXDeliver" & CanReadArg.Format(CFM_SHORT)  
+End Function
+
+Function CanManager_Deliver( CanReadArg )
+  DebugMessage "CanDeliver" & CanReadArg.Format(CFM_SHORT)
+End Function 
+
+Sub InitWindows
+
+  Window.width = 1024
+  Window.height = 600
+  Visual.Select("Layer_MessageLog").Style.Display = "block"
+  
+  'Create log window
+  CreateLogWindow
+
 End Sub
 
 Function OnClick_Send( Reason )
-Dim CanManager, CanSendArg, CanReadArg
-Dim TioCnt,Timeout
-Timeout = 1000
-Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  Dim CanManager
+  Dim CanSendArg, CanReadArg
+  Dim TioCnt,Timeout
+  Timeout = 1000
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  Memory.Get "CanManager",CanManager  
 
-Memory.Get "CanManager",CanManager
+  CanSendArg.CanID = &h608
+  CanSendArg.Data(0) = &h54
+  CanSendArg.Data(1) = &h00
+  CanSendArg.Length = 2
+  CANSend CanSendArg,CanManager
+  
+  For TioCnt = 0 To Timeout
+    If CanManager.PeekMessage (CanReadArg, 1) Then
+      DebugMessage "CanMgr " & CanReadArg.Format(CFM_SHORT)
+    End If
+  Next
+End Function
 
-CanSendArg.CanID = &h608
-CanSendArg.Data(0) = &h54
-CanSendArg.Data(1) = &h00
-CanSendArg.Length = 2
-CanManager.Send CanSendArg
 
-For TioCnt = 0 To Timeout
-  If CanManager.PeekMessage (CanReadArg, 1) Then
-    MsgBox "CanMgr " & CanReadArg.Format(CFM_SHORT)
+Sub CANSend ( CanSendArg, CanManager )
+  Dim debug
+  'debug = CONST_DEBUG
+ 
+  CanManager.Send CanSendArg
+  'If debug Then
+    DebugMessage CanSendArg.Format(CFM_SHORT)
+  'End If
+  
+End Sub
+
+'**********************************************************************
+'* Purpose: Create a logging window to log messages
+'* Input:  none
+'* Output: none
+'**********************************************************************
+Sub CreateLogWindow()
+  Dim DebugLogWindow
+
+  Set DebugLogWindow = CreateObject("WinAPI.Window")
+  DebugLogWindow.Title = "Tesla Debug Log"
+  Call Memory.Set("DebugLogWindow", DebugLogWindow)
+End Sub
+'+++++++++++++++++++++ End of CreateLogWindow() +++++++++++++++++++++++
+
+'************************************************************************
+'* Purpose: Display message log on Caccia log window        *
+'* Input:  sMessage                   *
+'* Output: None                    *
+'************************************************************************
+Sub DebugMessage(sMessage)
+  Dim sTimeStamp, sDate, sTime, DebugLogWindow
+
+  If NOT Memory.Get("DebugLogWindow", DebugLogWindow) Then
+    Exit Sub
   End If
-Next
 
-End Function
-
-Function OnClick_btnLogGridClear( Reason )
-  LogAdd "Test"
-End Function
-
-
-Function LogAdd ( sMessage )
-  Dim Gridobj  
-  Set Gridobj = Visual.Script("LogGrid")
-  Dim MsgId
-  MsgId = Gridobj.uid()
-  If NOT(sMessage = "") Then
-    Gridobj.addRow MsgId, ""& FormatDateTime(Date, vbShortDate) &","& FormatDateTime(Time, vbShortTime)&":"& String.Format("%02d ", Second(Time)) &","& sMessage
-    'Wish of SCM (automatically scroll to newest Msg)
-    Gridobj.showRow( MsgId )
-  End If  
-End Function 
-
-REM Function CanMgr1
-  REM Dim exitcondition
-  REM Dim CanManager1
-  REM Dim CanReadArg
-  
-  REM Set CanManager1 = Memory.CanManager.Clone
-  REM Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
-  REM CanManager1.ChangeFunnel "0x408,0x008", True
-  REM CanManager1.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS
-    
-  REM exitcondition = 0
-
-  REM Do
-    REM If CanManager1.PeekMessage (CanReadArg, 100) Then
-        REM MsgBox "CanMgr1 " & CanReadArg.Format(CFM_SHORT)
-    REM End If
-
-  REM Loop Until exitcondition = 1
-REM End Function
-
-Function CanMgr2
-
-End Function
-Function CanMgr3
-End Function
+  If Len(sMessage) <> 0 Then
+    sDate = Convert.FormatTime(System.Time, "%d-%m-%Y")
+    sTime = String.Format("%02d:%02d:%02d", Hour(Time), Minute(Time), Second(Time))
+    sTimeStamp = sDate & " " & sTime & " "
+    DebugLogWindow.Log(sTimeStamp & sMessage & vbCrLf)
+  End If
+End Sub
+' +++++++++++++++++++ End of DebugMessage() ++++++++++++
