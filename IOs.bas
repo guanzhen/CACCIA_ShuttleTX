@@ -8,6 +8,7 @@ Const IO_I_PCB_Jam_Input    = 6
 Const IO_I_PCB_Jam_Output   = 7
 Const IO_I_Barcode_scanner  = 8
 Const IO_in_Max             = 8
+Const IO_out_Max             = 8
 
 Function IO_I_setValue ( Target, Value )
   Dim IO_in_Array
@@ -51,18 +52,20 @@ Sub Init_IOs
   Set IO_out_Array = CreateObject( "MATH.Array" )
   
   Memory.Set "IO_in_Array",IO_in_Array
+  'setup input array
   For i = 0  To IO_in_Max
   	'DebugMessage "add "&i
     IO_in_Array.Add(0)
-  Next
-  
-  'set all the LED values in the newly created array, and update the display
-  For i = 0  To IO_in_Max
+    'set all the LED values in the newly created array, and update the display
     IO_I_setValue i,IO_in_Array.Data(i)
-  Next
-  
-  'Assign the attribute to each of the image elements
-  For i = 0  To IO_in_Max
+    'Assign the attribute to each of the image elements
     Visual.Select(String.Format("iled%01d",i)).setAttribute "attr","io_i_image"
   Next
+  DebugMessage "Added " & i & " input elements"
+  'setup output array
+  For i = 0  To IO_out_Max
+  	'DebugMessage "add "&i
+    IO_out_Array.Add(0)
+  Next    
+  
 End Sub

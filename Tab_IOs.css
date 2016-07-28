@@ -1,2 +1,14 @@
 
 #frame_inputs{border:1px;border-color:grey;border-style:solid;width:40%;}
+#frame_outputs
+{
+  border:1px;
+  border-color:grey;
+  border-style:solid;
+  left: 60%;
+  position: absolute;
+  top: 10px;
+  width:40%;
+  
+  
+}
