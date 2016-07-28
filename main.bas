@@ -3,8 +3,10 @@ Option Explicit
 #include <Can.bas>
 #include <SubCommon.bas>
 #include <PTKL_c.h>
-#include "constants.bas"
-'#include "messagelog.bas"
+#include "Can.bas"
+#include "IOs.bas"
+'#include "MessageLog.bas"
+'#include "Constants.bas"
 
 Sub OnLoadFrame()
   InitWindows
@@ -15,40 +17,6 @@ End Sub
 Sub OnUnloadFrame()
 
 End Sub
-
-Sub InitCAN 
-  Dim CanManager
-  DeleteCanManager 0,True
-  Set CanManager = LaunchCanManager( 0, "1000" )
-  CanManager.Events = True
-  CanManager.Deliver = True
-  CanManager.Platform = 3
-  CanManager.ChangeFunnel "0x408,0x008", True
-  CanManager.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
-  WithEvents.ConnectObject CanManager, "CanManager_"  
-  InitCANMgr2
-End Sub
-
-Sub InitCANMgr2 
-  Dim CanManagerPUB
-  Set CanManagerPUB = Memory.CanManager.Clone
-  CanManagerPUB.Events = True
-  CanManagerPUB.Deliver = True
-  CanManagerPUB.Platform = 3
-  CanManagerPUB.ChangeFunnel "0x408,0x008", True
-  CanManagerPUB.SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
-  'CanManagerPUB.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
-  WithEvents.ConnectObject CanManagerPUB, "CanManagerPUB_"
-End Sub
-
-Function CanManagerPUB_Deliver( CanReadArg )
-  DebugMessage "CanMgrRXDeliver" & CanReadArg.Format(CFM_SHORT)  
-End Function
-
-Function CanManager_Deliver( CanReadArg )
-  DebugMessage "CanDeliver" & CanReadArg.Format(CFM_SHORT)
-End Function 
-
 Sub InitWindows
 
   Window.width = 1024
@@ -58,40 +26,6 @@ Sub InitWindows
   'Create log window
   CreateLogWindow
 
-End Sub
-
-Function OnClick_Send( Reason )
-  Dim CanManager
-  Dim CanSendArg, CanReadArg
-  Dim TioCnt,Timeout
-  Timeout = 1000
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  Memory.Get "CanManager",CanManager  
-
-  CanSendArg.CanID = &h608
-  CanSendArg.Data(0) = &h54
-  CanSendArg.Data(1) = &h00
-  CanSendArg.Length = 2
-  CANSend CanSendArg,CanManager
-  
-  For TioCnt = 0 To Timeout
-    If CanManager.PeekMessage (CanReadArg, 1) Then
-      DebugMessage "CanMgr " & CanReadArg.Format(CFM_SHORT)
-    End If
-  Next
-End Function
-
-
-Sub CANSend ( CanSendArg, CanManager )
-  Dim debug
-  'debug = CONST_DEBUG
- 
-  CanManager.Send CanSendArg
-  'If debug Then
-    DebugMessage CanSendArg.Format(CFM_SHORT)
-  'End If
-  
 End Sub
 
 '**********************************************************************
@@ -128,3 +62,47 @@ Sub DebugMessage(sMessage)
   End If
 End Sub
 ' +++++++++++++++++++ End of DebugMessage() ++++++++++++
+
+Function OnClick_btnLogGridClear( ByVal Reason )
+  Visual.Script( "LogGrid").clearAll()
+End Function
+
+Function LogAdd ( ByVal sMessage )
+  Dim Gridobj  
+  Set Gridobj = Visual.Script("LogGrid")
+  Dim MsgId
+  MsgId = Gridobj.uid()
+  If NOT(sMessage = "") Then
+    Gridobj.addRow MsgId, ""& FormatDateTime(Date, vbShortDate) &","& FormatDateTime(Time, vbShortTime)&":"& String.Format("%02d ", Second(Time)) &","& sMessage
+    'Wish of SCM (automatically scroll to newest Msg)
+    Gridobj.showRow( MsgId )
+  End If  
+End Function
+
+Function OnClick_Send( Reason )
+  Dim CanManager
+  Dim CanSendArg, CanReadArg
+  Dim TioCnt,Timeout
+  Timeout = 1000
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  Memory.Get "CanManager",CanManager  
+
+  CanSendArg.CanID = &h608
+  CanSendArg.Data(0) = &h54
+  CanSendArg.Data(1) = &h00
+  CanSendArg.Length = 2
+  CANSend CanSendArg,CanManager
+  
+  For TioCnt = 0 To Timeout
+    If CanManager.PeekMessage (CanReadArg, 1) Then
+      DebugMessage "CanMgr " & CanReadArg.Format(CFM_SHORT)
+    End If
+  Next
+End Function
+
+
+Function OnClick_Send2( Reason )
+  DebugMessage "Set Toggle Cover On"
+  IO_setToggle"ledStartButton"
+End Function

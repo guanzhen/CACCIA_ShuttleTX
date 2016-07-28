@@ -1,8 +1,8 @@
-Function OnClick_btnLogGridClear( Reason )
+Function OnClick_btnLogGridClear( ByVal Reason )
   LogAdd "Test"
 End Function
 
-Function LogAdd ( sMessage )
+Function LogAdd ( ByVal sMessage )
   Dim Gridobj  
   Set Gridobj = Visual.Script("LogGrid")
   Dim MsgId
@@ -12,4 +12,4 @@ Function LogAdd ( sMessage )
     'Wish of SCM (automatically scroll to newest Msg)
     Gridobj.showRow( MsgId )
   End If  
-End Function 
+End Function
