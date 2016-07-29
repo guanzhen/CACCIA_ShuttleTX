@@ -5,14 +5,15 @@
 /* These CSS selectors work for CACCIA */
 /* div#test1 {font-size:15pt;} */
 body { margin:0px; }
-html { background-color : silver; }
+html { background-color : silver; border }
 iframe {border: 0px; width :100%; height:100%;}
+
+#Layer_CanSetup {   height:100%;  width :100%;   align:middle;border-style:solid;  border-color:lightgrey;}
 
 #Layer_TabStrip { padding:5pt; height:70%; width:100%;}
 #tabbar_main { height:100%; width:100%; }
 
 #Layer_MessageLog { padding:5pt;height:30%; width :100%;}
 #MessageLogObj { height:80%; width :100%;}
+#btnLogGridClear { height:30px;margin-top:5px;width:150px;}
 
-
-/*#btnLogGridClear { margin : 10pt;}*/
