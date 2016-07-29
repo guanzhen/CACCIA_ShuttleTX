@@ -4,14 +4,24 @@ Option Explicit
 #include <SubCommon.bas>
 #include <PTKL_c.h>
 #include <Ptkl_shuttle.h>
+
 #include "Can.bas"
 #include "IOs.bas"
+#include "DebugLog.bas"
+#include "CanSetup.bas"
+
+
 '#include "MessageLog.bas"
 '#include "Constants.bas"
 
+Const APP_WIDTH = 800
+Const APP_HEIGHT = 600
+Const CANSETUP_WIDTH = 400
+Const CANSETUP_HEIGHT = 160
+
 Sub OnLoadFrame()
   InitWindows
-  InitCAN
+  'InitCAN
   REM System.Start("CanMgr1")
 End Sub
 
@@ -20,49 +30,18 @@ Sub OnUnloadFrame()
 End Sub
 Sub InitWindows
 
-  Window.width = 1024
-  Window.height = 600
-  Visual.Select("Layer_MessageLog").Style.Display = "block"
+  Window.width = CANSETUP_WIDTH
+  Window.height = CANSETUP_HEIGHT
   
-  'Create log window
-  CreateLogWindow
+  Visual.Select("Layer_MessageLog").Style.Display = "none"
+  Visual.Select("Layer_TabStrip").Style.Display = "none"
+  'Create debug log window
+  CreateDebugLogWindow
+  InitWindowCanSetup
 
 End Sub
 
-'**********************************************************************
-'* Purpose: Create a logging window to log messages
-'* Input:  none
-'* Output: none
-'**********************************************************************
-Sub CreateLogWindow()
-  Dim DebugLogWindow
 
-  Set DebugLogWindow = CreateObject("WinAPI.Window")
-  DebugLogWindow.Title = "Tesla Debug Log"
-  Call Memory.Set("DebugLogWindow", DebugLogWindow)
-End Sub
-'+++++++++++++++++++++ End of CreateLogWindow() +++++++++++++++++++++++
-
-'************************************************************************
-'* Purpose: Display message log on Caccia log window        *
-'* Input:  sMessage                   *
-'* Output: None                    *
-'************************************************************************
-Sub DebugMessage(sMessage)
-  Dim sTimeStamp, sDate, sTime, DebugLogWindow
-
-  If NOT Memory.Get("DebugLogWindow", DebugLogWindow) Then
-    Exit Sub
-  End If
-
-  If Len(sMessage) <> 0 Then
-    sDate = Convert.FormatTime(System.Time, "%d-%m-%Y")
-    sTime = String.Format("%02d:%02d:%02d", Hour(Time), Minute(Time), Second(Time))
-    sTimeStamp = sDate & " " & sTime & " "
-    DebugLogWindow.Log(sTimeStamp & sMessage & vbCrLf)
-  End If
-End Sub
-' +++++++++++++++++++ End of DebugMessage() ++++++++++++
 
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()
@@ -89,7 +68,7 @@ Function OnClick_Send( Reason )
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   Memory.Get "CanManager",CanManager  
 
-  CanSendArg.CanID = &h608
+  CanSendArg.CanID = &h644
   CanSendArg.Data(0) = &h54
   CanSendArg.Data(1) = &h00
   CanSendArg.Length = 2
