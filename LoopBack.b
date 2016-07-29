@@ -37,6 +37,12 @@ If rc.Success
     Delay(20)    
     SendMsg{CANTXID2}(0x20,0x00,0x01,rc.Data[2])    
   }
+  'Cmd Get IO State
+  Case 0x37:
+  {
+    'Input start = 1, Cover = 1, PCB_Sensor = 1
+    SendMsg{CANTXID1}(rc.Data[0],0x00,0x89,0x00,0x00,0x00,0x00,0x00)   
+  }
   
   }
 }
