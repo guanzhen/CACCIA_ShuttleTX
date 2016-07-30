@@ -8,7 +8,11 @@
   left: 60%;
   position: absolute;
   top: 10px;
-  width:40%;
-  
-  
+  width:40%; 
+}
+
+button 
+{
+  height:20px;
+  width: 150px;
 }

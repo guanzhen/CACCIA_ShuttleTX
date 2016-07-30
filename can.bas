@@ -100,11 +100,11 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
       CANSendCMD = False
     End If
   'If debug Then
-    DebugMessage "Ack:"&CanSendArg.Format(CFM_SHORT) 
-    
+    DebugMessage "Ack:"&CanSendArg.Format(CFM_SHORT)     
   Else
       CANSendCMD = False
   End If
+  CanManager.Deliver = True
 End Function
 
 Function PUB_Handler ( CanReadArg )
