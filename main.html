@@ -3,33 +3,48 @@
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />  
   <link rel="stylesheet" type="text/css" href="main.css">
   
-<!-- For dhtmlx 4.0 -->
-<!--   
-    <script src="../../../DHtmlx/codebase/dhtmlx.js">></script>
-    <script src="../../../DHtmlx/sources/dhtmlxTabbar/codebase/dhtmlxtabbar.js">></script>  
--->
+  <!-- For dhtmlx 4.0 -->  
+  <!-- <script src="../../../DHtmlx/codebase/dhtmlx.js">></script> -->
+  <!-- <script src="../../../DHtmlx/sources/dhtmlxTabbar/codebase/dhtmlxtabbar.js">></script>   -->
+
+  <!-- <link rel="stylesheet" type="text/css" href="../../Caccia.css" /> -->
   
-    <!-- <link rel="stylesheet" type="text/css" href="../../Caccia.css" /> -->
-    <link rel="stylesheet" type="text/css" href="../../../codebase/tabbar/dhtmlxtabbar.css">
-    <script src="../../../codebase/dhtmlxcommon.js"></script>		
-    <script src="../../../codebase/tabbar/dhtmlxtabbar.js"></script> 
-   
-    <link rel="stylesheet" type="text/css" href="../../../codebase/grid/skins/dhtmlxgrid_dhx_skyblue.css">
-    <link rel="stylesheet" type="text/css" href="../../../codebase/grid/dhtmlxgrid.css">
-    <script src="../../../codebase/grid/dhtmlxgrid.js"></script>
-    <script src="../../../codebase/grid/dhtmlxgridcell.js"></script>
-    <script src="../../../codebase/grid/ext/dhtmlxgrid_data.js"></script>
-	<script src="../../../codebase/grid/excells/dhtmlxgrid_excell_link.js"</script>
+  <!-- Dhtmlx Common -->
+  <script src="../../../codebase/dhtmlxcommon.js"></script>		
+  <script src="../../../codebase/dhtmlxcontainer.js"></script>		
+  
+  <!-- Dhtmlx TabBar -->
+  <link rel="stylesheet" type="text/css" href="../../../codebase/tabbar/dhtmlxtabbar.css">
+  <script src="../../../codebase/tabbar/dhtmlxtabbar.js"></script> 
  
-  <script src="onload.js" >  </script>
+  <!-- Dhtmlx Grid -->
+  <link rel="stylesheet" type="text/css" href="../../../codebase/grid/skins/dhtmlxgrid_dhx_skyblue.css">
+  <link rel="stylesheet" type="text/css" href="../../../codebase/grid/dhtmlxgrid.css">
+  <script src="../../../codebase/grid/dhtmlxgrid.js"></script>
+  <script src="../../../codebase/grid/dhtmlxgridcell.js"></script>
+  <script src="../../../codebase/grid/ext/dhtmlxgrid_data.js"></script>
+	<!-- <script src="../../../codebase/grid/excells/dhtmlxgrid_excell_link.js"</script> -->
+  
+  <!-- Dhtmlx Windows -->
+  <link rel="stylesheet" type="text/css" href="../../../codebase/windows/skins/dhtmlxwindows_dhx_skyblue.css">
+  <link rel="stylesheet" type="text/css" href="../../../codebase/windows/dhtmlxwindows.css">
+  <script src="../../../codebase/windows/dhtmlxwindows.js"></script>
+  
+  <!-- Dhtmlx Form -->
+  <script src="../../../codebase/form/dhtmlxform.js"></script>
+  <script src="../../../codebase/form/ext/dhtmlxform_item_dhxcombo.js"></script>
+  <!-- <script src="../../../codebase/forms/dhtmlxdataprocessor.js"></script> -->
+  
+  <!-- User defined -->
+  <script src="onload.js" ></script>
   
   <title> Shuttle TX Control</title>
 </head>
 
 
 	<!-- <body onload="loadtabs();"> -->
-	<body onload="load_messagebox();loadtabs();">
-  <!-- <body> -->
+	<!-- <body onload="load_messagebox();loadtabs();"> -->
+  <body>
   <div id="Layer_CanSetup">
     <iframe id="iframe_cansetup" scrolling = no src="CANsetup.html" ></iframe>
   </div>
@@ -47,40 +62,5 @@
     
     <button id="btnLogGridClear">Clear</button>
   </div>
-<script>
-  var LogGrid
-  var tabbar
-  function load_messagebox() 
-  {
-    LogGrid = new dhtmlXGridObject('MessageLogObj');  
-    LogGrid.setHeader("Date,Time,Information");
-    LogGrid.setImagePath("../../../codebase/grid/imgs/");
-    LogGrid.setInitWidths( "100,100,*");
-    LogGrid.setColAlign ("center,center,left");
-    LogGrid.setColTypes ("ro,ro,ro");
-    LogGrid.setColSorting ("na,na,na");
-    LogGrid.setSkin ("red_gray");
-    LogGrid.enableTooltips ("true,true,true");
-    LogGrid.enableResizing ("false,false,false");
-    LogGrid.enableMultiselect(false);
-    LogGrid.enableAutoWidth (true);
-    LogGrid.init();
-  };  
-  function loadtabs() 
-  {
-    tabbar = new dhtmlXTabBar("tabbar_main","top");
-    tabbar.setImagePath("../../../codebase/tabbar/imgs/");
-    tabbar.addTab("main_tab1","Tab1");
-    tabbar.addTab("main_tab2","Tab2");
-    tabbar.addTab("main_tab3","Tab3");
-    tabbar.setContent( "main_tab1", iframe_tab1);
-    tabbar.setContent( "main_tab2", iframe_tab2);
-    tabbar.setContent( "main_tab3", iframe_tab3);
-    tabbar.setTabActive("main_tab1");
-    Layer_TabStrip.style.display = "block";
-  };
-
-</script>  
-
 	</body>
 </html>

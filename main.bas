@@ -20,9 +20,7 @@ Const CANSETUP_WIDTH = 400
 Const CANSETUP_HEIGHT = 160
 
 Sub OnLoadFrame()
-  InitWindows  
-  'InitCAN
-  REM System.Start("CanMgr1")
+  InitWindows 
 End Sub
 
 Sub OnUnloadFrame()
@@ -30,9 +28,11 @@ Sub OnUnloadFrame()
 End Sub
 Sub InitWindows
 
-  Window.width = CANSETUP_WIDTH
-  Window.height = CANSETUP_HEIGHT
-  
+  Window.width = APP_WIDTH
+  Window.height = APP_HEIGHT
+  Visual.ExecuteScriptFunction("loadtabs")
+  Visual.ExecuteScriptFunction("load_messagebox")
+  'Visual.ExecuteScriptFunction("loadCansetup")
   Visual.Select("Layer_MessageLog").Style.Display = "none"
   Visual.Select("Layer_TabStrip").Style.Display = "none"
   'Set the images for the IO Tab
