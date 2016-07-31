@@ -28,18 +28,21 @@ Sub OnUnloadFrame()
 End Sub
 Sub InitWindows
 
-  Window.width = APP_WIDTH
   Window.height = APP_HEIGHT
-  Visual.ExecuteScriptFunction("loadtabs")
-  Visual.ExecuteScriptFunction("load_messagebox")
-  'Visual.ExecuteScriptFunction("loadCansetup")
+  Window.width = APP_WIDTH
+  
+  REM Window.width = CANSETUP_WIDTH
+  REM Window.height = CANSETUP_HEIGHT
+  
   Visual.Select("Layer_MessageLog").Style.Display = "none"
   Visual.Select("Layer_TabStrip").Style.Display = "none"
   'Set the images for the IO Tab
   InitWindowIOs
+  
   'Create debug log window
   CreateDebugLogWindow
-  InitWindowCanSetup
+  'Visual.Script("win").attachEvent"onClose",btn_CanConnect()
+  'InitWindowCanSetup
 End Sub
 
 Function OnClick_btnLogGridClear( ByVal Reason )

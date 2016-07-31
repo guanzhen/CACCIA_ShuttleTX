@@ -1,7 +1,7 @@
 var LogGrid
 var tabbar
-
-function loadtabs() 
+var dhxWins,win,winframe
+function load_tabbar() 
 {
   tabbar = new dhtmlXTabBar("tabbar_main","top");
   tabbar.setImagePath("../../../codebase/tabbar/imgs/");
@@ -11,8 +11,7 @@ function loadtabs()
   tabbar.setContent( "main_tab1", iframe_tab1);
   tabbar.setContent( "main_tab2", iframe_tab2);
   tabbar.setContent( "main_tab3", iframe_tab3);
-  tabbar.setTabActive("main_tab1");
-  Layer_TabStrip.style.display = "block";
+  tabbar.setTabActive("main_tab1");  
 };
 
 function load_messagebox() 
@@ -47,10 +46,9 @@ function doOnLoad_dhtmlx40()
     //tabbar.cells(0).attachObject("iframe_tab1");
 };
 
-
-dhtmlxEvent(window,"load",function()
+function load_CANsetup()
 {
-var formStructure
+var dhxForm,formStructure
 formStructure = [
 
     {type:"settings",position:"label-top"},
@@ -67,6 +65,33 @@ formStructure = [
       {type:"button", name:"Connect",width:100,offsetTop:10,offsetLeft:100, value:"Connect"}
     ]}
 ];
+dhxWins = new dhtmlXWindows();
+win = dhxWins.createWindow("cansetup", 100, 100, 500 , 200);
+dhxWins.window("cansetup").setText("CAN Setup");
+dhxWins.window("cansetup").attachURL("CanSetup.html");
+winframe = win.getFrame();
+win.center();
+//dhxForm = dhxWins.window("cansetup").attachForm(formData);
+};
+
+ 
+dhtmlxEvent(window,"load",function()
+{
+load_messagebox();
+load_tabbar();
+load_CANsetup();
+Layer_TabStrip.style.display = "none";
+Layer_MessageLog.style.display = "none";
+
+});
+
+function testing()
+{
+  window.alert(winframe.contentWindow.document.getElementById("opt_shuttleconfig").value);
+  CanSetup.btn_CanConnect();
+}
+
+/* 
 var formData = [
 		{type: "combo", name: "myCombo", label: "Select Band", options:[
 				{value: "opt_a", text: "Cradle Of Filth"},
@@ -77,14 +102,4 @@ var formData = [
 				{value: "2", text: "Private Party"}
 		]}
 ];
-var dhxWins= new dhtmlXWindows();
-var win = dhxWins.createWindow("cansetup", 100, 100, 500 , 200);
-dhxWins.window("cansetup").setText("CAN Setup");
-//load_messagebox();
-//loadtabs();
-//Layer_TabStrip.style.display = "block";
-//Layer_MessageLog.style.display = "block";
-
-var dhxForm = dhxWins.window("cansetup").attachForm(formData);
-//doOnLoad_dhtmlx40();
-});
+ */
