@@ -24,32 +24,28 @@ Sub OnLoadFrame()
 End Sub
 
 Sub OnUnloadFrame()
-
 End Sub
+
 Sub InitWindows
 
   Window.height = APP_HEIGHT
   Window.width = APP_WIDTH
-  
-  REM Window.width = CANSETUP_WIDTH
-  REM Window.height = CANSETUP_HEIGHT
-  'Visual.ExecScript("load_tabbar")
-  
+
+  'Create debug log window
+  CreateDebugLogWindow
+  DebugMessage "Starting Up"
+    
   'Visual.ExecuteScriptFunction("load_tabbar")
   'Visual.ExecuteScriptFunction("load_messagebox")
-  'Visual.Select("Layer_MessageLog").Style.Display = "block"
-  'Visual.Select("Layer_TabStrip").Style.Display = "block"
+  'Visual.ExecuteScriptFunction("load_CANsetup")
+  
   'Set the images for the IO Tab
   InitWindowIOs
   
-  'Create debug log window
-  CreateDebugLogWindow
   
   'Wait for user to click on connect button.
   Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
-  
-  'No longer needed since we are using DHTMLX window
-  'InitWindowCanSetup
+
 End Sub
 
 Function tabbar_onSelect (id, id2, id3)

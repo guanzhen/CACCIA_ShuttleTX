@@ -23,13 +23,12 @@
         </select>
       </td>
     </tr>
-    <tr><td><button id ="btn_CanConnect" onclick="closeWindow()">Connect </button></td></tr>
+    <tr><td><button id ="btn_CanConnect" onclick="buttonclick()">Connect </button></td></tr>
   </table>
   </div>
  <script>
-    function closeWindow() {
-        parent.updateCANsetupvalues();
-        parent.win.close(); // close a window
+    function buttonclick() {
+        parent.onclick_btncanconnect();
     }
 </script>
 </body>
