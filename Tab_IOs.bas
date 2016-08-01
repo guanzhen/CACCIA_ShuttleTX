@@ -152,18 +152,6 @@ Function OnClick_btnoled23( Reason ) IO_setToggle(&H23) End Function
 Function OnClick_btnoled24( Reason ) IO_setToggle(&H24) End Function
 Function OnClick_btnoled25( Reason ) IO_setToggle(&H25) End Function
 
-Function btnIOToggleHandler2( Reason )
-  Dim temp
-  temp = Reason.Button
-  'Visual.Select(id).Style.GetAttribute"value",temp
-  DebugMessage "button pressed :"& temp
-End Function
-
-Function btnIOToggleHandler( id )
-  Dim temp
-  'Visual.Select(id).Style.GetAttribute"value",temp
-  DebugMessage "button pressed :"&id & " : " & temp
-End Function
 
 Function GetIOState()
   Dim CanSendArg, CanReadArg
@@ -198,12 +186,19 @@ Function GetIOState()
           Exit For
         End If
       Next
+    GetIOState = True
+  Else
+    GetIOState = False    
   End If
 
   
 End Function
 
 Function OnClick_btnUpdateInputs ( Reason )
-  LogAdd "Refresh Input IOs"
-  GetIOState
+  If GetIOState = True Then
+    LogAdd "Refresh Input IOs"
+  Else
+    LogAdd "Refresh Input IOs failed!"  
+  End If
+  
 End Function
