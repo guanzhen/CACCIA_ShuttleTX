@@ -43,6 +43,14 @@ If rc.Success
     'Input start = 1, Cover = 1, PCB_Sensor = 1
     SendMsg{CANTXID1}(rc.Data[0],0x00,0x99,0x06,0x00,0x87,0x1C,0x00)   
   }
+  'Cmd Set IO State
+  Case 0x38:
+  {
+    SendMsg{CANTXID1}(rc.Data[0],0x00,0x00)      
+  }
+  
+  Else
+    SendMsg{CANTXID1}(rc.Data[0],0x00) 
   
   }
 }

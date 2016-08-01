@@ -12,7 +12,7 @@ function load_tabbar()
   tabbar.setContent( "main_tab1", iframe_tab1);
   tabbar.setContent( "main_tab2", iframe_tab2);
   tabbar.setContent( "main_tab3", iframe_tab3);
-  tabbar.setTabActive("main_tab1");  
+  tabbar.setTabActive("main_tab3");  
 };
 
 function load_messagebox() 

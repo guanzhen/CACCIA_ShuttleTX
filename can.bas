@@ -98,9 +98,7 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
     Else
       DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
       CANSendCMD = False
-    End If
-  'If debug Then
-    DebugMessage "Ack:"&CanSendArg.Format(CFM_SHORT)     
+    End If    
   Else
       CANSendCMD = False
   End If
@@ -124,17 +122,6 @@ End Function
 Function PUB_IO_Handler ( CanReadArg )
   Dim Message
   Dim status
-  Select Case CanReadArg.Data(4)
-  Case $(INP_START):  Message = "Start Button"
-  Case $(INP_HALT):   Message = "Stop Button"
-  Case $(INP_EMERGENCY_STOP):  Message = "Emergency Stop"
-  Case $(INP_COVER):  Message = "Cover"        
-  Case $(INP_CONTROL_VOLTAGE_40): Message = "Control Voltage 40V"          
-  Case $(INP_PCB_SENSOR): Message = "PCB Sensor" 
-  Case $(INP_PCB_JAM_INPUT):  Message = "PCB JAM Input"   
-  Case $(INP_PCB_JAM_OUTPUT): Message = "PCB JAM Output"      
-  Case $(INP_BARCODE_SCANNER_PRESENT):  Message = "Barcode Scanner Present" 
-  End Select
   
   If CanReadArg.Data(5) = 0 Then 
     Status = "Off"
@@ -144,9 +131,10 @@ Function PUB_IO_Handler ( CanReadArg )
     Status = "Invalid Input"
   End If
   
-  IO_I_setValue CanReadArg.Data(4),CanReadArg.Data(5)  
-  LogMessage   "Pub message: " &Message
-  DebugMessage   "Pub message: " &Message
+  IO_I_setValue CanReadArg.Data(4),CanReadArg.Data(5) 
+  Message = "Pub message: " & IO_getName(CanReadArg.Data(4)) & " " & Status
+  LogMessage   Message
+  DebugMessage Message
 
 End Function
 

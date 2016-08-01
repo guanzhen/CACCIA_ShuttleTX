@@ -48,10 +48,6 @@ Sub InitWindows
 
 End Sub
 
-Function tabbar_onSelect (id, id2, id3)
-  DebugMessage "tabbar selected"
-End Function 
-
 
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()
