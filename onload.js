@@ -12,7 +12,7 @@ function load_tabbar()
   tabbar.setContent( "main_tab1", iframe_tab1);
   tabbar.setContent( "main_tab2", iframe_tab2);
   tabbar.setContent( "main_tab3", iframe_tab3);
-  tabbar.setTabActive("main_tab1");  
+  tabbar.setTabActive("main_tab3");  
 };
 
 function load_messagebox() 
@@ -57,8 +57,8 @@ win = dhxWins.createWindow("cansetup", 100, 100, 500 , 200);
 win.setText("CAN Setup");
 win.attachURL("CanSetup.html");
 win.center();
+//win.keepInViewport();
 winframe = win.getFrame();
-//dhxForm = dhxWins.window("cansetup").attachForm(formData);
 };
  
 
@@ -71,10 +71,11 @@ dhtmlxEvent(window,"load",function()
   Layer_MessageLog.style.display = "none";
 });
 
-function updateCANsetupvalues()
+function onclick_btncanconnect()
 {
   opt_config = winframe.contentWindow.document.getElementById("opt_shuttleconfig").value; 
-  opt_net = winframe.contentWindow.document.getElementById("opt_cannet").value; 
+  opt_net = winframe.contentWindow.document.getElementById("opt_cannet").value;
+  win.close();
   
 }
 function doOnLoad_dhtmlx40() 

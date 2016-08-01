@@ -28,7 +28,7 @@ Sub InitCAN ( Config, Net, BaudRate )
     End With
   End If
   Memory.Set "CANConfig",CANConfig
-  DebugMessage "InitCAN: Net:" &Net&" BaudRate:"& BaudRate&" CmdID:" & String.Format("%03X",CANConfig.CANIDcmd)
+  DebugMessage "InitCAN with settings: Net:" &Net&" BaudRate:"& BaudRate&" CmdID:" & String.Format("0x%03X",CANConfig.CANIDcmd)
   
   DeleteCanManager 0,True  
   Set CanManager = LaunchCanManager( Net, BaudRate )
@@ -36,7 +36,7 @@ Sub InitCAN ( Config, Net, BaudRate )
   CanManager.Deliver = True
   'CanManager.Platform = 3
   CanManager.ChangeFunnel String.Format("%d,%d",CANConfig.CANIDAck,CANConfig.CANIDPub),True
-  DebugMessage "CanManager1: FunnelSet:" & CanManager.QueryFunnel
+  DebugMessage "CanManager1: FunnelSet:" & String.Format("0x%03X,0x%03X",CANConfig.CANIDAck,CANConfig.CANIDPub)
   CanManager.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
   WithEvents.ConnectObject CanManager, "CanManager_"  
   InitCANMgr2
@@ -55,7 +55,7 @@ Sub InitCANMgr2
   CanManagerPUB.Deliver = True
   'CanManagerPUB.Platform = 3  
   CanManagerPUB.ChangeFunnel String.Format("%d,%d",CANConfig.CANIDAck,CANConfig.CANIDPub), True
-  DebugMessage "CanManager2: FunnelSet:" & CanManagerPUB.QueryFunnel
+  DebugMessage "CanManager2: FunnelSet:" &  String.Format("0x%03X,0x%03X",CANConfig.CANIDAck,CANConfig.CANIDPub)
   CanManagerPUB.SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
   WithEvents.ConnectObject CanManagerPUB, "CanManagerPUB_"
 End Sub
@@ -98,9 +98,7 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
     Else
       DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
       CANSendCMD = False
-    End If
-  'If debug Then
-    DebugMessage "Ack:"&CanSendArg.Format(CFM_SHORT)     
+    End If    
   Else
       CANSendCMD = False
   End If
@@ -122,20 +120,22 @@ Function PUB_Handler ( CanReadArg )
 End Function
 
 Function PUB_IO_Handler ( CanReadArg )
-  Select Case CanReadArg.Data(4)
-  Case $(INP_START):                    IO_I_setValue IO_I_StartButton,   CanReadArg.Data(5) 
-                                        LogMessage "Pub Message: StartButton "
-                                        DebugMessage "Pub Message: StartButton "
-  Case $(INP_HALT):                     IO_I_setValue IO_I_StopButton,    CanReadArg.Data(5)
-  Case $(INP_EMERGENCY_STOP):           IO_I_setValue IO_I_EmergencyStop, CanReadArg.Data(5)
-  Case $(INP_COVER):                    IO_I_setValue IO_I_Cover,         CanReadArg.Data(5)
-  Case $(INP_CONTROL_VOLTAGE_40):       IO_I_setValue IO_I_ControlVoltage,CanReadArg.Data(5)
-  Case $(INP_PCB_SENSOR):               IO_I_setValue IO_I_PCB_Sensor,    CanReadArg.Data(5)
-  Case $(INP_PCB_JAM_INPUT):            IO_I_setValue IO_I_PCB_Jam_Input, CanReadArg.Data(5)
-  Case $(INP_PCB_JAM_OUTPUT):           IO_I_setValue IO_I_PCB_Jam_Output,CanReadArg.Data(5)
-  Case $(INP_BARCODE_SCANNER_PRESENT):  IO_I_setValue IO_I_Barcode_scanner,CanReadArg.Data(5)
+  Dim Message
+  Dim status
+  
+  If CanReadArg.Data(5) = 0 Then 
+    Status = "Off"
+  Elseif CanReadArg.Data(5) = 1 Then
+    Status = "On"
+  Else
+    Status = "Invalid Input"
+  End If
+  
+  IO_I_setValue CanReadArg.Data(4),CanReadArg.Data(5) 
+  Message = "Pub message: " & IO_getName(CanReadArg.Data(4)) & " " & Status
+  LogMessage   Message
+  DebugMessage Message
 
-  End Select
 End Function
 
 

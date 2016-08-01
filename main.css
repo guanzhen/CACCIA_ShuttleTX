@@ -8,7 +8,7 @@ body { margin:0px; }
 html { background-color : silver; border }
 iframe {border: 0px; width :100%; height:100%;}
 
-#Layer_CanSetup {   height:100%;  width :100%;   align:middle;border-style:solid;  border-color:lightgrey;}
+#Layer_CanSetup {   height:100%;  width :100%; border-style:solid;  border-color:lightgrey;}
 
 #Layer_TabStrip { padding:5pt; height:70%; width:100%;}
 #tabbar_main { height:100%; width:100%; }
