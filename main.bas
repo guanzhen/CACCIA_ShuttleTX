@@ -33,17 +33,29 @@ Sub InitWindows
   
   REM Window.width = CANSETUP_WIDTH
   REM Window.height = CANSETUP_HEIGHT
+  'Visual.ExecScript("load_tabbar")
   
-  Visual.Select("Layer_MessageLog").Style.Display = "none"
-  Visual.Select("Layer_TabStrip").Style.Display = "none"
+  'Visual.ExecuteScriptFunction("load_tabbar")
+  'Visual.ExecuteScriptFunction("load_messagebox")
+  'Visual.Select("Layer_MessageLog").Style.Display = "block"
+  'Visual.Select("Layer_TabStrip").Style.Display = "block"
   'Set the images for the IO Tab
   InitWindowIOs
   
   'Create debug log window
   CreateDebugLogWindow
-  'Visual.Script("win").attachEvent"onClose",btn_CanConnect()
+  
+  'Wait for user to click on connect button.
+  Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
+  
+  'No longer needed since we are using DHTMLX window
   'InitWindowCanSetup
 End Sub
+
+Function tabbar_onSelect (id, id2, id3)
+  DebugMessage "tabbar selected"
+End Function 
+
 
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()

@@ -1,6 +1,7 @@
 var LogGrid
 var tabbar
 var dhxWins,win,winframe
+var opt_net,opt_config
 function load_tabbar() 
 {
   tabbar = new dhtmlXTabBar("tabbar_main","top");
@@ -31,21 +32,6 @@ function load_messagebox()
   LogGrid.init();
 };
 
-function doOnLoad_dhtmlx40() 
-{
-    var tabbar = new dhtmlXTabBar({
-    parent: "tabbar_main",
-    skin:   "dhx_web",
-    arrows_mode: "auto",
-    tabs: [
-    { id: "main_tab1", text: "Tab1"},
-    { id: "main_tab2", text: "Tab2"},
-    { id: "main_tab3", text: "Tab3"}
-    ] 
-    });
-    //tabbar.cells(0).attachObject("iframe_tab1");
-};
-
 function load_CANsetup()
 {
 var dhxForm,formStructure
@@ -66,30 +52,46 @@ formStructure = [
     ]}
 ];
 dhxWins = new dhtmlXWindows();
+//dhxWins.attachViewportTo("Layer_CanSetup");
 win = dhxWins.createWindow("cansetup", 100, 100, 500 , 200);
-dhxWins.window("cansetup").setText("CAN Setup");
-dhxWins.window("cansetup").attachURL("CanSetup.html");
-winframe = win.getFrame();
+win.setText("CAN Setup");
+win.attachURL("CanSetup.html");
 win.center();
+winframe = win.getFrame();
 //dhxForm = dhxWins.window("cansetup").attachForm(formData);
 };
-
  
+
 dhtmlxEvent(window,"load",function()
 {
-load_messagebox();
-load_tabbar();
-load_CANsetup();
-Layer_TabStrip.style.display = "none";
-Layer_MessageLog.style.display = "none";
-
+  load_messagebox();
+  load_tabbar();
+  load_CANsetup();
+  Layer_TabStrip.style.display = "none";
+  Layer_MessageLog.style.display = "none";
 });
 
-function testing()
+function updateCANsetupvalues()
 {
-  window.alert(winframe.contentWindow.document.getElementById("opt_shuttleconfig").value);
-  CanSetup.btn_CanConnect();
+  opt_config = winframe.contentWindow.document.getElementById("opt_shuttleconfig").value; 
+  opt_net = winframe.contentWindow.document.getElementById("opt_cannet").value; 
+  
 }
+function doOnLoad_dhtmlx40() 
+{
+    var tabbar = new dhtmlXTabBar({
+    parent: "tabbar_main",
+    skin:   "dhx_web",
+    arrows_mode: "auto",
+    tabs: [
+    { id: "main_tab1", text: "Tab1"},
+    { id: "main_tab2", text: "Tab2"},
+    { id: "main_tab3", text: "Tab3"}
+    ] 
+    });
+    //tabbar.cells(0).attachObject("iframe_tab1");
+};
+
 
 /* 
 var formData = [

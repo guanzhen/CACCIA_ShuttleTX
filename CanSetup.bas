@@ -3,22 +3,23 @@ Sub Testing
 
 End Sub
 
-Function btn_CanConnect(  )
-  Dim ShuttleConfig
+Function btn_CanConnect( id, id1 )
+  Dim ShuttleConfig,Net
   DebugMessage"Launch Can Connect"
-  'Visual.Select("Layer_CanSetup").Style.Display = "none"
-  'Window.width = APP_WIDTH
-  'Window.height = APP_HEIGHT
   Visual.Select("Layer_MessageLog").Style.Display = "block"
   Visual.Select("Layer_TabStrip").Style.Display = "block"
-  'DebugMessage "Selected Config :"& winframe.contentWindow.document.getElementById("opt_shuttleconfig").value
-  'DebugMessage "Selected Config :"& winframe.contentWindow.document.getElementById("opt_cannet").value
-  'DebugMessage "Selected Net :"& Visual.Select("opt_shuttleconfig").Value
-  'DebugMessage "Selected Net :"& Visual.Select("opt_cannet").Value
+  ShuttleConfig = Visual.Script("opt_net")
+  Net = Visual.Script("opt_config")
+  DebugMessage "Selected Config :"&ShuttleConfig
+  DebugMessage "Selected Net :"&Net
   
-  'InitCAN Visual.Select("opt_shuttleconfig").Value,Visual.Select("opt_cannet").Value,"1000"  
+  'DebugMessage "Selected Config :"& Visual.Script("winframe").contentWindow.document.getElementById("opt_shuttleconfig").value
+  'DebugMessage "Selected Net :"& Visual.Script("winframe").contentWindow.document.getElementById("opt_cannet").value
+  Visual.Script("dhxWins").unload()  
+  InitCAN ShuttleConfig,Net,"1000"  
 End Function
 
+'No longer needed since we are using DHTMLX window
 Function InitWindowCanSetup
 
   Visual.Select("Layer_CanSetup").Style.Height  = CANSETUP_HEIGHT
