@@ -111,11 +111,7 @@ Function IO_setToggle ( Target )
     End If
   Else
     LogAdd "Toggle " & IO_getName(Target) & " output failed!"
-  End If
- 
-
-  
-  
+  End If  
 End Function
 
 Function InitWindowIOs ()

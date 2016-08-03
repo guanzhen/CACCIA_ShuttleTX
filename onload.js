@@ -6,13 +6,17 @@ function load_tabbar()
 {
   tabbar = new dhtmlXTabBar("tabbar_main","top");
   tabbar.setImagePath("../../../codebase/tabbar/imgs/");
-  tabbar.addTab("main_tab1","Tab1");
-  tabbar.addTab("main_tab2","Tab2");
-  tabbar.addTab("main_tab3","Tab3");
+  tabbar.addTab("main_tab1","Commands");
+  tabbar.addTab("main_tab2","Endurance");
+  tabbar.addTab("main_tab3","Motor");
+  tabbar.addTab("main_tab4","IO Controls");
+  tabbar.addTab("main_tab5","Testing");
   tabbar.setContent( "main_tab1", iframe_tab1);
   tabbar.setContent( "main_tab2", iframe_tab2);
   tabbar.setContent( "main_tab3", iframe_tab3);
-  tabbar.setTabActive("main_tab3");  
+  tabbar.setContent( "main_tab4", iframe_tab4);
+  tabbar.setContent( "main_tab5", iframe_tab5);
+  tabbar.setTabActive("main_tab1");  
 };
 
 function load_messagebox() 
@@ -85,9 +89,9 @@ function doOnLoad_dhtmlx40()
     skin:   "dhx_web",
     arrows_mode: "auto",
     tabs: [
-    { id: "main_tab1", text: "Tab1"},
-    { id: "main_tab2", text: "Tab2"},
-    { id: "main_tab3", text: "Tab3"}
+    { id: "main_tab1", text: "Testing"},
+    { id: "main_tab2", text: "Commands"},
+    { id: "main_tab3", text: "IO Controls"}
     ] 
     });
     //tabbar.cells(0).attachObject("iframe_tab1");

@@ -24,6 +24,8 @@ If rc.Success
       SendMsg{CANTXID1}(rc.Data[0],rc.Data[1],0x00,0x11,0x22,0x33,0x44)  
     Case 0x10:
       SendMsg{CANTXID1}(rc.Data[0],rc.Data[1],0x00,0x01,0x02,0x03,0x04)      
+    Else
+      SendMsg{CANTXID1}(rc.Data[0],0x01)            
     }
   }
   ' Refill Start
@@ -50,8 +52,10 @@ If rc.Success
   }
   
   Else
+  {
     SendMsg{CANTXID1}(rc.Data[0],0x00) 
   
+  }
   }
 }
 Delay(50)
