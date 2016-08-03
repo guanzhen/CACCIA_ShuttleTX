@@ -158,7 +158,7 @@ Function OnClick_btnmvinpcb ( Reason )
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move in PCB from Lane "&lane
+      LogAdd "Move in PCB from "&get_LaneName(lane)
     Else
       LogAdd "Move in PCB Failed!"
     End If  
@@ -167,21 +167,15 @@ End Function
 
 Function OnClick_btnmvoutpcb ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
-  Dim lane,lane_name
+  Dim lane
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   
   If Visual.Exists("opt_destlane") Then
     lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
-    DebugMessage "MoveOutPCB Lane :" &lane
+    DebugMessage "MoveOutPCB "&get_LaneName(lane)
   Else
     DebugMessage "MoveOutPCB Lane invalid! :" &lane  
-  End If
-  
-  If lane = 3 Then  
-    lane_name = "Downstream 1" 
-  Else  
-    lane_name = "Downstream 2"
   End If
   
   If Memory.Exists("CANManager") Then
@@ -191,7 +185,7 @@ Function OnClick_btnmvoutpcb ( Reason )
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move out PCB from Lane "&lane_name
+      LogAdd "Move out PCB from "&get_LaneName(lane)
     Else
       LogAdd "Move out PCB Failed!"
     End If  
@@ -200,34 +194,40 @@ End Function
 
 Function OnClick_btnmvshuttle ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
-  Dim lane,lane_name
+  Dim lane
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   
-  If Visual.Exists("opt_destlane") Then
-    lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
-    DebugMessage "MoveOutPCB Lane :" &lane
+  If Visual.Exists("opt_mvshuttlelane") Then
+    lane = Visual.Select("opt_mvshuttlelane").SelectedItemAttribute("value")
+    DebugMessage "Move Shuttle to "&get_LaneName(lane)
   Else
-    DebugMessage "MoveOutPCB Lane invalid! :" &lane  
+    DebugMessage "Move Shuttle destination lane invalid! :" &lane  
   End If
   
-  If lane = 3 Then  
-    lane_name = "Downstream 1" 
-  Else  
-    lane_name = "Downstream 2"
-  End If
-  
+ 
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_OUT)
+    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_SHUTTLE)
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move out PCB from Lane "&lane_name
+      LogAdd "Move Shuttle to "&get_LaneName(lane)
     Else
       LogAdd "Move out PCB Failed!"
     End If  
   End If
 End Function 
+
+Function get_LaneName( Lane )
+  Select Case lane
+  Case 1:  get_LaneName = "Upstream 1"
+  Case 2:  get_LaneName = "Upstream 2"
+  Case 3:  get_LaneName = "Downstream 1"
+  Case 4:  get_LaneName = "Downstream 2"
+  Case Else get_LaneName = "invalid"
+  End Select
+End Function 
+
 
