@@ -75,6 +75,7 @@ End Function
 
 Function OnClick_btnGetApp ( Reason )
 Dim FWver_Hi,FWver_Lo
+  LogAdd ("Read Firmware Version")      
   If Command_getFWVer(0,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textAppVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
   Else
@@ -107,7 +108,6 @@ Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
     If CmdGetVersion(Memory.CanManager, CanSendArg , FWselect ,FWver_High,FWver_Lo) = Ack_Timeout Then
       LogAdd ("Read Firmware Timeout!")
     Else
-      LogAdd ("Read Firmware Version")
       Command_getFWVer = True
     End If
   Else
