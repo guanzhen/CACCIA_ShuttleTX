@@ -20,6 +20,11 @@ Const APP_HEIGHT = 600
 Const CANSETUP_WIDTH = 400
 Const CANSETUP_HEIGHT = 160
 
+Const LANE_UPSTREAM_1 = 1
+Const LANE_UPSTREAM_2 = 2
+Const LANE_DOWNSTREAM_1 = 3
+Const LANE_DOWNSTREAM_2 = 4
+
 Sub OnLoadFrame()
   InitWindows 
 End Sub
@@ -90,7 +95,6 @@ Dim FWver_Hi,FWver_Lo
   'MsgBox Visual.Select("txtValue1").Value
 End Function
 
-
 Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
   Dim CanSendArg, CANConfig, FWselect
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
@@ -111,6 +115,119 @@ Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
       Command_getFWVer = True
     End If
   Else
-      LogAdd "No Can Manager!"    
+    LogAdd "No Can Manager!"    
   End If 
+  Memory.CanManager.Deliver = True
 End Function
+
+Function OnClick_btnrefrun ( Reason )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_REFERENCE)
+    CanSendArg.Length = 1
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      LogAdd "Reference Run"
+    Else
+      LogAdd "Reference Run Failed!"
+    End If  
+  End If  
+End Function 
+
+Function OnClick_btnmvinpcb ( Reason )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Dim lane
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  If Visual.Exists("opt_sourcelane") Then
+    lane = Visual.Select("opt_sourcelane").SelectedItemAttribute("value")
+    DebugMessage "MoveInPCB Lane :" &lane 
+  Else
+    DebugMessage "MoveInPCB Lane invalid! :" &lane  
+  End If
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_IN)
+    CanSendArg.Data(1) = lane
+    CanSendArg.Length = 2
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      LogAdd "Move in PCB from Lane "&lane
+    Else
+      LogAdd "Move in PCB Failed!"
+    End If  
+  End If  
+End Function 
+
+Function OnClick_btnmvoutpcb ( Reason )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Dim lane,lane_name
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  If Visual.Exists("opt_destlane") Then
+    lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
+    DebugMessage "MoveOutPCB Lane :" &lane
+  Else
+    DebugMessage "MoveOutPCB Lane invalid! :" &lane  
+  End If
+  
+  If lane = 3 Then  
+    lane_name = "Downstream 1" 
+  Else  
+    lane_name = "Downstream 2"
+  End If
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_OUT)
+    CanSendArg.Data(1) = lane
+    CanSendArg.Length = 2
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      LogAdd "Move out PCB from Lane "&lane_name
+    Else
+      LogAdd "Move out PCB Failed!"
+    End If  
+  End If  
+End Function 
+
+Function OnClick_btnmvshuttle ( Reason )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Dim lane,lane_name
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  If Visual.Exists("opt_destlane") Then
+    lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
+    DebugMessage "MoveOutPCB Lane :" &lane
+  Else
+    DebugMessage "MoveOutPCB Lane invalid! :" &lane  
+  End If
+  
+  If lane = 3 Then  
+    lane_name = "Downstream 1" 
+  Else  
+    lane_name = "Downstream 2"
+  End If
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_OUT)
+    CanSendArg.Data(1) = lane
+    CanSendArg.Length = 2
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      LogAdd "Move out PCB from Lane "&lane_name
+    Else
+      LogAdd "Move out PCB Failed!"
+    End If  
+  End If
+End Function 
+
