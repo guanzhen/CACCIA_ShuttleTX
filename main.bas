@@ -10,6 +10,7 @@ Option Explicit
 #include "DebugLog.bas"
 #include "Tab_IOs.bas"
 #include "testing.bas"
+'#include "Tab_Commands.bas"
 '#include "Constants.bas"
 
 '#include "MessageLog.bas"
@@ -41,13 +42,11 @@ Sub InitWindows
   
   'Set the images for the IO Tab
   InitWindowIOs
-  
-  
+  Init_WindowCommands
   'Wait for user to click on connect button.
   Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
 
 End Sub
-
 
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()
@@ -63,4 +62,14 @@ Function LogAdd ( ByVal sMessage )
     'Wish of SCM (automatically scroll to newest Msg)
     Gridobj.showRow( MsgId )
   End If  
+End Function
+
+
+Function Init_WindowCommands( )
+DIm test
+Visual.Select("textBiosVersion").Disabled = true
+Visual.Select("textAppVersion").Disabled = true
+Visual.Select("textAppVersion").Value = "test1"
+Visual.Select("textAppVersion").Value = "test2"
+
 End Function

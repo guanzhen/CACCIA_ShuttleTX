@@ -21,7 +21,10 @@ Function OnClick_Send( Reason )
 End Function
 
 Function OnClick_Send2( Reason )
+  Visual.Select("Send2").InnerHtml = "Refresh IOs"
   DebugMessage "Send2"
+  DebugMessage Visual.Exists("Send2")
+  
   'Visual.Select("Send2").InnerHtml = "Send2"
   GetIOState
 End Function
