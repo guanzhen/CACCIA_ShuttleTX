@@ -1,0 +1,107 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
+  <!-- <link rel="stylesheet" type="text/css" href="Tab_Endurance.css"></link>   -->
+  <style>
+  html { background-color = #DEDFE1}
+  body { margin:1px; padding=5px;}
+  h1 { font-family=arial;font-size= 12pt; margin=2px 0px; color=white;}
+  th    {font-family=arial;color: white;padding : 1px 5px;}
+  td    {font-family=arial;color: white;padding : 1px 5px;}
+  table {width= 100%;}
+  #frame_Systemacceptance
+  {
+   filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');    
+    
+    float=left;
+    border = 2px;
+    border-style = solid;
+    border-color = white;
+    margin = 1px 2px;
+    padding = 2px;
+    width = 49%;
+    height = 355px;
+  }
+  #frame_innerSA
+  {
+    width = 100%;
+  }
+  #frame_endurancerun
+  {
+   filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');        
+    float:right;
+    border = 2px;
+    border-style = solid;
+    border-color = white;
+    margin = 1px 2px;
+    padding = 2px;    
+    width = 49%;  
+    height = 355px;
+  }
+  .innerframe
+  {
+    filter= progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');    
+    border = 2px;
+    border-style = solid;
+    border-color = white;
+    margin = 3px;
+    padding = 5px;
+    width = 100%;
+  }
+  button  {    width: 120px;  margin : 1px 2px;}
+  </style>
+
+</head>
+<body>
+  <div id="frame_Systemacceptance">
+    <h1> System Acceptance </h1>
+    <table>
+      <tr><td><input type=checkbox id="cbwithPBC">With PCB</input></td><td><input id="textwithPCBmins">mins</input></td></tr>
+      <tr><td><input type=checkbox id="cbwoPBC">Without PCB</input></td><td><input id="textwoPCBmins">mins</input></td></tr>      
+    </table>
+    <br>
+    <div id="frame_innerSA" class = "innerframe">
+      <table>
+        <tr><td>Start Time</td><td><input id="textSAstarttime"></input></td></tr>
+        <tr><td>Stop Time</td><td><input id="textSAstoptime"></input></td></tr>
+        <tr><td>Elapsed Time (with PCB)</td><td><input id="textSAelapsed_withPCB"></input></td></tr>
+        <tr><td>Elapsed Time (without PCB)</td><td><input id="textSAelapsed_withoutPCB"></input></td></tr>
+      </table>
+    </div>
+  </div>
+  
+  <div id="frame_endurancerun">
+  <h1>Endurance Run</h1>
+  <div class ="innerframe" id ="frame_innerwPCB">
+  <h1>With PCB</h1>
+    <table>
+      <tr><td><input type=checkbox id="cbshuttle">Shuttle</input></td></tr>
+      <tr><td><input type=checkbox id="cbpcbcyclicrun">PCB Cyclic Run</input></td></tr>      
+    </table>
+    <button id = "btnendrun_wpcb_start">Start</button>
+    <button id = "btnendrun_wpcb_stop">Stop</button>
+
+  </div>
+  <div class ="innerframe" id ="frame_innerwoPCB">
+  <h1>Without PCB</h1>
+    <table>
+      <tr><td><input type=checkbox id="cbwithPBC">Shuttle</input></td></tr>
+      <tr><td><input type=checkbox id="cbwoPBC">Width Adjustment</input></td></tr>      
+      <tr><td><input type=checkbox id="cbconveyor">Conveyor</input></td></tr>   
+    </table>
+    <button id = "btnendrun_wopcb_start">Start</button>
+    <button id = "btnendrun_wopcb_start">Stop</button>
+
+
+  </div>
+  <div class ="innerframe" id ="frame_timing">
+    <table>
+    <tr><td>Start Time</td><td><input id="textSAstarttime"></input></td></tr>
+    <tr><td>Stop Time</td><td><input id="textSAstoptime"></input></td></tr>
+    </table>
+  </div>  
+  </div>
+  
+
+</body>
+</html>
