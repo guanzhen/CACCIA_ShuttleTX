@@ -39,12 +39,12 @@ Function IO_setValue ( Target, Value )
       LedName = String.Format("led%02X",Target)
       IO_Array.Data(Target-1) = 1
       Visual.Select(LedName).Src = "./resources/led_round_green.png"
-      DebugMessage "Set LED on:" & LedName    
+      'DebugMessage "Set LED on:" & LedName    
       
     Elseif Value = 0 Then
       LedName = String.Format("led%02X",Target)  
-      IO_Array.Data(Target-1) = 0    
-      DebugMessage "Set LED off:" & LedName
+      IO_Array.Data(Target-1) = 0      
+      'DebugMessage "Set LED off:" & LedName
       Visual.Select(LedName).Src = "./resources/led_round_grey.png"
     Else
       DebugMessage "Invalid IO Input value to set"
@@ -111,11 +111,7 @@ Function IO_setToggle ( Target )
     End If
   Else
     LogAdd "Toggle " & IO_getName(Target) & " output failed!"
-  End If
- 
-
-  
-  
+  End If  
 End Function
 
 Function InitWindowIOs ()

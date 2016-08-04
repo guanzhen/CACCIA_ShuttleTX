@@ -1,15 +1,15 @@
 Option Explicit
-
-#include <Can.bas>
-#include <SubCommon.bas>
 #include <PTKL_c.h>
 #include <Ptkl_shuttle.h>
-
-#include "Can.bas"
+#include <Can.bas>
+#include "Tab_Commands.bas"
+#include <SubCommon.bas>
+#include "can_common.bas"
 #include "CanSetup.bas"
 #include "DebugLog.bas"
 #include "Tab_IOs.bas"
 #include "testing.bas"
+
 '#include "Constants.bas"
 
 '#include "MessageLog.bas"
@@ -18,6 +18,11 @@ Const APP_WIDTH = 800
 Const APP_HEIGHT = 600
 Const CANSETUP_WIDTH = 400
 Const CANSETUP_HEIGHT = 160
+
+Const LANE_UPSTREAM_1 = 1
+Const LANE_UPSTREAM_2 = 2
+Const LANE_DOWNSTREAM_1 = 3
+Const LANE_DOWNSTREAM_2 = 4
 
 Sub OnLoadFrame()
   InitWindows 
@@ -41,13 +46,11 @@ Sub InitWindows
   
   'Set the images for the IO Tab
   InitWindowIOs
-  
-  
+  Init_WindowCommands
   'Wait for user to click on connect button.
   Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
 
 End Sub
-
 
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()
@@ -64,3 +67,5 @@ Function LogAdd ( ByVal sMessage )
     Gridobj.showRow( MsgId )
   End If  
 End Function
+
+

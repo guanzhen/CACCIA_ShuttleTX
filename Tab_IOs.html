@@ -1,7 +1,51 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
-  <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link>
+  <!-- <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link> -->
+  <style>
+  #frame_IOs
+  {
+    border:2px;
+    border-color:grey;
+    border-style:solid;
+    height : 100%;
+    width : 100%;  
+  }
+  #frame_inputs
+  {
+    border:2px;
+    border-color:grey;
+    border-style:solid;
+    height : 88%;
+    margin : 2px;
+    width: 48%;
+  }
+  #frame_outputs
+  {
+    border:2px;
+    border-color:grey;
+    border-style:solid;
+    height : 88%;
+    left: 49%;
+    margin : 2px;
+    position: absolute;
+    top: 17px;
+    width:48%; 
+  }
+  #frame_hidden{}
+  button 
+  {
+    height:20px;
+    width: 120px;
+  }
+
+  #btnUpdateInputs
+  {
+    height:30px;
+    left : 20px;
+    position: absolute;
+  }
+  </style>
 </head>
 <body>
   <div id="frame_IOs">
@@ -20,17 +64,17 @@
     </div>
     <div id = "frame_outputs">
       <table>
-        <tr><td><img id="led18"></img>Cover Blocked</td><td><button value = "18" id="btnoled18">On</button></td></tr>
-        <tr><td><img id="led19"></img>Brake WA Motor</td><td><button value = "19" id="btnoled19">On</button></td></tr>
-        <tr><td><img id="led1A"></img>Shuttle Motor</td><td><button value = "1A" id="btnoled1A">On</button></td></tr>
-        <tr><td><img id="led1B"></img>Activate Barcode Lane 1</td><td><button value = "1B" id="btnoled1B">On</button></td></tr>
-        <tr><td><img id="led1C"></img>Activate Barcode Lane 2</td><td><button value = "1C" id="btnoled1C">On</button></td></tr>
-        <tr><td><img id="led20"></img>SMEMA U1 Machine Ready</td><td><button value = "20" id="btnoled20">On</button></td></tr>
-        <tr><td><img id="led21"></img>SMEMA U2 Machine Ready</td><td><button value = "21" id="btnoled21">On</button></td></tr>
-        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">On</button></td></tr>
-        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">On</button></td></tr>
-        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">On</button></td></tr>
-        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">On</button></td></tr>
+        <tr><td><img id="led18"></img>Cover Blocked</td><td><button value = "18" id="btnoled18">Toggle</button></td></tr>
+        <tr><td><img id="led19"></img>Brake WA Motor</td><td><button value = "19" id="btnoled19">Toggle</button></td></tr>
+        <tr><td><img id="led1A"></img>Shuttle Motor</td><td><button value = "1A" id="btnoled1A">Toggle</button></td></tr>
+        <tr><td><img id="led1B"></img>Activate Barcode Lane 1</td><td><button value = "1B" id="btnoled1B">Toggle</button></td></tr>
+        <tr><td><img id="led1C"></img>Activate Barcode Lane 2</td><td><button value = "1C" id="btnoled1C">Toggle</button></td></tr>
+        <tr><td><img id="led20"></img>SMEMA U1 Machine Ready</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
+        <tr><td><img id="led21"></img>SMEMA U2 Machine Ready</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
+        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
+        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
+        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
+        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
       </table>
     </div>
   <button id="btnUpdateInputs">Refresh</button>
