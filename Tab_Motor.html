@@ -1,0 +1,79 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
+  <!-- <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link> -->
+  <style>
+  html { background-color = #DEDFE1}
+  body { margin:1px; padding=5px;}
+
+  input { width:80px;}
+  td    {font-size=10pt;font-family=arial;color: white;padding : 1px 5px;}  
+  h1 { font-family=arial;font-size= 12pt; margin=2px 0px; color=white;}
+  p { font-family=arial;font-size= 10pt; color=white;}
+  button { width: 150px;}
+  .innerframe
+  {
+    filter= progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');    
+    border = 2px;
+    border-style = solid;
+    border-color = white;
+    dispaly = inline;
+    float:left;
+    height = 50%;
+    margin = 1px;
+    padding = 5px;
+    width = 32%;  
+    height = 99%;
+  }
+  #frame_beltmotor
+  {
+  }
+  #frame_shuttlemotor
+  {
+  }
+  #frame_widthadjustmotor
+  {
+  }
+  
+  </style>
+
+</head>
+<body>
+    <div id="frame_beltmotor" class = "innerframe">
+      <h1>Belt Motor</h1>      
+      <p align="center"><button id = "btnendrun_wopcb_start">Check Motor Current</button></p>
+      <table>
+        <tr><td>Forward:</td><td><input id="textSAstarttime"></input> mA</td></tr>
+        <tr><td>Backward:</td><td><input id="textSAstoptime"></input> mA</td></tr>
+      </table>   
+    </div>
+    <div id="frame_shuttlemotor" class = "innerframe">
+      <h1>Shuttle Motor</h1>          
+      <p align="center"><button id = "btnendrun_wopcb_start">Calibrate Motor </button></p>
+      <p align="center"><button id = "btnendrun_wopcb_start">Reference Run</button></p>
+      <p align="center"><input id="textSAstarttime"></input> mm</p>
+      <p align="center"><button id = "btnendrun_wopcb_start">Move to Positon</button></p>
+      <p align="center"><button id = "btnendrun_wopcb_start">Check Motor Current</button></p>
+      <table>
+        <tr><td>Max:</td><td><input id="textSAstarttime"></input> mA</td></tr>
+        <tr><td>Forward:</td><td><input id="textSAstarttime"></input> mA</td></tr>
+        <tr><td>Backward:</td><td><input id="textSAstoptime"></input> mA</td></tr>
+      </table>   
+
+    </div>
+    <div id="frame_widthadjustmotor" class = "innerframe">
+          <h1>Width Adjustment Motor</h1>          
+      <p align="center"><button id = "btnendrun_wopcb_start">Calibrate Motor </button></p>
+      <p align="center"><button id = "btnendrun_wopcb_start">Reference Run</button></p>
+      <p align="center"><input id="textSAstarttime"></input> mm</p>
+      <p align="center"><button id = "btnendrun_wopcb_start">Move to Positon</button></p>
+      <p align="center"><button id = "btnendrun_wopcb_start">Check Motor Current</button></p>
+      <table>
+        <tr><td>Max:</td><td><input id="textSAstarttime"></input> mA</td></tr>
+        <tr><td>Forward:</td><td><input id="textSAstarttime"></input> mA</td></tr>
+        <tr><td>Backward:</td><td><input id="textSAstoptime"></input> mA</td></tr>
+      </table>   
+    </div>
+
+</body>
+</html>

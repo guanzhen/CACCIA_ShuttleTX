@@ -1,6 +1,7 @@
 Option Explicit
 #include <PTKL_c.h>
 #include <Ptkl_shuttle.h>
+#include "Tab_Endurance.bas"
 #include <Can.bas>
 #include "Tab_Commands.bas"
 #include <SubCommon.bas>

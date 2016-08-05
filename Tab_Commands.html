@@ -5,6 +5,8 @@
   
   <style>
   html { background-color: #DEDFE1;}
+  body { margin:1px; padding=5px;}
+
   button  {    width: 120px;  margin : 1px 2px;}
   select  {    width: 120px;  }
   input  { background-color:lightgrey;}
@@ -23,18 +25,21 @@
   }  
   #FrameFirmwareVersion
   {
+    float :left;
     font : arial;
-    position: absolute;
-    top : 17px;
   }
-  #btnGetApp { margin: 5px 10 px;}
+    //position: absolute;
+    //top : 17px;
+  #btnGetApp { margin: 10px 10 px;}
   #frame_displayrefstatus
   {
-    position: absolute;
-    top : 17px;
-    left : 50%;
+    float :right;
+    clear: left;
   }
-  
+    //position: absolute;
+    //top : 17px;
+    //left : 50%;
+  #div_btngetapp { clear:left; padding:0px;}
   #frame_Commands
   {    
     filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');
@@ -52,11 +57,11 @@
   <div id="frame_displayinfo">
     <div id = "FrameFirmwareVersion">
       <table>
-        <tr><th colspan="2">Firmware Version</th></tr>
+        <tr><th colspan="2" align = "left">Firmware Version</th></tr>
         <tr><td>Bios</td><td><input id="textBiosVersion"></input></td></tr>
         <tr><td>App</td><td><input id="textAppVersion"></input></td></tr>
       </table>
-      <button id = "btnGetApp" class = "BtnClick">Read</button>
+      <div id="div_btngetapp"><button id = "btnGetApp" class = "BtnClick">Read</button> </div>
 <!--       
       <div id = "subgrp_FWDownload">
         Firmware Download <br>
@@ -73,7 +78,7 @@
       </div>
       <div id = "frame_displayrefstatus">
         <table>
-          <tr><th colspan="2">Shuttle Reference Status</th></tr>
+          <tr><th colspan="2"  align = "left">Shuttle Reference Status</th></tr>
           <tr><td>Shuttle</td><td><input id="textstatusshuttleref"></input></td></tr>
           <tr><td>Width</td><td><input id="textstatuswidthref"></input></td></tr>
         </table>
