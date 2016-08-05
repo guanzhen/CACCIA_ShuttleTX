@@ -153,6 +153,9 @@ End Function
 Function Init_WindowCommands( )
 Visual.Select("textBiosVersion").Disabled = true
 Visual.Select("textAppVersion").Disabled = true
-Visual.Select("textBiosVersion").Value = "00.00"
-Visual.Select("textAppVersion").Value = "00.00"
+Visual.Select("textBiosVersion").Disabled = false
+Visual.Select("textAppVersion").Disabled = false
+
+Visual.Select("textAppVersion").ReadOnly = True
+Visual.Select("textBiosVersion").ReadOnly = True
 End Function

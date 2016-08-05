@@ -34,6 +34,7 @@
   #frame_widthadjustmotor
   {
   }
+  .input_read {background-color:lightgrey; }
   
   </style>
 
@@ -41,37 +42,37 @@
 <body>
     <div id="frame_beltmotor" class = "innerframe">
       <h1>Belt Motor</h1>      
-      <p align="center"><button id = "btnendrun_wopcb_start">Check Motor Current</button></p>
+      <p align="center"><button id = "btn_belt_checkcurr">Check Motor Current</button></p>
       <table>
-        <tr><td>Forward:</td><td><input id="textSAstarttime"></input> mA</td></tr>
-        <tr><td>Backward:</td><td><input id="textSAstoptime"></input> mA</td></tr>
+        <tr><td>Forward:</td><td><input class="input_read" id="text_belt_currforward"></input> mA</td></tr>
+        <tr><td>Backward:</td><td><input class="input_read" id="text_belt_currbackward"></input> mA</td></tr>
       </table>   
     </div>
     <div id="frame_shuttlemotor" class = "innerframe">
       <h1>Shuttle Motor</h1>          
-      <p align="center"><button id = "btnendrun_wopcb_start">Calibrate Motor </button></p>
-      <p align="center"><button id = "btnendrun_wopcb_start">Reference Run</button></p>
-      <p align="center"><input id="textSAstarttime"></input> mm</p>
-      <p align="center"><button id = "btnendrun_wopcb_start">Move to Positon</button></p>
-      <p align="center"><button id = "btnendrun_wopcb_start">Check Motor Current</button></p>
+      <p align="center"><button id = "btn_shuttle_calibrate">Calibrate Motor </button></p>
+      <p align="center"><button id = "btn_shuttle_refrun">Reference Run</button></p>
+      <p align="center"><input  id="input_shuttle_posiiton"></input> mm</p>
+      <p align="center"><button id = "btn_shuttle_mvtopos">Move to Positon</button></p>
+      <p align="center"><button id = "btn_shuttle_checkcurr">Check Motor Current</button></p>
       <table>
-        <tr><td>Max:</td><td><input id="textSAstarttime"></input> mA</td></tr>
-        <tr><td>Forward:</td><td><input id="textSAstarttime"></input> mA</td></tr>
-        <tr><td>Backward:</td><td><input id="textSAstoptime"></input> mA</td></tr>
+        <tr><td>Max:</td><td><input class="input_read" id="text_shuttle_currmax"></input> mA</td></tr>
+        <tr><td>Forward:</td><td><input class="input_read" id="text_shuttle_currforward"></input> mA</td></tr>
+        <tr><td>Backward:</td><td><input class="input_read" id="text_shuttle_curbackward"></input> mA</td></tr>
       </table>   
 
     </div>
     <div id="frame_widthadjustmotor" class = "innerframe">
           <h1>Width Adjustment Motor</h1>          
-      <p align="center"><button id = "btnendrun_wopcb_start">Calibrate Motor </button></p>
-      <p align="center"><button id = "btnendrun_wopcb_start">Reference Run</button></p>
-      <p align="center"><input id="textSAstarttime"></input> mm</p>
-      <p align="center"><button id = "btnendrun_wopcb_start">Move to Positon</button></p>
-      <p align="center"><button id = "btnendrun_wopcb_start">Check Motor Current</button></p>
+      <p align="center"><button id = "btn_WA_calibrate">Calibrate Motor </button></p>
+      <p align="center"><button id = "btn_WA_refrun">Reference Run</button></p>
+      <p align="center"><input id="input_WA_posiiton"></input> mm</p>
+      <p align="center"><button id = "btn_WA_mvtopos">Move to Positon</button></p>
+      <p align="center"><button id = "btn_WA_checkcurr">Check Motor Current</button></p>
       <table>
-        <tr><td>Max:</td><td><input id="textSAstarttime"></input> mA</td></tr>
-        <tr><td>Forward:</td><td><input id="textSAstarttime"></input> mA</td></tr>
-        <tr><td>Backward:</td><td><input id="textSAstoptime"></input> mA</td></tr>
+        <tr><td>Max:</td><td><input class="input_read" id="text_WA_currmax"></input> mA</td></tr>
+        <tr><td>Forward:</td><td><input class="input_read" id="text_WA_currforward"></input> mA</td></tr>
+        <tr><td>Backward:</td><td><input class="input_read" id="text_WA_currbackward"></input> mA</td></tr>
       </table>   
     </div>
 
