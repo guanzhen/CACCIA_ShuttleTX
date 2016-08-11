@@ -1,6 +1,9 @@
 Option Explicit
+#include "Tab_Endurance.bas"
 #include <PTKL_c.h>
 #include <Ptkl_shuttle.h>
+#include "Tab_Motor.bas"
+
 #include <Can.bas>
 #include "Tab_Commands.bas"
 #include <SubCommon.bas>
@@ -47,6 +50,7 @@ Sub InitWindows
   'Set the images for the IO Tab
   InitWindowIOs
   Init_WindowCommands
+  Init_WindowMotor
   'Wait for user to click on connect button.
   Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
 
@@ -68,4 +72,20 @@ Function LogAdd ( ByVal sMessage )
   End If  
 End Function
 
+Function CheckValue(ByVal nValue)
 
+  'Check if it is a number
+  If NOT IsNumeric(nValue) Then
+    LogAdd("Value entered is not a valid number")
+    CheckValue = FALSE
+    Exit Function
+  End If
+
+  If nValue < 0 Then
+    LogAdd("Value entered must be a positive number")
+    CheckValue = FALSE
+    Exit Function
+  Else
+    CheckValue = TRUE
+  End If
+End Function

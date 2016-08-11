@@ -3,34 +3,33 @@
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
   <!-- <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link> -->
   <style>
-  #frame_IOs
-  {
-    border:2px;
-    border-color:grey;
-    border-style:solid;
-    height : 100%;
-    width : 100%;  
-  }
+  td    { font-family=arial; font-size:15px;  color: white;padding : 1px 5px;} 
+  body { margin:1px; padding=5px;}
+  html { background-color: #DEDFE1;}
   #frame_inputs
   {
     border:2px;
-    border-color:grey;
+    border-color:white;
     border-style:solid;
+    float :left;
+    display:inline;    
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1');    
     height : 88%;
-    margin : 2px;
-    width: 48%;
+    margin : 0px 2px 2px 0px;
+    width: 50%;
   }
   #frame_outputs
   {
     border:2px;
-    border-color:grey;
+    border-color:white;
     border-style:solid;
+    display:inline;
+    float :left;
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1');    
     height : 88%;
     left: 49%;
-    margin : 2px;
-    position: absolute;
-    top: 17px;
-    width:48%; 
+    margin : 0px 2px 2px 0px;
+    width:50%; 
   }
   #frame_hidden{}
   button 
@@ -45,42 +44,43 @@
     left : 20px;
     position: absolute;
   }
+  #div_btn { clear:left;}
+  
   </style>
 </head>
 <body>
-  <div id="frame_IOs">
-    <div id = "frame_inputs">
-      <table>
-        <tr><td><img id="led01"></img>Start Button</td></tr>
-        <tr><td><img id="led02"></img>Stop Button</td></tr>
-        <tr><td><img id="led03"></img>Emergency Button</td></tr>
-        <tr><td><img id="led04"></img>Cover</td></tr>
-        <tr><td><img id="led05"></img>Control Voltage</td></tr>
-        <tr><td><img id="led08"></img>PCB Sensor</td></tr>
-        <tr><td><img id="led09"></img>PCB Jam Input</td></tr>
-        <tr><td><img id="led0A"></img>PCB Jam Output</td></tr>
-        <tr><td><img id="led0B"></img>Bar Code Scanner Present</td></tr>
-      </table>    
-    </div>
-    <div id = "frame_outputs">
-      <table>
-        <tr><td><img id="led18"></img>Cover Blocked</td><td><button value = "18" id="btnoled18">Toggle</button></td></tr>
-        <tr><td><img id="led19"></img>Brake WA Motor</td><td><button value = "19" id="btnoled19">Toggle</button></td></tr>
-        <tr><td><img id="led1A"></img>Shuttle Motor</td><td><button value = "1A" id="btnoled1A">Toggle</button></td></tr>
-        <tr><td><img id="led1B"></img>Activate Barcode Lane 1</td><td><button value = "1B" id="btnoled1B">Toggle</button></td></tr>
-        <tr><td><img id="led1C"></img>Activate Barcode Lane 2</td><td><button value = "1C" id="btnoled1C">Toggle</button></td></tr>
-        <tr><td><img id="led20"></img>SMEMA U1 Machine Ready</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
-        <tr><td><img id="led21"></img>SMEMA U2 Machine Ready</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
-        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
-        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
-        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
-        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
-      </table>
-    </div>
-  <button id="btnUpdateInputs">Refresh</button>
-  </div>
-  <div id= "frame_hidden">
+  <div id = "frame_inputs">
     <table>
+      <tr><td><img id="led01"></img>Start Button</td></tr>
+      <tr><td><img id="led02"></img>Stop Button</td></tr>
+      <tr><td><img id="led03"></img>Emergency Button</td></tr>
+      <tr><td><img id="led04"></img>Cover</td></tr>
+      <tr><td><img id="led05"></img>Control Voltage</td></tr>
+      <tr><td><img id="led08"></img>PCB Sensor</td></tr>
+      <tr><td><img id="led09"></img>PCB Jam Input</td></tr>
+      <tr><td><img id="led0A"></img>PCB Jam Output</td></tr>
+      <tr><td><img id="led0B"></img>Bar Code Scanner Present</td></tr>
+    </table>    
+  </div>
+  <div id = "frame_outputs">
+    <table>
+      <tr><td><img id="led18"></img>Cover Blocked</td><td><button value = "18" id="btnoled18">Toggle</button></td></tr>
+      <tr><td><img id="led19"></img>Brake WA Motor</td><td><button value = "19" id="btnoled19">Toggle</button></td></tr>
+      <tr><td><img id="led1A"></img>Shuttle Motor</td><td><button value = "1A" id="btnoled1A">Toggle</button></td></tr>
+      <tr><td><img id="led1B"></img>Activate Barcode Lane 1</td><td><button value = "1B" id="btnoled1B">Toggle</button></td></tr>
+      <tr><td><img id="led1C"></img>Activate Barcode Lane 2</td><td><button value = "1C" id="btnoled1C">Toggle</button></td></tr>
+      <tr><td><img id="led20"></img>SMEMA U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
+      <tr><td><img id="led21"></img>SMEMA U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
+      <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
+      <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
+      <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
+      <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
+    </table>
+  </div>
+  <div id="div_btn"><button id="btnUpdateInputs">Refresh</button></div>
+  <div id= "frame_hidden" display = "none">
+    <table>
+      <tr><td><img id="led00"></img></td></tr>
       <tr><td><img id="led10"></img></td></tr>
       <tr><td><img id="led11"></img></td></tr>
       <tr><td><img id="led12"></img></td></tr>
