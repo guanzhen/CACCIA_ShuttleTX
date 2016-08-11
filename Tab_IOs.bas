@@ -25,7 +25,7 @@ Const IO_Max            = 37
 Function IO_getValue( Target )
   Dim IO_Array
   Memory.Get "IO_Array",IO_Array
-  IO_getValue = IO_Array.Data(Target - 1)  
+  IO_getValue = IO_Array.Data(Target)  
 End Function
 
 Function IO_setValue ( Target, Value )
@@ -34,16 +34,16 @@ Function IO_setValue ( Target, Value )
   Memory.Get "IO_Array",IO_Array
   
   'If   Target > 0 & Target <= IO_Max & Value = 1 | Value = 0 Then
-  'DebugMessage "IO set:"& Target - 1
+  DebugMessage "IO set:"& Target & " value: " & Value
     if Value = 1 Then
       LedName = String.Format("led%02X",Target)
-      IO_Array.Data(Target-1) = 1
+      IO_Array.Data(Target) = 1
       Visual.Select(LedName).Src = "./resources/led_round_green.png"
       'DebugMessage "Set LED on:" & LedName    
       
     Elseif Value = 0 Then
       LedName = String.Format("led%02X",Target)  
-      IO_Array.Data(Target-1) = 0      
+      IO_Array.Data(Target) = 0      
       'DebugMessage "Set LED off:" & LedName
       Visual.Select(LedName).Src = "./resources/led_round_grey.png"
     Else
@@ -82,7 +82,7 @@ Function IO_getName ( Target )
   Case $(OUTP_SMEMA_D1_FAILED_BOARD):  Message = "SMEMA D1 Failed Board" 
   Case $(OUTP_SMEMA_D2_PCB_AVAILABLE):  Message = "SMEMA D2 PCB Available" 
   Case $(OUTP_SMEMA_D2_FAILED_BOARD):  Message = "SMEMA D2 Failed board" 
-  Case Else Message = "invalid IO"
+  Case Else Message = "invalid IO" & Target
   End Select
 
   IO_getName = Message
@@ -124,7 +124,7 @@ Function InitWindowIOs ()
   Memory.Set "IO_Array",IO_Array
   'setup input array, with element 0
   'IO_Array.Add(0) 
-  For i = 1  To IO_Max
+  For i = 0  To IO_Max
     'DebugMessage "add "&i
     IO_Array.Add(0)
     'set all the LED values in the newly created array, and update the display
@@ -150,14 +150,15 @@ Function OnClick_btnoled25( Reason ) IO_setToggle(&H25) End Function
 
 
 Function GetIOState()
-  Dim CanSendArg, CanReadArg
+  Dim CanSendArg, CanReadArg,CANConfig
   Dim iByte, iBit, bitCount, exitLoop
   Dim btncount,btnname
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  bitCount = 1
+  bitCount = 0
   exitLoop = 0
-  CanSendArg.CanID = &h644
+  Memory.Get "CANConfig",CANConfig
+  CanSendArg.CanID = CANConfig.CANIDcmd
   CanSendArg.Data(0) = &h37
   CanSendArg.Data(1) = &h00
   CanSendArg.Length = 2

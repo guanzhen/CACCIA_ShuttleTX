@@ -1,8 +1,8 @@
 Option Explicit
 #include "Tab_Endurance.bas"
 #include <PTKL_c.h>
-#include "Tab_Motor.bas"
 #include <Ptkl_shuttle.h>
+#include "Tab_Motor.bas"
 
 #include <Can.bas>
 #include "Tab_Commands.bas"

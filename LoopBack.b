@@ -1,3 +1,4 @@
+
 Dim CANID,CANTXID1,CANTXID2
 Dim LoopCont,rc
 CANID = 0x644
@@ -85,6 +86,25 @@ If rc.Success
     SendMsg{CANTXID2}(0x90,0x00,0x04)
     Delay(20)
     SendMsg{CANTXID2}(0x40,0x00,0x04) 
+  }
+  'CMD_GET_PARAM 
+  Case 0x33:
+  {
+    Switch rc.Data[1]
+    {
+      Case 0x31: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x6F,0x00,0x00,0x00) }  'PAR_SHUTTLE_CURRENT_FORW
+      Case 0x32: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0xDE,0x00,0x00,0x00) }  'PAR_SHUTTLE_CURRENT_BACKW
+      Case 0x33: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x4D,0x01,0x00,0x00) }  'PAR_WA_CURRENT_FORW
+      Case 0x34: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0xBC,0x01,0x00,0x00) }  'PAR_WA_CURRENT_BACKW
+      Case 0x35: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x2B,0x02,0x00,0x00) }  'PAR_CONV_CURRENT_FORW
+      Case 0x36: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x9B,0x02,0x00,0x00) }  'PAR_CONV_CURRENT_BACKW
+      
+      Else
+      {
+      
+        SendMsg{CANTXID1}(rc.Data[0],0x01,0x00)
+      }
+    }    
   }
 
   Else
