@@ -65,12 +65,19 @@ Function CanManager_Deliver( ByVal CanReadArg )
 End Function 
 
 Function CanManagerPUB_Deliver( ByVal CanReadArg )
-  DebugMessage "CanPubMgr: " & CanReadArg.Format(CFM_SHORT)  
-  
+  'DebugMessage "CanPubMgr: " & CanReadArg.Format(CFM_SHORT)  
   'If Prepare ID(CanData(2) = 0, meaning it is a spontanous public message, we handle the message
-  If CanReadArg.Data(2) = 0 Then 
-    PUB_Handler CanReadArg
-  End If
+  
+  If CanReadArg.Data(1) = 0 Then 
+    If CanReadArg.Data(2) = 0 Then
+      PUB_Handler CanReadArg
+    Else
+      DebugDecodePub CanReadArg  
+    End If
+  Else
+    LogAdd "Error! (" & Get_Err_Name(CanReadArg.Data(1))& ")"
+    DebugMessage "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " Err: (" & Get_Err_Name(CanReadArg.Data(1))& ")"
+  End If  
 End Function
 
 Sub CANSend ( CanSendArg )
@@ -82,8 +89,7 @@ Sub CANSend ( CanSendArg )
     CanManager.Send CanSendArg
   'If debug Then
     DebugMessage CanSendArg.Format(CFM_SHORT)
-  End If
-  
+  End If  
 End Sub
 
 Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
@@ -104,72 +110,10 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
   CanManager.Deliver = True
 End Function
 
-Function Get_PUB_PrepareID( ID )
-Dim name
-  Select Case ID
-    Case	&h20	:	name ="	CMD_SET_PCB_DATA	"
-    Case	&h21	:	name ="	CMD_GET_PCB_DATA	"
-    Case	&h22	:	name ="	CMD_SET_LANE_PAR	"
-    Case	&h23	:	name ="	CMD_GET_LANE_PAR	"
-    Case	&h24	:	name ="	CMD_GET_SHUTTLE_PAR	"
-    Case	&h25	:	name ="	CMD_CHECK_LANE_POS	"
-    Case	&h26	:	name ="	CMD_GET_BARCODE_LABEL	"
-    Case	&h27	:	name ="	CMD_GET_PCB_STATE	"
-    Case	&h28	:	name ="	CMD_DELETE_PCB	"
-    Case	&h29	:	name ="	CMD_INSERT_PCB	"
-    Case	&h30	:	name ="	CMD_SET_HW_OPTION	"
-    Case	&h31	:	name ="	CMD_GET_HW_OPTION	"
-    Case	&h32	:	name ="	CMD_SET_PARAM	"
-    Case	&h33	:	name ="	CMD_GET_PARAM	"
-    Case	&h34	:	name ="	CMD_INFO	"
-    Case	&h35	:	name ="	CMD_SET_WIDTH_OFFSET	"
-    Case	&h36	:	name ="	CMD_SET_FIXED_RAIL_OFFSET	"
-    Case	&h37	:	name ="	CMD_GET_IO_STATE	"
-    Case	&h38	:	name ="	CMD_SET_OUTPUT	"
-    Case	&h39	:	name ="	CMD_MOTOR_GET_POSITION	"
-    Case	&h3A	:	name ="	CMD_MOTOR_NOTIFY_POS	"
-    Case	&h3B	:	name ="	CMD_GET_REF_STATUS	"
-    Case	&h3C	:	name ="	CMD_GET_INTERFACE_STATUS	"
-    Case	&h41	:	name ="	CMD_PREPARE_REFERENCE	"
-    Case	&h42	:	name ="	CMD_PREPARE_MOVE_IN	"
-    Case	&h43	:	name ="	CMD_PREPARE_MOVE_OUT	"
-    Case	&h44	:	name ="	CMD_PREPARE_MOVE_SHUTTLE	"
-    Case	&h45	:	name ="	CMD_PREPARE_WIDTH_ADJUSTMENT	"
-    Case	&h46	:	name ="	CMD_PREPARE_SHUTTLE_POSITION	"
-    Case	&h47	:	name ="	CMD_PREPARE_BARCODE_SCANNER	"
-    Case	&h48	:	name ="	CMD_PREPARE_MOTOR_REFERENCE	"
-    Case	&h49	:	name ="	CMD_PREPARE_MOTOR_CALIBRATE	"
-    Case	&h4A	:	name ="	CMD_PREPARE_MOTOR_CURRENT	"
-    Case	&h4B	:	name ="	CMD_PREPARE_MOTOR_VELOCITY	"
-    Case	&h4C	:	name ="	CMD_PREPARE_MOTOR_POSITION	"
-    Case	&h4D	:	name ="	CMD_PREPARE_ENDURANCE_RUN	"
-    Case Else  name = "unknown" & ID
-  End Select
-  Get_PUB_PrepareID = name
-End Function
 
-
-Function DebugDecodePub( CanReadArg )
-Dim Active,Running,prepid
-
-  If (CanReadArg.Data(0) & &h80) = True Then
-    Active = "active "
-  Else
-    Active = "idle "
-  End If
-    
-  If (CanReadArg.Data(0) & &h04) = True Then
-    Running = "action running "
-  Else
-    Running = "waiting "
-  End If
-
-  prepid = Get_PUB_PrepareID(CanReadArg.Data(2))
-  DebugMessage "PubMsg: "&Active & Running & prepid
-End Function
 
 Function PUB_Handler ( CanReadArg )
-  Dim command
+  Dim command  
   'DebugMessage "Spontanous Public Message RX"
   Select Case  CanReadArg.Data(3)
     case $(PUB_MSG_ERR_PARAM):  
@@ -179,10 +123,8 @@ Function PUB_Handler ( CanReadArg )
         'DebugMessage "IO State"
         'LogAdd "Pub Msg: IO State "& CanReadArg.Format(CFM_SHORT)
       PUB_IO_Handler CanReadArg
-    case Else
-      DebugDecodePub CanReadArg
-  
   End Select
+  
 End Function
 
 Function PUB_IO_Handler ( CanReadArg )
@@ -198,7 +140,7 @@ Function PUB_IO_Handler ( CanReadArg )
   End If
   
   IO_setValue CanReadArg.Data(4),CanReadArg.Data(5) 
-  Message = "PubMsg: " & IO_getName(CanReadArg.Data(4)) & " " & Status
+  Message = "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " " & IO_getName(CanReadArg.Data(4)) & " " & Status
   DebugMessage Message
 
 End Function
@@ -221,10 +163,105 @@ Function CAN_getparam( CanReadArg , Param )
     CanSendArg.Data(2) = ParamH
     CanSendArg.Length = 3
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      DebugMessage "Get Param OK"
+      'DebugMessage "Get Param OK"
     Else
-      DebugMessage "Get Param Failed"
+      'DebugMessage "Get Param Failed"
     End If  
   End If
 End Function
 
+Function DebugDecodePub( CanReadArg )
+Dim Active,Running,prepid
+
+  If (Lang.Bit( CanReadArg.Data(0),7,1 )) = 1 Then
+    Active = "active, "
+  Else
+    Active = "idle, "
+  End If
+    
+  If (Lang.Bit( CanReadArg.Data(0),2,1 )) = 1 Then
+    Running = "action running, "
+  Else
+    Running = "waiting, "
+  End If
+  prepid = CanReadArg.Data(2)
+  DebugMessage "PubMsg: "& CanReadArg.Format(CFM_SHORT)  & " ("&Active & Running & " PrepID:" & prepid & ")"
+End Function
+
+Function Get_Err_Name( ID )
+  Dim name
+  Select Case ID
+  Case	&h02	:	name ="ERR_CONTROL_VOLTAGE"
+  Case	&h03	:	name ="ERR_EMERGENCY_STOP"
+  Case	&h04	:	name ="ERR_ABORTED"
+  Case	&h10	:	name ="ERR_MOVE_IN"
+  Case	&h11	:	name ="ERR_MOVE_OUT"
+  Case	&h12	:	name ="ERR_POSITION_RAIL"
+  Case	&h13	:	name ="ERR_LANE_WIDTH"
+  Case	&h14	:	name ="ERR_OFFSET_WIDTH"
+  Case	&h15	:	name ="ERR_SHUTTLE_BLOCKED"
+  Case	&h16	:	name ="ERR_WIDTH_ADJ_BLOCKED"
+  Case	&h17	:	name ="ERR_WA_NOT_REFERENCED"
+  Case	&h18	:	name ="ERR_SHUTTLE_NOT_REFERENCED"
+  Case	&h19	:	name ="ERR_DELIVERY_UPSTREAM"
+  Case	&h1A	:	name ="ERR_ARRIVED_DOWNSTREAM"
+  Case	&h1B	:	name ="ERR_TRAVEL_RANGE_SHUTTLE"
+  Case	&h1C	:	name ="ERR_TRAVEL_RANGE_WA"
+  Case	&h1D	:	name ="ERR_TRAVEL_RANGE_RAIL_R"
+  Case	&h1E	:	name ="ERR_TRAVEL_RANGE_RAIL_L"
+  Case	&h1F	:	name ="ERR_MECH_LIMIT_RIGHT_SIDE"
+  Case	&h20	:	name ="ERR_MECH_LIMIT_LEFT_SIDE"
+  Case	&h30	:	name ="ERR_MOTOR_MOVING"
+  Case	&h31	:	name ="ERR_MOTOR_COUNT"
+  Case	&h32	:	name ="ERR_MOTOR_INDEX_PULSE"
+  Case	&h33	:	name ="ERR_MOTOR_ENCODER"
+  Case	&h34	:	name ="ERR_MOTOR_REFERENCE_MOVED"
+  Case	&h40	:	name ="ERR_BARCODE_TIMEOUT"
+  Case	&h41	:	name ="ERR_BARCODE_SYNTAX"
+  Case	&h42	:	name ="ERR_BARCODE_FEEDBACK"
+  Case	&h80	:	name ="ERR_ESW_SHUTTLE"
+  Case Else  name = "unknown" & ID
+  End Select
+  Get_Err_Name = name
+End Function 
+Function Get_PUB_PrepareID( ID )
+Dim name
+  Select Case ID
+    Case	&h02	:	name ="PAR_CHANGED"
+    Case	&h03	:	name ="PAR_CONTROL_BOARD_ID"
+    Case	&h0B	:	name ="PAR_VELOCITY_DRIVE_IN"
+    Case	&h0C	:	name ="PAR_VELOCITY_DRIVE_OUT"
+    Case	&h0D	:	name ="PAR_CONV_ACCELERATION"
+    Case	&h10	:	name ="PAR_TIMEOUT_MOVE_OUT"
+    Case	&h11	:	name ="PAR_TIMEOUT_MOVE_IN"
+    Case	&h12	:	name ="PAR_TIMEOUT_BARCODE"
+    Case	&h13	:	name ="PAR_MIN_WIDTH"
+    Case	&h14	:	name ="PAR_WA_VELOCITY"
+    Case	&h15	:	name ="PAR_SHUTTLE_VELOCITY"
+    Case	&h16	:	name ="PAR_SHUTTLE_ACCELERATION"
+    Case	&h17	:	name ="PAR_SHUTTLE_JERK"
+    Case	&h18	:	name ="PAR_CURRENT_SHUTTLE_MOTOR"
+    Case	&h19	:	name ="PAR_CURRENT_WA_MOTOR"
+    Case	&h1A	:	name ="PAR_VELOCITY_TEST_CONV_MOTOR"
+    Case	&h1B	:	name ="PAR_VELOCITY_TEST_SHUTTLE_MOTOR"
+    Case	&h1C	:	name ="PAR_VELOCITY_TEST_WA_MOTOR"
+    Case	&h1D	:	name ="PAR_TRAVEL_RANGE_SHUTTLE"
+    Case	&h1E	:	name ="PAR_TRAVEL_RANGE_WA"
+    Case	&h31	:	name ="PAR_SHUTTLE_CURRENT_FORW"
+    Case	&h32	:	name ="PAR_SHUTTLE_CURRENT_BACKW"
+    Case	&h33	:	name ="PAR_WA_CURRENT_FORW"
+    Case	&h34	:	name ="PAR_WA_CURRENT_BACKW"
+    Case	&h35	:	name ="PAR_CONV_CURRENT_FORW"
+    Case	&h36	:	name ="PAR_CONV_CURRENT_BACKW"
+    Case	&h40	:	name ="PAR_OPERATING_HOURS"
+    Case	&h41	:	name ="PAR_BOARD_THROUGHPUT"
+    Case	&h42	:	name ="PAR_SHUTTLE_MOTOR_MILEAGE"
+    Case	&h43	:	name ="PAR_WA_MOTOR_MILEAGE"
+    Case	&h44	:	name ="PAR_CONV_MOTOR_MILEAGE"
+    Case	&hFFF	:	name ="PAR_LAST"
+    Case	&hFFF	:	name ="PAR_NEXT"
+
+    Case Else  name = "unknown" & ID
+  End Select
+  Get_PUB_PrepareID = name
+End Function

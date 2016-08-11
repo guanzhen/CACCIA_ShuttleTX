@@ -34,7 +34,7 @@ Function IO_setValue ( Target, Value )
   Memory.Get "IO_Array",IO_Array
   
   'If   Target > 0 & Target <= IO_Max & Value = 1 | Value = 0 Then
-  DebugMessage "IO set:"& Target & " value: " & Value
+  'DebugMessage "IO set:"& Target & " value: " & Value
     if Value = 1 Then
       LedName = String.Format("led%02X",Target)
       IO_Array.Data(Target) = 1
