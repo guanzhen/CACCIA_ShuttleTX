@@ -70,10 +70,11 @@ Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
     Else
       Command_getFWVer = True
     End If
+    Memory.CanManager.Deliver = True
   Else
     LogAdd "No Can Manager!"    
   End If 
-  Memory.CanManager.Deliver = True
+ 
 End Function
 
 Function OnClick_btnrefrun ( Reason )

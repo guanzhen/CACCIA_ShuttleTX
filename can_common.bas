@@ -32,14 +32,20 @@ Sub InitCAN ( Config, Net, BaudRate )
   
   DeleteCanManager 0,True  
   Set CanManager = LaunchCanManager( Net, BaudRate )
-  CanManager.Events = True
-  CanManager.Deliver = True
-  'CanManager.Platform = 3
-  CanManager.ChangeFunnel String.Format("%d,%d",CANConfig.CANIDAck,CANConfig.CANIDPub),True
-  DebugMessage "CanManager1: FunnelSet:" & String.Format("0x%03X,0x%03X",CANConfig.CANIDAck,CANConfig.CANIDPub)
-  CanManager.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
-  WithEvents.ConnectObject CanManager, "CanManager_"  
-  InitCANMgr2
+  If Lang.IsObject(CanManager) Then
+    CanManager.Events = True
+    CanManager.Deliver = True
+    'CanManager.Platform = 3
+    CanManager.ChangeFunnel String.Format("%d,%d",CANConfig.CANIDAck,CANConfig.CANIDPub),True
+    DebugMessage "CanManager1: FunnelSet:" & String.Format("0x%03X,0x%03X",CANConfig.CANIDAck,CANConfig.CANIDPub)
+    CanManager.SetArbitrationOrder CAN_ARBITRATION_SYNCHRONOUS 
+    WithEvents.ConnectObject CanManager, "CanManager_"  
+    InitCANMgr2
+  Else
+    LogAdd "No Can Manager!"
+  End If
+    
+    
 End Sub
 
 '**********************************************************************
@@ -104,10 +110,11 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
       DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
       CANSendCMD = False
     End If    
+    CanManager.Deliver = True
   Else
       CANSendCMD = False
   End If
-  CanManager.Deliver = True
+
 End Function
 
 
@@ -151,7 +158,7 @@ Function CAN_getparam( CanReadArg , Param )
   Dim ParamL,ParamH
   Set CanSendArg = CreateObject("ICAN.CanSendArg")
 
-  DebugMessage "Param: " & " " & Lang.GetByte (Param,0)& " " & Lang.GetByte (Param,1)& " " & Lang.GetByte (Param,2)& " " & Lang.GetByte (Param,3)
+  'DebugMessage "Param: " & " " & Lang.GetByte (Param,0)& " " & Lang.GetByte (Param,1)& " " & Lang.GetByte (Param,2)& " " & Lang.GetByte (Param,3)
   ParamL = Lang.GetByte (Param,0)
   ParamH = Lang.GetByte (Param,1)
   
