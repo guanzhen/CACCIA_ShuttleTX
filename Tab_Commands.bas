@@ -1,5 +1,6 @@
 Function OnClick_btnGetApp ( Reason )
 Dim FWver_Hi,FWver_Lo
+Dim WidthStat, ShuttleStat
   LogAdd ("Read Firmware Version")      
   If Command_getFWVer(0,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textAppVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
@@ -12,7 +13,42 @@ Dim FWver_Hi,FWver_Lo
     Visual.Select("textBiosVersion").Value = "--.--"  
   End If
   
+  If Command_getRefStatus (WidthStat,ShuttleStat) = True Then
+    If WidthStat = 1 Then
+      Visual.Select("textstatuswidthref").Value = "Not Referenced"
+    Else
+      Visual.Select("textstatuswidthref").Value = "Referenced"
+    End If
+    If ShuttleStat = 1 Then
+      Visual.Select("textstatusshuttleref").Value = "Not Referenced"
+    Else
+      Visual.Select("textstatusshuttleref").Value = "Referenced"
+    End If
+  End If
+  
   'MsgBox Visual.Select("txtValue1").Value
+End Function
+
+Function Command_getRefStatus ( WidthStat, ShuttleStat)
+  Dim CanSendArg,CanReadArg,CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  If Memory.Exists("CanManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_REF_STATUS)
+    CanSendArg.Length = 1
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      ShuttleStat = CanReadArg.Data(2)
+      WidthStat = CanReadArg.Data(3)
+      Command_getRefStatus = True
+    Else
+      ShuttleStat = 0
+      WidthStat = 0
+      Command_getRefStatus = False
+    End If  
+  End If
 End Function
 
 Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
@@ -34,10 +70,11 @@ Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
     Else
       Command_getFWVer = True
     End If
+    Memory.CanManager.Deliver = True
   Else
     LogAdd "No Can Manager!"    
   End If 
-  Memory.CanManager.Deliver = True
+ 
 End Function
 
 Function OnClick_btnrefrun ( Reason )

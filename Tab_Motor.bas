@@ -6,7 +6,8 @@ Const MOTOR_SHUTTLE = 2
 Const MOTOR_WIDTH_ADJ = 3
 
 
-Function Init_WindowMotor( )
+Sub Init_WindowMotor( )
+DebugMessage "Init Motor Window"
 Visual.Select("text_belt_currforward").ReadOnly = True
 Visual.Select("text_belt_currbackward").ReadOnly = True
 Visual.Select("text_shuttle_currmax").ReadOnly = True
@@ -21,8 +22,7 @@ Visual.Select("input_WA_position").value = "100"
 
 Visual.Select("row_WA_currmax").style.display = "none"
 Visual.Select("row_shuttle_currmax").style.display = "none"
-
-End Function
+End Sub
 
 Function Motor_RefRun( Motor )
   Dim CanSendArg , CanReadArg, CANConfig
