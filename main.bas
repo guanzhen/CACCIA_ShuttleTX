@@ -1,12 +1,12 @@
 Option Explicit
-#include "Tab_Endurance.bas"
 #include <PTKL_c.h>
 #include <Ptkl_shuttle.h>
-#include "Tab_Motor.bas"
-
 #include <Can.bas>
-#include "Tab_Commands.bas"
 #include <SubCommon.bas>
+
+#include "Tab_Motor.bas"
+#include "Tab_Endurance.bas"
+#include "Tab_Commands.bas"
 #include "can_common.bas"
 #include "CanSetup.bas"
 #include "DebugLog.bas"
@@ -51,6 +51,7 @@ Sub InitWindows
   InitWindowIOs
   Init_WindowCommands
   Init_WindowMotor
+  Init_WindowEndurance
   'Wait for user to click on connect button.
   Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
 
