@@ -19,10 +19,10 @@
     border-style = solid;
     border-color = white;
     display=inline;
-    margin = 1px 2px;
+    margin = 0px 1px 1px 0px;
     padding = 2px;
-    width = 49%;
-    height = 355px;
+    width = 49.5%;    
+    height = 375px;
   }
   #frame_innerSA
   {
@@ -30,16 +30,16 @@
   }
   #frame_endurancerun
   {
-   filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');        
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');        
     float:left;
     border = 2px;
     border-style = solid;
     border-color = white;
     display=inline;
-    margin = 1px 2px;
+    margin = 0px 0px 1px 1px;
     padding = 2px;    
-    width = 49%;  
-    height = 355px;
+    width = 49.5%;  
+    height = 375px;
   }
   .innerframe
   {
@@ -51,7 +51,8 @@
     padding = 5px;
     width = 100%;
   }
-  button  {    width: 120px;  margin : 1px 2px;}
+  button  {    width: 120px; height:30px; margin : 1px 2px;}
+  .input_read {background-color:lightgrey; }
   </style>
 
 </head>
@@ -66,10 +67,10 @@
     </div>
     <div id="frame_innerSA" class = "innerframe">
       <table>
-        <tr><td>Start Time</td><td><input id="textSAstarttime"></input></td></tr>
-        <tr><td>Stop Time</td><td><input id="textSAstoptime"></input></td></tr>
-        <tr><td>Elapsed Time (w PCB)</td><td><input id="textSAelapsed_withPCB"></input></td></tr>
-        <tr><td>Elapsed Time (w/o PCB)</td><td><input id="textSAelapsed_withoutPCB"></input></td></tr>
+        <tr><td>Start Time</td><td><input class="input_read" id="textSAstarttime"></input></td></tr>
+        <tr><td>Stop Time</td><td><input class="input_read" id="textSAstoptime"></input></td></tr>
+        <tr><td>Elapsed Time (w PCB)</td><td><input class="input_read" id="textSAelapsed_withPCB"></input></td></tr>
+        <tr><td>Elapsed Time (no PCB)</td><td><input class="input_read" id="textSAelapsed_withoutPCB"></input></td></tr>
       </table>
     </div>
     <p align="center">
@@ -101,15 +102,15 @@
     </table>
     <p align="center">
     <button id = "btnendrun_wopcb_start">Start</button>
-    <button id = "btnendrun_wopcb_start">Stop</button>
+    <button id = "btnendrun_wopcb_stop">Stop</button>
     </p>
 
 
   </div>
   <div class ="innerframe" id ="frame_timing">
     <table>
-    <tr><td>Start Time</td><td><input id="textSAstarttime"></input></td></tr>
-    <tr><td>Stop Time</td><td><input id="textSAstoptime"></input></td></tr>
+    <tr><td>Start Time</td><td><input class="input_read" id="textSAstarttime"></input></td></tr>
+    <tr><td>Stop Time</td><td><input class="input_read" id="textSAstoptime"></input></td></tr>
     </table>
   </div>  
   </div>
