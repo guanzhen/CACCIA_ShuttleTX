@@ -44,3 +44,21 @@ Function OnClick_Send3( Reason )
   End If
  
 End Function
+
+Function OnClick_btntestTimerStart ( Reason )
+Dim TimeTarget
+set TimeTarget = Object.CreateRecord( "time_start", "time_stop", "time_elapsed","display_starttime","display_endtime","display_elapsed")
+
+With TimeTarget 
+  .display_starttime = "timer_start"
+  .display_endtime = "timer_end"
+  .display_elapsed = "timer_elapsed"
+End With 
+
+Memory.Set "TimeTarget",TimeTarget
+Timer_StartStop(TIMER_START)
+End Function
+
+Function OnClick_btntestTimerStop ( Reason )
+Timer_StartStop(TIMER_STOP)
+End Function
