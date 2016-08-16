@@ -220,7 +220,7 @@ End Function
 Function Timer( TimeOut )
   Dim sig_TimerStop
   Dim ls_loopcont
-  Dim count,start_time,stop_time
+  Dim count,start_time,stop_time,now_time
   
   Set sig_TimerStop = Signal.Create
   
@@ -234,17 +234,17 @@ Function Timer( TimeOut )
   
   Do while ls_loopcont = 1
   
-    count = Time - start_time
-    'Visual.Select("timer_elapsed").Value = FormatTimeString(count)
-  
+    now_time = (Time - start_time)
+    count = Hour(now_time)*360 + Minute(now_time)*60 +Second(now_time)
+    Visual.Select("timer_elapsed").Value = count
+    
     If sig_TimerStop.wait(50) Then
       ls_loopcont = 0
     End If
-  
-    If Second(count) >= TimeOut Then
-      ls_loopcont = 0
-    End If
     
+    If count >= TimeOut Then
+      ls_loopcont = 0
+    End If    
   Loop
   stop_time = Time
   DebugMessage "Timer:End Time :" & FormatTimeString(stop_time)

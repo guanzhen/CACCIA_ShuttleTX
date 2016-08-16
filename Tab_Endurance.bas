@@ -8,43 +8,58 @@ Visual.Select("textSAstarttime").ReadOnly = true
 Visual.Select("textSAstoptime").ReadOnly = true
 Visual.Select("cbwithPBC").Checked  = true
 Visual.Select("cbwoPBC").Checked = true
-Visual.Select("textwithPCBmins").Value = "60"
-Visual.Select("textwoPCBmins").Value = "60"
+Visual.Select("textwithPCBmins").Value = "5"
+Visual.Select("textwoPCBmins").Value = "6"
 End Function
 
 Function OnClick_btnSArun_start ( Reason )
-Dim SAStartTime
+Dim Checked_PCB,Checked_woPCB
+Dim Duration_PCB,Duration_woPCB
+Dim NoError
+NoError = 1
 
-LogAdd "SA Start"
-SAStartTime  = System.Time
-DebugMessage SAStartTime
+Checked_PCB = Visual.Select("cbwithPBC").Checked
+Checked_woPCB = Visual.Select("cbwoPBC").Checked
 
-Visual.Select("textSAstarttime").Value = String.Format("%02d,%02d,%02d",Hour(SAStartTime),Minute(SAStartTime),Second(SAStartTime))
-
+  If NOT Checked_PCB AND NOT Checked_woPCB Then
+    NoError = 0
+    LogAdd "No tests are selected!"
+  End If
+  
+  If CheckValue(Visual.Select("textwithPCBmins").Value) Then
+    Duration_PCB = String.SafeParse (Visual.Select("textwithPCBmins").Value)
+    DebugMessage "PCB Duration: "& Duration_PCB
+  Else
+    LogAdd "Invalid value for PCB duration."
+    NoError = 0
+  End If
+  
+  If CheckValue(Visual.Select("textwoPCBmins").Value) Then
+    Duration_woPCB = String.SafeParse (Visual.Select("textwoPCBmins").Value)
+    DebugMessage "woPCB Duration: "& Duration_woPCB
+  Else
+    LogAdd "Invalid value for w/o PCB duration."
+    NoError = 0
+  End If
+  
+  If NoError = 1 Then
+    LogAdd "System Acceptance start!"
+    System.Start SAEnduranceRunMonitor(Duration_PCB,Duration_woPCB,Checked_PCB,Checked_woPCB)
+  Else
+    LogAdd "System Acceptance cannot start."
+  End If
+  
 End Function
 
 Function OnClick_btnSArun_stop ( Reason )
-  Dim TimeTargetPCB,TimeTargetnoPCB
-  LogAdd "SA Stop"
-  set TimeTargetPCB = Object.CreateRecord( "time_target", "time_start", "time_stop", "time_elapsed","display_starttime","display_endtime","display_elapsed")
-  set TimeTargetnoPCB = Object.CreateRecord( "time_target", "time_start", "time_stop", "time_elapsed","display_starttime","display_endtime","display_elapsed")
-  Memory.Set "TimeTarget",TimeTargetPCB  
-  'With PCB
-  With TimeTargetPCB 
-  .display_starttime = "textSAstarttime"
-  .display_endtime = "textSAstoptime"
-  .display_elapsed = "textSAelapsed_withPCB"
-  End With  
-  EnduranceRunTimer_StartStop(TIMER_START)
-  
-  'Without PCB
-  Memory.Set "TimeTarget",TimeTargetnoPCB  
-  With TimeTargetPCB 
-    .display_starttime = "textSAstarttime"
-    .display_endtime = "textSAstoptime"
-    .display_elapsed = "textSAelapsed_withoutPCB"
-  End With
-  TimeTargetPCB.display_elapsed = "textSAelapsed_withoutPCB"    
+  DebugMessage "Stop Timer1 Clicked"
+  If Memory.Exists("sig_externalstop") Then
+    LogAdd "Endurance Run Stopped"   
+    Memory.sig_externalstop.Set
+  Else
+    LogAdd "No endurance run to stop."   
+  End If
+  DebugMessage "Stop Timer1 Ended"
 End Function
 
 
@@ -119,15 +134,21 @@ End Function
 
 Function SAEnduranceRunMonitor ( Time_PCB,Time_woPCB,en_PCB,en_woPCB )
 Dim sig_timerend,sig_updatedisplay_func
+Dim sig_externalstop
 Dim looping
 Dim external_stop
 Dim PCB_timestart, woPCB_timestart, PCB_timeelapsed,woPCB_timeelapsed,time_end
-external_stop = 0
+
+
 
 Visual.Select("textSAstarttime").Value = FormatTimeString(Time)
 Visual.Select("textSAelapsed_withPCB").Value = ""
 Visual.Select("textSAelapsed_withoutPCB").Value = ""
 Visual.Select("textSAstoptime").Value = ""
+
+Set sig_externalstop = Signal.Create
+Memory.Set "sig_externalstop", sig_externalstop
+external_stop = 0
 
 If en_PCB = True Then
 '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
@@ -145,8 +166,12 @@ If en_PCB = True Then
   Do while looping = 1   
    If sig_timerend.wait(50) Then    
     looping = 0
-    external_stop = 1
    End If
+   If sig_externalstop.wait(50) Then   
+    looping = 0
+    external_stop = 1
+    Timer_Handler TIMER_STOP,0
+    End If
    'Display elapsed time
    PCB_timeelapsed = Time - PCB_timestart
    Visual.Select("textSAelapsed_withPCB").Value = FormatTimeString(PCB_timeelapsed)
@@ -161,7 +186,7 @@ Else
   Visual.Select("textSAelapsed_withPCB").Value = "N.A"
 End If
 
-'If Not external_stop = 1 Then
+If external_stop = 0 Then
   If en_woPCB = True Then
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
     'EnduranceRun_SendCmd 0 , False, True, True, True
@@ -175,13 +200,17 @@ End If
       looping = 1
     '3. wait for timer signal
       Do while looping = 1   
-       If sig_timerend.wait(50) Then    
-        looping = 0
-       End If
-       'Display elapsed time
-       woPCB_timeelapsed = Time - woPCB_timestart
-       Visual.Select("textSAelapsed_withoutPCB").Value = FormatTimeString(woPCB_timeelapsed)
-       System.Delay(100)
+        If sig_timerend.wait(50) Then    
+          looping = 0
+        End If
+        If sig_externalstop.wait(50) Then
+          Timer_Handler TIMER_STOP,0            
+          looping = 0
+        End If
+        'Display elapsed time
+        woPCB_timeelapsed = Time - woPCB_timestart
+        Visual.Select("textSAelapsed_withoutPCB").Value = FormatTimeString(woPCB_timeelapsed)
+        System.Delay(100)
       Loop
       'TODO: Send Stop Command
       DebugMessage "Endurance Run w/o PCB Completed: Total Time: "&FormatTimeString(woPCB_timeelapsed)
@@ -189,10 +218,10 @@ End If
     Else  
       Visual.Select("textSAelapsed_withoutPCB").Value = "N.A"
     End If  
-'Else
-' Visual.Select("textSAelapsed_withoutPCB").Value = "-"
-'End If
+Else
+ Visual.Select("textSAelapsed_withoutPCB").Value = "-"
+End If
 
 Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
-
+Memory.Free "sig_externalstop"
 End Function
