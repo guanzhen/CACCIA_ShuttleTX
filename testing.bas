@@ -56,9 +56,36 @@ With TimeTarget
 End With 
 
 Memory.Set "TimeTarget",TimeTarget
-Timer_StartStop(TIMER_START)
+EnduranceRunTimer_StartStop(TIMER_START)
 End Function
 
 Function OnClick_btntestTimerStop ( Reason )
-Timer_StartStop(TIMER_STOP)
+EnduranceRunTimer_StartStop(TIMER_STOP)
+End Function
+
+Function OnClick_btntestTimer1Start ( Reason )
+  Dim sig_timerend,looping
+  Set sig_timerend = Signal.Create
+  Memory.Set "sig_timerend",sig_timerend
+  DebugMessage "Start Timer1"
+  Timer_Handler TIMER_START,10
+  looping = 1
+
+  Do while looping = 1
+   If sig_timerend.wait(50) Then
+    looping = 0    
+   End If
+  Loop
+  DebugMessage "Timer1 Ended"
+  Memory.Free "sig_timerend"
+End Function
+
+Function OnClick_btntestTimer1Stop ( Reason )
+  DebugMessage "Stop Timer1 Clicked"
+  Timer_Handler TIMER_STOP,0
+  DebugMessage "Stop Timer1 Ended"
+End Function
+
+Function OnClick_btntestSARun ( Reason )
+System.Start SAEnduranceRunMonitor( 10,12,False,True)
 End Function

@@ -101,11 +101,11 @@ Function CheckValue(ByVal nValue)
   End If
 End Function
 
-Function Timer_StartStop( Start_nStop )
+Function EnduranceRunTimer_StartStop( Start_nStop )
 	If Start_nStop = 1 Then		
     'DebugMessage "Timer Start"
 		If Not Memory.Exists("Signal_TimerStop") Then
-		  System.Start "Timer_Loop",1
+		  System.Start "EnduranceRun_Timer",1
     Else
       DebugMessage "Timer is already running"
 		End if		
@@ -120,7 +120,7 @@ Function Timer_StartStop( Start_nStop )
 	End If
 End Function
 
-Function Timer_Loop( Var1 )
+Function EnduranceRun_Timer( Var1 )
 
   Dim l_Signal_TimerStop
   Dim l_UpdateSignal
@@ -191,4 +191,73 @@ End Function
 
 Function FormatTimeString( Var_Time )
   FormatTimeString = String.Format("%02d:%02d:%02d", Hour(Var_Time), Minute(Var_Time), Second(Var_Time))
+End Function
+
+
+
+Function Timer_Handler ( StartStop , TimeOut )
+	If StartStop = 1 Then		
+    'DebugMessage "Timer Start"
+		If Not Memory.Exists("sig_TimerStop") Then
+		  System.Start "Timer", TimeOut
+    Else
+      DebugMessage "Timer is already running"
+      If Memory.Exists("sig_timerend") Then
+        Memory.sig_timerend.Set
+      End If
+		End if		
+	Else
+    'DebugMessage "Timer Stop"
+		If Memory.Exists("sig_TimerStop") Then
+	  	Memory.sig_TimerStop.Set
+		End If
+		Do While Memory.Exists("sig_TimerStop") = True
+			System.Delay(100)
+		Loop
+	End If
+End Function
+
+Function Timer( TimeOut )
+  Dim sig_TimerStop
+  Dim ls_loopcont
+  Dim count,start_time,stop_time
+  
+  Set sig_TimerStop = Signal.Create
+  
+  Memory.Set "sig_TimerStop", sig_TimerStop
+  DebugMessage "Timer Started"
+  
+  ls_loopcont = 1
+  start_time = Time
+  DebugMessage "Timer:Start Time :" & FormatTimeString(start_time)
+  'Visual.Select("timer_start").Value = FormatTimeString(start_time)
+  
+  Do while ls_loopcont = 1
+  
+    count = Time - start_time
+    'Visual.Select("timer_elapsed").Value = FormatTimeString(count)
+  
+    If sig_TimerStop.wait(50) Then
+      ls_loopcont = 0
+    End If
+  
+    If Second(count) >= TimeOut Then
+      ls_loopcont = 0
+    End If
+    
+  Loop
+  stop_time = Time
+  DebugMessage "Timer:End Time :" & FormatTimeString(stop_time)
+  'Visual.Select("timer_end").Value =  FormatTimeString(stop_time)
+ 
+  If Memory.Exists("sig_timerend") Then
+    Memory.sig_timerend.Set
+    DebugMessage "Memory Set sig_timerend"
+  End If
+  
+  If Memory.Exists("sig_TimerStop") Then
+    Memory.Free "sig_TimerStop"
+    DebugMessage "Memory Free sig_TimerStop"
+  End If
+  
 End Function
