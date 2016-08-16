@@ -92,10 +92,11 @@ Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   
   Mode = 0
-  Lang.Bit Mode,0,PCB
-  Lang.Bit Mode,1,Conveyor
-  Lang.Bit Mode,2,Shuttle
-  Lang.Bit Mode,3,WA
+  EnduranceRun_SendCmd = false
+  Mode = Lang.SetBit(Mode,0,PCB)
+  Mode = Lang.SetBit(Mode,1,Conveyor)
+  Mode = Lang.SetBit(Mode,2,Shuttle)
+  Mode = Lang.SetBit(Mode,3,WA)
   
   If TimeOut = 0 Then
     'Run without stop
@@ -114,20 +115,22 @@ Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
     CanSendArg.Data(0) = $(CMD_PREPARE_ENDURANCE_RUN)
-    CanSendArg.Data(1) = Mode
-    CanSendArg.Data(2) = TimeOutSel
-    CanSendArg.Length = 2
+    CanSendArg.Data(1) = 0
+    CanSendArg.Data(2) = Mode
+    CanSendArg.Data(3) = TimeOutSel
+    CanSendArg.Data(4) = TO_LL
+    CanSendArg.Data(5) = TO_LH
+    CanSendArg.Data(6) = TO_HL
+    CanSendArg.Data(7) = TO_HH
+    CanSendArg.Length = 8
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      Start_EnduranceRun = true
-      LogAdd "Endurance run start"
+      EnduranceRun_SendCmd = true
+      'LogAdd "Endurance run command sent ok"
     Else
-      Start_EnduranceRun = false
-      LogAdd "Endurance run start failed"
+      'LogAdd "Endurance run command sent failed"
     End If
   else
-    Start_EnduranceRun = false
-    LogAdd "No CAN Manager!"
-    
+    LogAdd "No CAN Manager!"    
   End If 
 
 End Function
@@ -152,8 +155,12 @@ external_stop = 0
 
 If en_PCB = True Then
 '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
-'EnduranceRun_SendCmd( 0 , True, True, True, False )
   DebugMessage "Send Start Endurance Run with PCB Command"
+  If EnduranceRun_SendCmd(0 , True, True, True, False) = False Then
+    'Error occured
+    external_stop = 1
+    LogAdd "Unable to communicate with Shuttle TX"
+  End If
 '2. Set timer
   Set sig_timerend = Signal.Create    
   Memory.Set "sig_timerend",sig_timerend
@@ -167,7 +174,7 @@ If en_PCB = True Then
    If sig_timerend.wait(50) Then    
     looping = 0
    End If
-   If sig_externalstop.wait(50) Then   
+   If sig_externalstop.wait(50) OR external_stop = 1 Then   
     looping = 0
     external_stop = 1
     Timer_Handler TIMER_STOP,0
@@ -179,7 +186,9 @@ If en_PCB = True Then
   Loop
   
   'TODO: Send Stop Command
-  
+  If CANSendAbort = False Then
+    external_stop = 1
+  End If
   DebugMessage "Endurance Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
   Memory.Free "sig_timerend"
 Else  
@@ -189,7 +198,7 @@ End If
 If external_stop = 0 Then
   If en_woPCB = True Then
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
-    'EnduranceRun_SendCmd 0 , False, True, True, True
+    EnduranceRun_SendCmd 0 , False, True, True, True
     DebugMessage "Send Start Endurance Run wo PCB Command"
     '2. Set timer
       Set sig_timerend = Signal.Create    
@@ -213,6 +222,7 @@ If external_stop = 0 Then
         System.Delay(100)
       Loop
       'TODO: Send Stop Command
+      CANSendAbort
       DebugMessage "Endurance Run w/o PCB Completed: Total Time: "&FormatTimeString(woPCB_timeelapsed)
       Memory.Free "sig_timerend"
     Else  
@@ -223,5 +233,6 @@ Else
 End If
 
 Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
+LogAdd "System Acceptance ended!"
 Memory.Free "sig_externalstop"
 End Function

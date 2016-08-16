@@ -117,7 +117,29 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
 
 End Function
 
-
+Function CANSendAbort ( )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  CANSendAbort = False  
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_ABORT)
+    CanSendArg.Length = 1
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      DebugMessage "Current operation aborted"
+      CANSendAbort = True
+    Else
+      DebugMessage "attempt to abort operation failed"
+    End If
+  else
+    LogAdd "No CAN Manager!"
+    
+  End If 
+End Function
 
 Function PUB_Handler ( CanReadArg )
   Dim command  
