@@ -3,7 +3,7 @@
 '* Input:  none
 '* Output: none
 '**********************************************************************
-Sub InitCAN ( Config, Net, BaudRate )
+Function InitCAN ( Config, Net, BaudRate )
   Dim CanManager, CanConfig
   set CANConfig = Object.CreateRecord( "Net", "CANIDcmd", "CANIDAck", "CANIDPub","Baudrate" )
   
@@ -46,7 +46,7 @@ Sub InitCAN ( Config, Net, BaudRate )
   End If
     
     
-End Sub
+End Function
 
 '**********************************************************************
 '* Purpose: Init CAN module listening to only Public Messages (0x008)

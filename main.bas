@@ -4,13 +4,13 @@ Option Explicit
 #include <Can.bas>
 #include <SubCommon.bas>
 
-#include "Tab_Motor.bas"
-#include "Tab_Endurance.bas"
-#include "Tab_Commands.bas"
 #include "can_common.bas"
 #include "CanSetup.bas"
 #include "DebugLog.bas"
+#include "Tab_Commands.bas"
+#include "Tab_Motor.bas"
 #include "Tab_IOs.bas"
+#include "Tab_Endurance.bas"
 #include "testing.bas"
 
 '#include "Constants.bas"
@@ -28,7 +28,7 @@ Const LANE_DOWNSTREAM_1 = 3
 Const LANE_DOWNSTREAM_2 = 4
 
 Sub OnLoadFrame()
-  InitWindows 
+  InitWindows
 End Sub
 
 Sub OnUnloadFrame()
@@ -42,11 +42,11 @@ Sub InitWindows
   'Create debug log window
   CreateDebugLogWindow
   DebugMessage "Starting Up"
-    
+
   'Visual.ExecuteScriptFunction("load_tabbar")
   'Visual.ExecuteScriptFunction("load_messagebox")
   'Visual.ExecuteScriptFunction("load_CANsetup")
-  
+
   'Set the images for the IO Tab
   InitWindowIOs
   Init_WindowCommands
@@ -62,7 +62,7 @@ Function OnClick_btnLogGridClear( ByVal Reason )
 End Function
 
 Function LogAdd ( ByVal sMessage )
-  Dim Gridobj  
+  Dim Gridobj
   Set Gridobj = Visual.Script("LogGrid")
   Dim MsgId
   MsgId = Gridobj.uid()
@@ -70,7 +70,7 @@ Function LogAdd ( ByVal sMessage )
     Gridobj.addRow MsgId, ""& FormatDateTime(Date, vbShortDate) &","& FormatDateTime(Time, vbShortTime)&":"& String.Format("%02d ", Second(Time)) &","& sMessage
     'Wish of SCM (automatically scroll to newest Msg)
     Gridobj.showRow( MsgId )
-  End If  
+  End If
 End Function
 
 Function CheckValue(ByVal nValue)
