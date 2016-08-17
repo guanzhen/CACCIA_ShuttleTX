@@ -62,6 +62,7 @@ Sub InitWindows
   Init_WindowCommands
   Init_WindowMotor
   Init_WindowEndurance
+  Window.AdjustLayout "body_main"
   'Wait for user to click on connect button.
   Visual.Script("win").attachEvent "onClose" , Lang.GetRef( "btn_CanConnect" , 1)
 
