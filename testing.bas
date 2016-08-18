@@ -44,3 +44,48 @@ Function OnClick_Send3( Reason )
   End If
  
 End Function
+
+Function OnClick_btntestTimerStart ( Reason )
+Dim TimeTarget
+set TimeTarget = Object.CreateRecord( "time_start", "time_stop", "time_elapsed","display_starttime","display_endtime","display_elapsed")
+
+With TimeTarget 
+  .display_starttime = "timer_start"
+  .display_endtime = "timer_end"
+  .display_elapsed = "timer_elapsed"
+End With 
+
+Memory.Set "TimeTarget",TimeTarget
+EnduranceRunTimer_StartStop(TIMER_START)
+End Function
+
+Function OnClick_btntestTimerStop ( Reason )
+EnduranceRunTimer_StartStop(TIMER_STOP)
+End Function
+
+Function OnClick_btntestTimer1Start ( Reason )
+  Dim sig_timerend,looping
+  Set sig_timerend = Signal.Create
+  Memory.Set "sig_timerend",sig_timerend
+  DebugMessage "Start Timer1"
+  Timer_Handler TIMER_START,10
+  looping = 1
+
+  Do while looping = 1
+   If sig_timerend.wait(50) Then
+    looping = 0    
+   End If
+  Loop
+  DebugMessage "Timer1 Ended"
+  Memory.Free "sig_timerend"
+End Function
+
+Function OnClick_btntestTimer1Stop ( Reason )
+  DebugMessage "Stop Timer1 Clicked"
+  Timer_Handler TIMER_STOP,0
+  DebugMessage "Stop Timer1 Ended"
+End Function
+
+Function OnClick_btntestSARun ( Reason )
+System.Start SAEnduranceRunMonitor( 10,12,False,True)
+End Function
