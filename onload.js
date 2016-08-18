@@ -2,10 +2,15 @@ var LogGrid
 var tabbar
 var dhxWins,win,winframe
 var opt_net,opt_config
-function load_tabbar() 
+function load_tabbar()
 {
   tabbar = new dhtmlXTabBar("tabbar_main","top");
+  tabbar.enableAutoReSize( true );
   tabbar.setImagePath("../../../codebase/tabbar/imgs/");
+  tabbar.setSkin("dhx_skyblue");
+
+
+
   tabbar.addTab("main_tab1","Commands");
   tabbar.addTab("main_tab2","Endurance");
   tabbar.addTab("main_tab3","Motor");
@@ -16,12 +21,18 @@ function load_tabbar()
   tabbar.setContent( "main_tab3", iframe_tab3);
   tabbar.setContent( "main_tab4", iframe_tab4);
   tabbar.setContent( "main_tab5", iframe_tab5);
-  tabbar.setTabActive("main_tab1");  
+  for ( var i = 1; i <= tabbar.getNumberOfTabs(); i++ )
+  {
+    tabbar.setCustomStyle( 'main_tab' + i, 'gray', 'black', 'font-size:10pt;font-family:Arial;font-weight: bold;' );
+  }
+  //tabbar.normalize();
+
+  tabbar.setTabActive("main_tab1");
 };
 
-function load_messagebox() 
+function load_messagebox()
 {
-  LogGrid = new dhtmlXGridObject('MessageLogObj');  
+  LogGrid = new dhtmlXGridObject('MessageLogObj');
   LogGrid.setHeader("Date,Time,Information");
   LogGrid.setImagePath("../../../codebase/grid/imgs/");
   LogGrid.setInitWidths( "100,100,*");
@@ -64,7 +75,7 @@ win.center();
 //win.keepInViewport();
 winframe = win.getFrame();
 };
- 
+
 
 dhtmlxEvent(window,"load",function()
 {
@@ -77,12 +88,12 @@ dhtmlxEvent(window,"load",function()
 
 function onclick_btncanconnect()
 {
-  opt_config = winframe.contentWindow.document.getElementById("opt_shuttleconfig").value; 
+  opt_config = winframe.contentWindow.document.getElementById("opt_shuttleconfig").value;
   opt_net = winframe.contentWindow.document.getElementById("opt_cannet").value;
   win.close();
-  
+
 }
-function doOnLoad_dhtmlx40() 
+function doOnLoad_dhtmlx40()
 {
     var tabbar = new dhtmlXTabBar({
     parent: "tabbar_main",
@@ -92,13 +103,13 @@ function doOnLoad_dhtmlx40()
     { id: "main_tab1", text: "Testing"},
     { id: "main_tab2", text: "Commands"},
     { id: "main_tab3", text: "IO Controls"}
-    ] 
+    ]
     });
     //tabbar.cells(0).attachObject("iframe_tab1");
 };
 
 
-/* 
+/*
 var formData = [
 		{type: "combo", name: "myCombo", label: "Select Band", options:[
 				{value: "opt_a", text: "Cradle Of Filth"},
