@@ -18,7 +18,7 @@ Option Explicit
 '#include "MessageLog.bas"
 
 Const APP_WIDTH = 800
-Const APP_HEIGHT = 600
+Const APP_HEIGHT = 650
 Const CANSETUP_WIDTH = 400
 Const CANSETUP_HEIGHT = 160
 
@@ -36,12 +36,15 @@ End Sub
 
 Sub OnUnloadFrame()
 'To Stop the timer
-'Timer_Loop TIMER_STOP
+StopAllEnduranceRuns
+Timer_Handler TIMER_STOP,0
 End Sub
 
 Sub OnReloadFrame()
 'To Stop the timer
-'Timer_Loop TIMER_STOP
+StopSARun
+StopERRun
+Timer_Handler TIMER_STOP,0
 End Sub
 
 Sub InitWindows
@@ -108,7 +111,7 @@ Function FormatTimeString( Var_Time )
 End Function
 
 Function Timer_Handler ( StartStop , TimeOut )
-	If StartStop = 1 Then		
+	If StartStop = 1 Then
     'DebugMessage "Timer Start"
 		If Not Memory.Exists("sig_TimerStop") Then
 		  System.Start "Timer", TimeOut
@@ -117,7 +120,7 @@ Function Timer_Handler ( StartStop , TimeOut )
       If Memory.Exists("sig_timerend") Then
         Memory.sig_timerend.Set
       End If
-		End if		
+		End if
 	Else
     'DebugMessage "Timer Stop"
 		If Memory.Exists("sig_TimerStop") Then
@@ -133,43 +136,43 @@ Function Timer( TimeOut )
   Dim sig_TimerStop
   Dim ls_loopcont
   Dim count,start_time,stop_time,now_time
-  
+
   Set sig_TimerStop = Signal.Create
-  
+
   Memory.Set "sig_TimerStop", sig_TimerStop
   DebugMessage "Timer Started"
-  
+
   ls_loopcont = 1
   start_time = Time
   DebugMessage "Timer:Start Time :" & FormatTimeString(start_time)
   'Visual.Select("timer_start").Value = FormatTimeString(start_time)
-  
+
   Do while ls_loopcont = 1
-  
+
     now_time = (Time - start_time)
     count = Hour(now_time)*360 + Minute(now_time)*60 +Second(now_time)
     Visual.Select("timer_elapsed").Value = count
-    
+
     If sig_TimerStop.wait(50) Then
       ls_loopcont = 0
     End If
-    
-    If count >= TimeOut Then
+
+    If count >= TimeOut AND NOT TimeOut=0 Then
       ls_loopcont = 0
-    End If    
+    End If
   Loop
   stop_time = Time
   DebugMessage "Timer:End Time :" & FormatTimeString(stop_time)
   'Visual.Select("timer_end").Value =  FormatTimeString(stop_time)
- 
+
   If Memory.Exists("sig_timerend") Then
     Memory.sig_timerend.Set
     DebugMessage "Memory Set sig_timerend"
   End If
-  
+
   If Memory.Exists("sig_TimerStop") Then
     Memory.Free "sig_TimerStop"
     DebugMessage "Memory Free sig_TimerStop"
   End If
-  
+
 End Function
