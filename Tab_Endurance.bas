@@ -16,8 +16,8 @@ Visual.Select("cbwopcbshuttle").Checked = true
 Visual.Select("cbwopcbWA").Checked = true
 Visual.Select("cbwopcbconveyor").Checked = true
 
-Visual.Select("textwithPCBmins").Value = "5"
-Visual.Select("textwoPCBmins").Value = "6"
+Visual.Select("textwithPCBmins").Value = "60"
+Visual.Select("textwoPCBmins").Value = "60"
 End Function
 
 Function OnClick_btnSArun_start ( Reason )
@@ -35,7 +35,7 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
   End If
 
   If CheckValue(Visual.Select("textwithPCBmins").Value) Then
-    Duration_PCB = String.SafeParse (Visual.Select("textwithPCBmins").Value)
+    Duration_PCB = String.SafeParse (Visual.Select("textwithPCBmins").Value) * 60
     DebugMessage "PCB Duration: "& Duration_PCB
   Else
     LogAdd "Invalid value for PCB duration."
@@ -43,7 +43,7 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
   End If
 
   If CheckValue(Visual.Select("textwoPCBmins").Value) Then
-    Duration_woPCB = String.SafeParse (Visual.Select("textwoPCBmins").Value)
+    Duration_woPCB = (String.SafeParse (Visual.Select("textwoPCBmins").Value))  * 60
     DebugMessage "woPCB Duration: "& Duration_woPCB
   Else
     LogAdd "Invalid value for w/o PCB duration."
