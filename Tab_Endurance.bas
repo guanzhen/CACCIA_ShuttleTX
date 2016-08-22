@@ -176,6 +176,7 @@ Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
   End If
 
 End Function
+
 Function StopERRun( )
 If Memory.Exists("sig_ERexternalstop") Then
   LogAdd "Endurance Run Stopped"
@@ -221,6 +222,7 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Loop
   time_stop = Time
   Visual.Select("textERstoptime").Value = FormatTimeString(time_stop)
+  CANSendAbort
   DebugMessage "Endurance Run Stopped. Total Time: "& FormatTimeString(time_elapsed)
   Memory.Free "sig_ERexternalstop"
 Else
@@ -278,9 +280,8 @@ If en_PCB = True Then
    System.Delay(100)
   Loop
   'Send the CAN abort command, to terminate the current endurance run.
-  If CANSendAbort = False Then
-    external_stop = 1
-  End If
+
+  CANSendAbort
   DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
   Memory.Free "sig_timerend"
 Else
