@@ -5,14 +5,14 @@ Function OnClick_Send( Reason )
   Timeout = 1000
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  Memory.Get "CanManager",CanManager  
+  Memory.Get "CanManager",CanManager
 
   CanSendArg.CanID = &h644
   CanSendArg.Data(0) = &h54
   CanSendArg.Data(1) = &h00
   CanSendArg.Length = 2
   CANSend CanSendArg
-  
+
   For TioCnt = 0 To Timeout
     If CanManager.PeekMessage (CanReadArg, 1) Then
       DebugMessage "CanMgr " & CanReadArg.Format(CFM_SHORT)
@@ -24,7 +24,7 @@ Function OnClick_Send2( Reason )
   Visual.Select("Send2").InnerHtml = "Refresh IOs"
   DebugMessage "Send2"
   DebugMessage Visual.Exists("Send2")
-  
+
   'Visual.Select("Send2").InnerHtml = "Send2"
   GetIOState
 End Function
@@ -42,7 +42,7 @@ Function OnClick_Send3( Reason )
   Else
     DebugMessage "Sendcommand NOK"
   End If
- 
+
 End Function
 
 Function OnClick_btntestTimer1Start ( Reason )
@@ -55,7 +55,7 @@ Function OnClick_btntestTimer1Start ( Reason )
 
   Do while looping = 1
    If sig_timerend.wait(50) Then
-    looping = 0    
+    looping = 0
    End If
   Loop
   DebugMessage "Timer1 Ended"
@@ -66,8 +66,4 @@ Function OnClick_btntestTimer1Stop ( Reason )
   DebugMessage "Stop Timer1 Clicked"
   Timer_Handler TIMER_STOP,0
   DebugMessage "Stop Timer1 Ended"
-End Function
-
-Function OnClick_btntestSARun ( Reason )
-System.Start SAEnduranceRunMonitor( 10,12,False,True)
 End Function

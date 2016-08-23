@@ -7,7 +7,7 @@ Function CreateDebugLogWindow()
   Dim DebugLogWindow
 
   Set DebugLogWindow = CreateObject("WinAPI.Window")
-  DebugLogWindow.Title = "Tesla Debug Log"
+  DebugLogWindow.Title = "ShuttleTX Debug Log"
   Memory.Set"DebugLogWindow", DebugLogWindow
 End Function
 '+++++++++++++++++++++ End of CreateDebugLogWindow() +++++++++++++++++++++++

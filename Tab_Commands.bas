@@ -1,7 +1,7 @@
 Function OnClick_btnGetApp ( Reason )
 Dim FWver_Hi,FWver_Lo
 Dim WidthStat, ShuttleStat
-  LogAdd ("Read Firmware Version")      
+  LogAdd ("Read Firmware Version")
   If Command_getFWVer(0,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textAppVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
   Else
@@ -10,9 +10,9 @@ Dim WidthStat, ShuttleStat
   If Command_getFWVer(1,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textBiosVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
   Else
-    Visual.Select("textBiosVersion").Value = "--.--"  
+    Visual.Select("textBiosVersion").Value = "--.--"
   End If
-  
+
   If Command_getRefStatus (WidthStat,ShuttleStat) = True Then
     If WidthStat = 1 Then
       Visual.Select("textstatuswidthref").Value = "Not Referenced"
@@ -25,7 +25,7 @@ Dim WidthStat, ShuttleStat
       Visual.Select("textstatusshuttleref").Value = "Referenced"
     End If
   End If
-  
+
   'MsgBox Visual.Select("txtValue1").Value
 End Function
 
@@ -33,7 +33,7 @@ Function Command_getRefStatus ( WidthStat, ShuttleStat)
   Dim CanSendArg,CanReadArg,CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
+
   If Memory.Exists("CanManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -47,21 +47,21 @@ Function Command_getRefStatus ( WidthStat, ShuttleStat)
       ShuttleStat = 0
       WidthStat = 0
       Command_getRefStatus = False
-    End If  
+    End If
   End If
 End Function
 
 Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
   Dim CanSendArg, CANConfig, FWselect
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  
+
   If App_Bios = 0 Then
   FWselect = &h00
-  Else 
+  Else
   FWselect = &h10
   End If
   Command_getFWVer = False
-  
+
   If Memory.Exists("CanManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -72,16 +72,16 @@ Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
     End If
     Memory.CanManager.Deliver = True
   Else
-    LogAdd "No Can Manager!"    
-  End If 
- 
+    LogAdd "No Can Manager!"
+  End If
+
 End Function
 
 Function OnClick_btnrefrun ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
+
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -91,23 +91,23 @@ Function OnClick_btnrefrun ( Reason )
       LogAdd "Reference Run"
     Else
       LogAdd "Reference Run Failed!"
-    End If  
-  End If  
-End Function 
+    End If
+  End If
+End Function
 
 Function OnClick_btnmvinpcb ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
   Dim lane
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
+
   If Visual.Exists("opt_sourcelane") Then
     lane = Visual.Select("opt_sourcelane").SelectedItemAttribute("value")
-    DebugMessage "MoveInPCB Lane :" &lane 
+    DebugMessage "MoveInPCB Lane :" &lane
   Else
-    DebugMessage "MoveInPCB Lane invalid! :" &lane  
+    DebugMessage "MoveInPCB Lane invalid! :" &lane
   End If
-  
+
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -118,23 +118,29 @@ Function OnClick_btnmvinpcb ( Reason )
       LogAdd "Move in PCB from "&get_LaneName(lane)
     Else
       LogAdd "Move in PCB Failed!"
-    End If  
-  End If  
-End Function 
+    End If
+  End If
+End Function
+
+Function OnClick_btnabort ( Reason )
+
+CANSendAbort
+
+End Function
 
 Function OnClick_btnmvoutpcb ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
   Dim lane
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
+
   If Visual.Exists("opt_destlane") Then
     lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
     DebugMessage "MoveOutPCB "&get_LaneName(lane)
   Else
-    DebugMessage "MoveOutPCB Lane invalid! :" &lane  
+    DebugMessage "MoveOutPCB Lane invalid! :" &lane
   End If
-  
+
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -145,24 +151,24 @@ Function OnClick_btnmvoutpcb ( Reason )
       LogAdd "Move out PCB from "&get_LaneName(lane)
     Else
       LogAdd "Move out PCB Failed!"
-    End If  
-  End If  
-End Function 
+    End If
+  End If
+End Function
 
 Function OnClick_btnmvshuttle ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
   Dim lane
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
+
   If Visual.Exists("opt_mvshuttlelane") Then
     lane = Visual.Select("opt_mvshuttlelane").SelectedItemAttribute("value")
     DebugMessage "Move Shuttle to "&get_LaneName(lane)
   Else
-    DebugMessage "Move Shuttle destination lane invalid! :" &lane  
+    DebugMessage "Move Shuttle destination lane invalid! :" &lane
   End If
-  
- 
+
+
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -173,9 +179,9 @@ Function OnClick_btnmvshuttle ( Reason )
       LogAdd "Move Shuttle to "&get_LaneName(lane)
     Else
       LogAdd "Move out PCB Failed!"
-    End If  
+    End If
   End If
-End Function 
+End Function
 
 Function get_LaneName( Lane )
   Select Case lane
@@ -185,7 +191,7 @@ Function get_LaneName( Lane )
   Case 4:  get_LaneName = "Downstream 2"
   Case Else get_LaneName = "invalid"
   End Select
-End Function 
+End Function
 
 Function Init_WindowCommands( )
 Visual.Select("textBiosVersion").Disabled = true

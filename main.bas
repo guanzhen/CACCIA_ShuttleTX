@@ -18,7 +18,7 @@ Option Explicit
 '#include "MessageLog.bas"
 
 Const APP_WIDTH = 800
-Const APP_HEIGHT = 650
+Const APP_HEIGHT = 600
 Const CANSETUP_WIDTH = 400
 Const CANSETUP_HEIGHT = 160
 

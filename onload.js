@@ -28,6 +28,7 @@ function load_tabbar()
   }
   //tabbar.normalize();
 
+  tabbar.setTabActive("main_tab2");
   tabbar.setTabActive("main_tab1");
 };
 
