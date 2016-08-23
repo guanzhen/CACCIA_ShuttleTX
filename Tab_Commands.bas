@@ -178,7 +178,7 @@ Function OnClick_btnmvshuttle ( Reason )
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
       LogAdd "Move Shuttle to "&get_LaneName(lane)
     Else
-      LogAdd "Move out PCB Failed!"
+      LogAdd "Move Shuttle Failed!"
     End If
   End If
 End Function
