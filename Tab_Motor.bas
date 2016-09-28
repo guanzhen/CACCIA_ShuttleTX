@@ -1,11 +1,113 @@
-Sub test ( )
 
-End Sub
 Const MOTOR_CONVEYOR = 4
 Const MOTOR_SHUTTLE = 2
 Const MOTOR_WIDTH_ADJ = 3
 
+'-----------------------------
+' On Click Events
+'-----------------------------
 
+'-----------------------------
+' Conveyor Motors
+
+Function OnClick_btn_belt_checkcurr( Reason )
+  Dim CanReadArg
+  Dim Curr_Forw, Curr_Back
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  LogAdd "Belt Motor check current"
+  Motor_CheckCurr( MOTOR_SHUTTLE ) 
+  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
+  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+  Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
+  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
+  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+  Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
+  
+End Function
+
+'-----------------------------
+' Shuttle Motors
+
+Function OnClick_btn_shuttle_calibrate( Reason )
+LogAdd "Shuttle Motor calibrate"
+Motor_Calibrate( MOTOR_SHUTTLE )
+End Function
+
+'-----------------------------
+Function OnClick_btn_shuttle_refrun( Reason )
+LogAdd "Shuttle Motor reference run"
+Motor_RefRun( MOTOR_SHUTTLE )
+End Function
+
+'-----------------------------
+Function OnClick_btn_shuttle_mvtopos( Reason )
+  If CheckValue(Visual.Select("input_shuttle_position").Value) Then
+    LogAdd "Shuttle Motor Move to position"
+    
+    CMD_PrepareSA Visual.Select("input_shuttle_position").Value,1,0
+  Else
+    LogAdd "Shuttle Motor Move to position failed!"
+  End If
+End Function
+
+'-----------------------------
+Function OnClick_btn_shuttle_checkcurr( Reason )
+  Dim CanReadArg
+  Dim Curr_Forw, Curr_Back
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  LogAdd "Shuttle Motor check current"  
+  Motor_CheckCurr( MOTOR_SHUTTLE ) 
+  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
+  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+  Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
+  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
+  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+  Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
+End Function
+
+'-----------------------------
+' Width Adjustment Motors
+
+Function OnClick_btn_WA_calibrate( Reason )
+  LogAdd "Width Adjustment Motor calibrate"
+  Motor_Calibrate( MOTOR_WIDTH_ADJ )
+End Function
+
+'-----------------------------
+Function OnClick_btn_WA_refrun( Reason )
+  LogAdd "Width Adjustment Motor reference run"
+  Motor_RefRun( MOTOR_WIDTH_ADJ )
+End Function
+
+'-----------------------------
+
+Function OnClick_btn_WA_mvtopos( Reason )
+    If CheckValue(Visual.Select("input_WA_position").Value) Then
+    LogAdd "Width Adjustment Motor Move to Position"
+    CMD_PrepareWA Visual.Select("input_WA_position").value,1,0
+  Else
+    LogAdd "Width Adjustment Motor Move to Position failed!"
+  End If
+End Function
+'-----------------------------
+
+Function OnClick_btn_WA_checkcurr( Reason )
+
+  Dim CanReadArg
+  Dim Curr_Forw, Curr_Back
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  LogAdd "Width Adjustment check current"
+  Motor_CheckCurr( MOTOR_SHUTTLE ) 
+  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_FORW)
+  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+  Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
+  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_BACKW)
+  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+  Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
+  
+End Function
+
+'-----------------------------
 Sub Init_WindowMotor( )
 DebugMessage "Init Motor Window"
 Visual.Select("text_belt_currforward").ReadOnly = True
@@ -24,6 +126,7 @@ Visual.Select("row_WA_currmax").style.display = "none"
 Visual.Select("row_shuttle_currmax").style.display = "none"
 End Sub
 
+'-----------------------------
 Function Motor_RefRun( Motor )
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
@@ -43,6 +146,8 @@ Function Motor_RefRun( Motor )
   End If
 End Function
 
+
+'-----------------------------
 Function Motor_CheckCurr( Motor )
 
   Dim CanSendArg , CanReadArg, CANConfig
@@ -63,6 +168,7 @@ Function Motor_CheckCurr( Motor )
   End If
 End Function
 
+'-----------------------------
 Function Motor_Calibrate( Motor )
 
   Dim CanSendArg , CanReadArg, CANConfig
@@ -83,6 +189,7 @@ Function Motor_Calibrate( Motor )
   End If
 End Function
 
+'-----------------------------
 Function Motor_MovePos( Motor, MovType, Pos )
 
   Dim CanSendArg , CanReadArg, CANConfig
@@ -124,94 +231,4 @@ End Function
 'PAR_CONV_CURRENT_FORW
 'PAR_CONV_CURRENT_BACKW
 
-'-----------------------------
-' Conveyor Motors
-
-Function OnClick_btn_belt_checkcurr( Reason )
-  Dim CanReadArg
-  Dim Curr_Forw, Curr_Back
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Belt Motor check current"
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
-  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
-  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
-  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
-  
-End Function
-
-'-----------------------------
-' Shuttle Motors
-
-Function OnClick_btn_shuttle_calibrate( Reason )
-LogAdd "Shuttle Motor calibrate"
-Motor_Calibrate( MOTOR_SHUTTLE )
-End Function
-
-Function OnClick_btn_shuttle_refrun( Reason )
-LogAdd "Shuttle Motor reference run"
-Motor_RefRun( MOTOR_SHUTTLE )
-End Function
-
-Function OnClick_btn_shuttle_mvtopos( Reason )
-  If CheckValue(Visual.Select("input_shuttle_position").Value) Then
-    LogAdd "Shuttle Motor Move to position"
-    Motor_MovePos MOTOR_SHUTTLE,0,Visual.Select("input_shuttle_position").Value
-  Else
-    LogAdd "Shuttle Motor Move to position failed!"
-  End If
-End Function
-
-Function OnClick_btn_shuttle_checkcurr( Reason )
-  Dim CanReadArg
-  Dim Curr_Forw, Curr_Back
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Shuttle Motor check current"  
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
-  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
-  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
-  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
-End Function
-
-'-----------------------------
-' Width Adjustment Motors
-
-Function OnClick_btn_WA_calibrate( Reason )
-  LogAdd "Width Adjustment Motor calibrate"
-  Motor_Calibrate( MOTOR_WIDTH_ADJ )
-End Function
-
-Function OnClick_btn_WA_refrun( Reason )
-  LogAdd "Width Adjustment Motor reference run"
-  Motor_RefRun( MOTOR_WIDTH_ADJ )
-End Function
-
-Function OnClick_btn_WA_mvtopos( Reason )
-    If CheckValue(Visual.Select("input_WA_position").Value) Then
-    LogAdd "Width Adjustment Motor Move to Position"
-    Motor_MovePos MOTOR_WIDTH_ADJ,0,Visual.Select("input_WA_position").value
-  Else
-    LogAdd "Width Adjustment Motor Move to Position failed!"
-  End If
-End Function
-
-Function OnClick_btn_WA_checkcurr( Reason )
-    Dim CanReadArg
-  Dim Curr_Forw, Curr_Back
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Width Adjustment check current"
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
-  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_FORW)
-  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_BACKW)
-  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
-  
-End Function
 

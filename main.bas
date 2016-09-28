@@ -1,11 +1,12 @@
+
 Option Explicit
 #include <PTKL_c.h>
 #include <Ptkl_shuttle.h>
 #include <Can.bas>
 #include <SubCommon.bas>
 
-#include "can_common.bas"
 #include "CanSetup.bas"
+#include "can_common.bas"
 #include "DebugLog.bas"
 #include "Tab_Commands.bas"
 #include "Tab_Motor.bas"

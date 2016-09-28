@@ -83,7 +83,17 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
   Else
     LogAdd "Error! (" & Get_Err_Name(CanReadArg.Data(1))& ")"
     DebugMessage "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " Err: (" & Get_Err_Name(CanReadArg.Data(1))& ")"
+    If Memory.Exists("sig_externalstop") Then
+      LogAdd "SA Run Stopped Due to Error"
+      Memory.sig_externalstop.Set
+    End If
+    If Memory.Exists("sig_ERexternalstop") Then
+      LogAdd "Endurance Run Stopped due to Error"
+      Memory.sig_ERexternalstop.Set
+    End If      
+
   End If  
+
 End Function
 
 Sub CANSend ( CanSendArg )
@@ -249,7 +259,7 @@ Function Get_Err_Name( ID )
   Case	&h41	:	name ="ERR_BARCODE_SYNTAX"
   Case	&h42	:	name ="ERR_BARCODE_FEEDBACK"
   Case	&h80	:	name ="ERR_ESW_SHUTTLE"
-  Case Else  name = "unknown" & ID
+  Case Else  name = "unknown " & ID
   End Select
   Get_Err_Name = name
 End Function 
@@ -293,4 +303,134 @@ Dim name
     Case Else  name = "unknown" & ID
   End Select
   Get_PUB_PrepareID = name
+End Function
+
+Function CMD_PrepareWA ( Width , rel_abs, fixedrail)
+  'fixedrail 
+  ' 0 = right side fixed
+  ' 1 = left side fixed
+  'abs_rel
+  ' 0 = relative shuttle position 
+  ' 1 = absolute shuttle position
+
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Dim Error_Flag
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  Error_Flag = 0
+  
+  If rel_abs < 0 OR rel_abs > 1 Then
+    Error_Flag = 1
+  End If
+  
+  If fixedrail < 0 OR fixedrail > 1 Then
+    Error_Flag = 1
+  End If
+  
+  If Error_Flag = 0 Then
+    If Memory.Exists( "CanManager" ) Then
+      Memory.Get "CANConfig",CANConfig
+      CanSendArg.CanId = CANConfig.CANIDcmd
+      CanSendArg.Data(0) = $(CMD_PREPARE_WIDTH_ADJUSTMENT)
+      CanSendArg.Data(1) = rel_abs
+      CanSendArg.Data(2) = fixedrail
+      CanSendArg.Data(3) = 0
+      CanSendArg.Data(4) = Lang.GetByte(Width,0)
+      CanSendArg.Data(5) = Lang.GetByte(Width,1)
+      CanSendArg.Data(6) = Lang.GetByte(Width,2)
+      CanSendArg.Data(7) = Lang.GetByte(Width,3)
+      CanSendArg.Length = 8
+      If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+
+      Else
+
+      End If
+    Else
+
+    End if
+  
+  Else
+    DebugMessage "Invalid Param"
+  End If
+End Function
+
+Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Dim Error_Flag
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+  'fixedrail 
+  ' 0 = right side fixed
+  ' 1 = left side fixed
+  'abs_rel
+  ' 0 = relative shuttle position 
+  ' 1 = absolute shuttle position
+
+  Error_Flag = 0
+  
+  If rel_abs < 0 OR rel_abs > 1 Then
+    Error_Flag = 1
+  End If
+  
+  If fixedrail < 0 OR fixedrail > 1 Then
+    Error_Flag = 1
+  End If
+  
+  If Error_Flag = 0 Then
+    If Memory.Exists( "CanManager" ) Then
+      Memory.Get "CANConfig",CANConfig
+      CanSendArg.CanId = CANConfig.CANIDcmd
+      CanSendArg.Data(0) = $(CMD_PREPARE_WIDTH_ADJUSTMENT)
+      CanSendArg.Data(1) = rel_abs
+      CanSendArg.Data(2) = fixedrail
+      CanSendArg.Data(3) = 0
+      CanSendArg.Data(4) = Lang.GetByte(Position,0)
+      CanSendArg.Data(5) = Lang.GetByte(Position,1)
+      CanSendArg.Data(6) = Lang.GetByte(Position,2)
+      CanSendArg.Data(7) = Lang.GetByte(Position,3)
+      CanSendArg.Length = 8
+      
+      If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+        CMD_PrepareSA = True
+      Else
+        CMD_PrepareSA = False      
+      End If
+      
+    Else
+    
+      CMD_PrepareSA = False
+      
+    End if
+  
+  Else
+    DebugMessage "Invalid Param"
+  End If
+End Function
+
+Function CmdGetParam ( Param, ByRef Value)
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_PARAM)
+    CanSendArg.Data(1) = Lang.GetByte(Param,0)
+    CanSendArg.Data(2) = Lang.GetByte(Param,1)
+    CanSendArg.Length = 3
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      Value = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))      
+    Else
+
+    End If    
+  Else
+
+  End if
+
 End Function

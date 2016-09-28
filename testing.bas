@@ -1,3 +1,4 @@
+
 Function OnClick_Send( Reason )
   Dim CanManager
   Dim CanSendArg, CanReadArg

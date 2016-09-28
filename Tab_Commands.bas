@@ -1,3 +1,4 @@
+
 Function OnClick_btnGetApp ( Reason )
 Dim FWver_Hi,FWver_Lo
 Dim WidthStat, ShuttleStat
@@ -120,6 +121,29 @@ Function OnClick_btnmvinpcb ( Reason )
       LogAdd "Move in PCB Failed!"
     End If
   End If
+End Function
+
+Function OnClick_btndeletepcb ( Reason )
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_DELETE_PCB)
+    CanSendArg.Length = 1
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Delete PCB command sent"
+    Else
+       LogAdd "Delete PCB command failed"
+    End If    
+  Else
+
+  End if
+  
 End Function
 
 Function OnClick_btnabort ( Reason )

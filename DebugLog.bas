@@ -1,3 +1,4 @@
+
 '**********************************************************************
 '* Purpose: Create a logging window to log messages
 '* Input:  none

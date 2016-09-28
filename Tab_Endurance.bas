@@ -1,3 +1,4 @@
+
 Function Init_WindowEndurance
 DebugMessage "Init Endurance Run Window"
 Visual.Select("textSAstarttime").ReadOnly = true
@@ -139,7 +140,7 @@ Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
   Mode = Lang.SetBit(Mode,1,Conveyor)
   Mode = Lang.SetBit(Mode,2,Shuttle)
   Mode = Lang.SetBit(Mode,3,WA)
-
+  DebugMessage PCB & " " & Conveyor & " " & Shuttle & " " & WA
   If TimeOut = 0 Then
     'Run without stop
     TimeOutSel = 0
@@ -186,7 +187,7 @@ Else
 End If
 End Function
 
-Function ERMonitor(optPCB, optConveyor, optWA, optShuttle)
+Function ERMonitor(optPCB, optConveyor, optShuttle, optWA)
 Dim sig_ERexternalstop,sig_timerend
 Dim ERexternal_stop
 Dim looping
