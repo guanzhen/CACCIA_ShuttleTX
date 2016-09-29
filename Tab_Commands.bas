@@ -26,7 +26,8 @@ Dim WidthStat, ShuttleStat
       Visual.Select("textstatusshuttleref").Value = "Referenced"
     End If
   End If
-
+  
+  GetIOState
   'MsgBox Visual.Select("txtValue1").Value
 End Function
 
@@ -139,6 +140,68 @@ Function OnClick_btndeletepcb ( Reason )
       LogAdd "Delete PCB command sent"
     Else
        LogAdd "Delete PCB command failed"
+    End If    
+  Else
+
+  End if  
+End Function
+
+Function OnClick_btncalsensor ( Reason )
+  CMD_CalibrateSensor
+End Function
+
+Function OnClick_btnresetoffset ( Reason )
+  CMD_ResetOffset 1
+  CMD_ResetOffset 2
+  CMD_ResetOffset 3
+  CMD_ResetOffset 4  
+End Function
+
+
+Function CMD_ResetOffset( Lane )
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_RESET_FIXED_RAIL_OFFSET)
+    CanSendArg.Data(1) = Lane
+    CanSendArg.Length = 2
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Reset offset command sent"
+      CMD_ResetOffset = 1
+    Else
+      LogAdd "Reset offset command failed"
+      CMD_ResetOffset = 0
+    End If    
+  Else
+
+  End if
+  
+End Function
+
+Function CMD_CalibrateSensor
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_CALIBRATE_SENSOR)
+    CanSendArg.Length = 1
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Calibrate sensor command sent"
+      CMD_CalibrateSensor = 1
+    Else
+      CMD_CalibrateSensor = 0
+      LogAdd "Calibrate sensor command failed"
     End If    
   Else
 

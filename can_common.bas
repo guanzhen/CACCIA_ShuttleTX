@@ -305,6 +305,7 @@ Dim name
   Get_PUB_PrepareID = name
 End Function
 
+'Prepare width adjustment
 Function CMD_PrepareWA ( Width , rel_abs, fixedrail)
   'fixedrail 
   ' 0 = right side fixed
@@ -356,6 +357,7 @@ Function CMD_PrepareWA ( Width , rel_abs, fixedrail)
   End If
 End Function
 
+'Prepare shuttle adjustment
 Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager

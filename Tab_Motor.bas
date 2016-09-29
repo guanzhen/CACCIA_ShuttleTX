@@ -3,11 +3,34 @@ Const MOTOR_CONVEYOR = 4
 Const MOTOR_SHUTTLE = 2
 Const MOTOR_WIDTH_ADJ = 3
 
-'-----------------------------
-' On Click Events
-'-----------------------------
+'-------------------------------------------------------
+' Init Windows
+'-------------------------------------------------------
 
-'-----------------------------
+Sub Init_WindowMotor( )
+DebugMessage "Init Motor Window"
+Visual.Select("text_belt_currforward").ReadOnly = True
+Visual.Select("text_belt_currbackward").ReadOnly = True
+Visual.Select("text_shuttle_currmax").ReadOnly = True
+Visual.Select("text_shuttle_currforward").ReadOnly = True
+Visual.Select("text_shuttle_currbackward").ReadOnly = True
+Visual.Select("text_WA_currmax").ReadOnly = True
+Visual.Select("text_WA_currforward").ReadOnly = True
+Visual.Select("text_WA_currbackward").ReadOnly = True
+
+Visual.Select("input_shuttle_position").value = "100000"
+Visual.Select("input_WA_position").value = "100000"
+
+Visual.Select("row_WA_currmax").style.display = "none"
+Visual.Select("row_shuttle_currmax").style.display = "none"
+End Sub
+
+
+'-------------------------------------------------------
+' On Click Events
+'-------------------------------------------------------
+
+'-------------------------------------------------------
 ' Conveyor Motors
 
 Function OnClick_btn_belt_checkcurr( Reason )
@@ -25,7 +48,7 @@ Function OnClick_btn_belt_checkcurr( Reason )
   
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
 ' Shuttle Motors
 
 Function OnClick_btn_shuttle_calibrate( Reason )
@@ -33,15 +56,17 @@ LogAdd "Shuttle Motor calibrate"
 Motor_Calibrate( MOTOR_SHUTTLE )
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function OnClick_btn_shuttle_refrun( Reason )
 LogAdd "Shuttle Motor reference run"
 Motor_RefRun( MOTOR_SHUTTLE )
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function OnClick_btn_shuttle_mvtopos( Reason )
-  If CheckValue(Visual.Select("input_shuttle_position").Value) Then
+  If CheckUValue(Visual.Select("input_shuttle_position").Value) Then
     LogAdd "Shuttle Motor Move to position"
     
     CMD_PrepareSA Visual.Select("input_shuttle_position").Value,1,0
@@ -50,7 +75,8 @@ Function OnClick_btn_shuttle_mvtopos( Reason )
   End If
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function OnClick_btn_shuttle_checkcurr( Reason )
   Dim CanReadArg
   Dim Curr_Forw, Curr_Back
@@ -65,7 +91,7 @@ Function OnClick_btn_shuttle_checkcurr( Reason )
   Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
 ' Width Adjustment Motors
 
 Function OnClick_btn_WA_calibrate( Reason )
@@ -73,23 +99,24 @@ Function OnClick_btn_WA_calibrate( Reason )
   Motor_Calibrate( MOTOR_WIDTH_ADJ )
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function OnClick_btn_WA_refrun( Reason )
   LogAdd "Width Adjustment Motor reference run"
   Motor_RefRun( MOTOR_WIDTH_ADJ )
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
 
 Function OnClick_btn_WA_mvtopos( Reason )
-    If CheckValue(Visual.Select("input_WA_position").Value) Then
+    If CheckUValue(Visual.Select("input_WA_position").Value) Then
     LogAdd "Width Adjustment Motor Move to Position"
     CMD_PrepareWA Visual.Select("input_WA_position").value,1,0
   Else
     LogAdd "Width Adjustment Motor Move to Position failed!"
   End If
 End Function
-'-----------------------------
+'-------------------------------------------------------
 
 Function OnClick_btn_WA_checkcurr( Reason )
 
@@ -107,26 +134,11 @@ Function OnClick_btn_WA_checkcurr( Reason )
   
 End Function
 
-'-----------------------------
-Sub Init_WindowMotor( )
-DebugMessage "Init Motor Window"
-Visual.Select("text_belt_currforward").ReadOnly = True
-Visual.Select("text_belt_currbackward").ReadOnly = True
-Visual.Select("text_shuttle_currmax").ReadOnly = True
-Visual.Select("text_shuttle_currforward").ReadOnly = True
-Visual.Select("text_shuttle_currbackward").ReadOnly = True
-Visual.Select("text_WA_currmax").ReadOnly = True
-Visual.Select("text_WA_currforward").ReadOnly = True
-Visual.Select("text_WA_currbackward").ReadOnly = True
+'-------------------------------------------------------
 
-Visual.Select("input_shuttle_position").value = "100"
-Visual.Select("input_WA_position").value = "100"
 
-Visual.Select("row_WA_currmax").style.display = "none"
-Visual.Select("row_shuttle_currmax").style.display = "none"
-End Sub
+'-------------------------------------------------------
 
-'-----------------------------
 Function Motor_RefRun( Motor )
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
@@ -147,7 +159,8 @@ Function Motor_RefRun( Motor )
 End Function
 
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function Motor_CheckCurr( Motor )
 
   Dim CanSendArg , CanReadArg, CANConfig
@@ -168,7 +181,8 @@ Function Motor_CheckCurr( Motor )
   End If
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function Motor_Calibrate( Motor )
 
   Dim CanSendArg , CanReadArg, CANConfig
@@ -189,7 +203,8 @@ Function Motor_Calibrate( Motor )
   End If
 End Function
 
-'-----------------------------
+'-------------------------------------------------------
+
 Function Motor_MovePos( Motor, MovType, Pos )
 
   Dim CanSendArg , CanReadArg, CANConfig

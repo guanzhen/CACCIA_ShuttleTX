@@ -31,9 +31,13 @@ Const LANE_DOWNSTREAM_2 = 4
 Const TIMER_START = 1
 Const TIMER_STOP = 0
 
+'-------------------------------------------------------
+
 Sub OnLoadFrame()
   InitWindows
 End Sub
+
+'-------------------------------------------------------
 
 Sub OnUnloadFrame()
 'To Stop the timer
@@ -41,12 +45,15 @@ StopAllEnduranceRuns
 Timer_Handler TIMER_STOP,0
 End Sub
 
+'-------------------------------------------------------
+
 Sub OnReloadFrame()
 'To Stop the timer
-StopSARun
-StopERRun
+StopAllEnduranceRuns
 Timer_Handler TIMER_STOP,0
 End Sub
+
+'-------------------------------------------------------
 
 Sub InitWindows
 
@@ -72,9 +79,13 @@ Sub InitWindows
 
 End Sub
 
+'-------------------------------------------------------
+
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()
 End Function
+
+'-------------------------------------------------------
 
 Function LogAdd ( ByVal sMessage )
   Dim Gridobj
@@ -88,24 +99,40 @@ Function LogAdd ( ByVal sMessage )
   End If
 End Function
 
-Function CheckValue(ByVal nValue)
+'-------------------------------------------------------
+
+Function CheckUValue(ByVal nValue)
 
   'Check if it is a number
   If NOT IsNumeric(nValue) Then
     LogAdd("Value entered is not a valid number")
-    CheckValue = FALSE
+    CheckUValue = FALSE
     Exit Function
   End If
 
   If nValue < 0 Then
     LogAdd("Value entered must be a positive number")
-    CheckValue = FALSE
+    CheckUValue = FALSE
     Exit Function
   Else
-    CheckValue = TRUE
+    CheckUValue = TRUE
   End If
 End Function
 
+'-------------------------------------------------------
+
+Function CheckSValue(ByVal nValue)
+  'Check if it is a number
+  If NOT IsNumeric(nValue) Then
+    LogAdd("Value entered is not a valid number")
+    CheckUValue = FALSE
+    Exit Function
+  Else
+    CheckUValue = TRUE  
+  End If
+End Function
+
+'-------------------------------------------------------
 
 Function FormatTimeString( Var_Time )
   FormatTimeString = String.Format("%02d:%02d:%02d", Hour(Var_Time), Minute(Var_Time), Second(Var_Time))
@@ -132,6 +159,8 @@ Function Timer_Handler ( StartStop , TimeOut )
 		Loop
 	End If
 End Function
+
+'-------------------------------------------------------
 
 Function Timer( TimeOut )
   Dim sig_TimerStop

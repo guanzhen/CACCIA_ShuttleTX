@@ -1,3 +1,4 @@
+
 'List of constants for IO inputs. Ensure that all the respective IOs HTML image tag have the ID format "iledn" , 
 'where n correspond to the below table
 Const IO_I_StartButton      = &H01
@@ -14,6 +15,8 @@ Const IO_O_WA_Motor                   = &H19
 Const IO_O_shuttle_motor              = &H1A
 Const IO_O_barcodescan_lane1          = &H1B
 Const IO_O_barcodescan_lane2          = &H1C
+Const IO_O_COVERLOCK_1                = &H1D
+Const IO_O_COVERLOCK_2                = &H1E
 Const IO_O_SMEMA_ip_lane1_machine_rdy = &H20
 Const IO_O_SMEMA_op_lane1_PCB_avail   = &H21
 Const IO_O_SMEMA_op_lane1_failed_PCB  = &H22
@@ -22,12 +25,73 @@ Const IO_O_SMEMA_op_lane2_PCB_avail   = &H24
 Const IO_O_SMEMA_op_lane2_failed_PCB  = &H25
 Const IO_Max            = 37
 
+'-------------------------------------------------------
+' Init Windows
+'-------------------------------------------------------
+
+Function InitWindowIOs ()
+  Dim IO_Array
+  Dim i
+  Dim LEDName
+  Set IO_Array = CreateObject( "MATH.Array" )  
+  
+  Visual.Select("frame_hidden").style.display = "none"
+  Memory.Set "IO_Array",IO_Array
+  'setup input array, with element 0
+  'IO_Array.Add(0) 
+  For i = 0  To IO_Max
+    'DebugMessage "add "&i
+    IO_Array.Add(0)
+    'set all the LED values in the newly created array, and update the display
+    LEDName = String.Format("led%02X",i)
+    IO_setValue i,0
+    'Assign the attribute to each of the image elements
+    Visual.Select(LedName).setAttribute "attr","io_i_image"
+
+  Next
+End Function
+
+'-------------------------------------------------------
+' Init On Click Functions
+'-------------------------------------------------------
+
+'Function OnClick_btnoled18( Reason ) IO_setToggle(&H18) End Function
+Function OnClick_btnoled19( Reason ) IO_setToggle(&H19) End Function
+Function OnClick_btnoled1A( Reason ) IO_setToggle(&H1A) End Function
+Function OnClick_btnoled1B( Reason ) IO_setToggle(&H1B) End Function
+Function OnClick_btnoled1C( Reason ) IO_setToggle(&H1C) End Function
+Function OnClick_btnoled1D( Reason ) IO_setToggle(&H1D) End Function
+Function OnClick_btnoled1E( Reason ) IO_setToggle(&H1E) End Function
+Function OnClick_btnoled20( Reason ) IO_setToggle(&H20) End Function
+Function OnClick_btnoled21( Reason ) IO_setToggle(&H21) End Function
+Function OnClick_btnoled22( Reason ) IO_setToggle(&H22) End Function
+Function OnClick_btnoled23( Reason ) IO_setToggle(&H23) End Function
+Function OnClick_btnoled24( Reason ) IO_setToggle(&H24) End Function
+Function OnClick_btnoled25( Reason ) IO_setToggle(&H25) End Function
+
+'-------------------------------------------------------
+'Refreshes the IO inputs
+Function OnClick_btnUpdateInputs ( Reason )
+  If GetIOState = True Then
+    LogAdd "Refresh Input IOs"
+  Else
+    LogAdd "Refresh Input IOs failed!"  
+  End If  
+End Function
+
+'-------------------------------------------------------
+' Support Functions
+'-------------------------------------------------------
+
+'Gets the value of the selected IO
 Function IO_getValue( Target )
   Dim IO_Array
   Memory.Get "IO_Array",IO_Array
   IO_getValue = IO_Array.Data(Target)  
 End Function
 
+'-------------------------------------------------------
+' Set the value of the selected IO
 Function IO_setValue ( Target, Value )
   Dim IO_Array
   Dim LedName
@@ -52,6 +116,8 @@ Function IO_setValue ( Target, Value )
   'End If
 End Function
 
+'-------------------------------------------------------
+' Returns a name to the selected IO 
 Function IO_getName ( Target )
   Dim Message
 
@@ -60,7 +126,8 @@ Function IO_getName ( Target )
   Case $(INP_HALT):   Message = "Stop Button"
   Case $(INP_EMERGENCY_STOP):  Message = "Emergency Stop"
   Case $(INP_COVER):  Message = "Cover"        
-  Case $(INP_CONTROL_VOLTAGE_40): Message = "Control Voltage 40V"          
+  Case $(INP_CONTROL_VOLTAGE_40): Message = "Control Voltage 40V"      
+  Case $(INP_SAFETY_CIRCUIT_INTERRUPTED): Message = "Safety Circuit Interrupted"      
   Case $(INP_PCB_SENSOR): Message = "PCB Sensor" 
   Case $(INP_PCB_JAM_INPUT):  Message = "PCB JAM Input"   
   Case $(INP_PCB_JAM_OUTPUT): Message = "PCB JAM Output"      
@@ -71,11 +138,14 @@ Function IO_getName ( Target )
   Case $(INP_SMEMA_U2_FAILED_BOARD):  Message = "SMEMA U2 Failed Board" 
   Case $(INP_SMEMA_D1_MACHINE_READY):  Message = "SMEMA D1 Machine Ready" 
   Case $(INP_SMEMA_D2_MACHINE_READY):  Message = "SMEMA D2 Machine ready" 
-  Case $(OUTP_COVER_BLOCKED):  Message = "Cover Blocked" 
+  'Case $(OUTP_COVER_BLOCKED):  Message = "Cover Blocked" 
   Case $(OUTP_BRAKE_WA_MOTOR):  Message = "Brake WA Motor" 
   Case $(OUTP_BRAKE_SHUTTLE_MOTOR):  Message = "Brake Shuttle Motor" 
   Case $(OUTP_ACTIVATE_BARCODE_LANE_1):  Message = "Activate barcode Lane 1" 
   Case $(OUTP_ACTIVATE_BARCODE_LANE_2):  Message = "Activate barcode Lane 2" 
+  Case $(OUTP_COVER_LOCK_1):  Message = "Output Cover Lock 1" 
+  Case $(OUTP_COVER_LOCK_2):  Message = "Output Cover Lock 2" 
+
   Case $(OUTP_SMEMA_U1_MACHINE_READY):  Message = "SMEMA U1 Machine ready" 
   Case $(OUTP_SMEMA_U2_MACHINE_READY):  Message = "SMEMA U2 Machine ready" 
   Case $(OUTP_SMEMA_D1_PCB_AVAILABLE):  Message = "SMEMA D1 PCB Available" 
@@ -89,6 +159,8 @@ Function IO_getName ( Target )
 
 End Function
 
+'-------------------------------------------------------
+'Toggle the output of the selected IO
 Function IO_setToggle ( Target )
   Dim CanSendArg, CanReadArg, CANConfig
   Dim NewValue 
@@ -114,41 +186,8 @@ Function IO_setToggle ( Target )
   End If  
 End Function
 
-Function InitWindowIOs ()
-  Dim IO_Array
-  Dim i
-  Dim LEDName
-  Set IO_Array = CreateObject( "MATH.Array" )  
-  
-  Visual.Select("frame_hidden").style.display = "none"
-  Memory.Set "IO_Array",IO_Array
-  'setup input array, with element 0
-  'IO_Array.Add(0) 
-  For i = 0  To IO_Max
-    'DebugMessage "add "&i
-    IO_Array.Add(0)
-    'set all the LED values in the newly created array, and update the display
-    LEDName = String.Format("led%02X",i)
-    IO_setValue i,0
-    'Assign the attribute to each of the image elements
-    Visual.Select(LedName).setAttribute "attr","io_i_image"
-
-  Next
-End Function
-
-Function OnClick_btnoled18( Reason ) IO_setToggle(&H18) End Function
-Function OnClick_btnoled19( Reason ) IO_setToggle(&H19) End Function
-Function OnClick_btnoled1A( Reason ) IO_setToggle(&H1A) End Function
-Function OnClick_btnoled1B( Reason ) IO_setToggle(&H1B) End Function
-Function OnClick_btnoled1C( Reason ) IO_setToggle(&H1C) End Function
-Function OnClick_btnoled20( Reason ) IO_setToggle(&H20) End Function
-Function OnClick_btnoled21( Reason ) IO_setToggle(&H21) End Function
-Function OnClick_btnoled22( Reason ) IO_setToggle(&H22) End Function
-Function OnClick_btnoled23( Reason ) IO_setToggle(&H23) End Function
-Function OnClick_btnoled24( Reason ) IO_setToggle(&H24) End Function
-Function OnClick_btnoled25( Reason ) IO_setToggle(&H25) End Function
-
-
+'-------------------------------------------------------
+' Gets the IO state of ALL the input and outputs
 Function GetIOState()
   Dim CanSendArg, CanReadArg,CANConfig
   Dim iByte, iBit, bitCount, exitLoop
@@ -186,16 +225,7 @@ Function GetIOState()
     GetIOState = True
   Else
     GetIOState = False    
-  End If
-
-  
+  End If  
 End Function
 
-Function OnClick_btnUpdateInputs ( Reason )
-  If GetIOState = True Then
-    LogAdd "Refresh Input IOs"
-  Else
-    LogAdd "Refresh Input IOs failed!"  
-  End If
-  
-End Function
+

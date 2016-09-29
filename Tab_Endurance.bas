@@ -35,7 +35,7 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
     LogAdd "No tests are selected!"
   End If
 
-  If CheckValue(Visual.Select("textwithPCBmins").Value) Then
+  If CheckUValue(Visual.Select("textwithPCBmins").Value) Then
     Duration_PCB = String.SafeParse (Visual.Select("textwithPCBmins").Value) * 60
     DebugMessage "PCB Duration: "& Duration_PCB
   Else
@@ -43,7 +43,7 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
     NoError = 0
   End If
 
-  If CheckValue(Visual.Select("textwoPCBmins").Value) Then
+  If CheckUValue(Visual.Select("textwoPCBmins").Value) Then
     Duration_woPCB = (String.SafeParse (Visual.Select("textwoPCBmins").Value))  * 60
     DebugMessage "woPCB Duration: "& Duration_woPCB
   Else
