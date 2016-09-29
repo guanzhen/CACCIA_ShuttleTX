@@ -10,7 +10,7 @@
   td    {font-size=10pt;font-family=arial;color: white;padding : 1px 5px;}  
   h1 { font-family=arial;font-size= 12pt; margin=2px 0px; color=white;}
   p { font-family=arial;font-size= 10pt; color=white;}
-  button { width: 150px;}
+  button { width: 150px;}  
   .innerframe
   {
     filter= progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');    
@@ -21,8 +21,18 @@
     float:left;
     height = 50%;   
     padding = 5px;
-    width = 33%;  
-    height = 98.5%;
+    width = 50%;  
+    height = 50%;
+  }
+  .currinfo_subframe
+  {
+    float:left;
+    margin: 10px;
+    padding: 5px;
+    height = 60%;
+    border = 2px;
+    border-style = solid;
+    border-color = white;
   }
   #frame_beltmotor
   {
@@ -37,46 +47,78 @@
     margin = 0px 0px 0px 1px;
   }
   .input_read {background-color:lightgrey; }
-  
+  #frame_currentinfo
+  {
+    width = 100%;
+    height = 40%;    
+  }
+  #frame_currentcheck
+  {
+    float:bottom;
+    clear:left;
+  }
   </style>
 
 </head>
 <body>
     <div id="frame_beltmotor" class = "innerframe">
       <h1>Belt Motor</h1>      
-      <p align="center"><button id = "btn_belt_checkcurr">Check Motor Current</button></p>
-      <table>
-        <tr><td>Forward:</td><td><input class="input_read" id="text_belt_currforward"></input> mA</td></tr>
-        <tr><td>Backward:</td><td><input class="input_read" id="text_belt_currbackward"></input> mA</td></tr>
-      </table>   
     </div>
     <div id="frame_shuttlemotor" class = "innerframe">
       <h1>Shuttle Motor</h1>          
       <p align="center"><button id = "btn_shuttle_calibrate">Calibrate Motor </button></p>
       <p align="center"><button id = "btn_shuttle_refrun">Reference Run</button></p>
-      <p align="center"><input  id="input_shuttle_position"></input> mm</p>
+      <p align="center"><input  id="input_shuttle_position"></input> um</p>
       <p align="center"><button id = "btn_shuttle_mvtopos">Move to Positon</button></p>
-      <p align="center"><button id = "btn_shuttle_checkcurr">Check Motor Current</button></p>
-      <table>
-        <tr id="row_shuttle_currmax"><td>Max:</td><td><input class="input_read" id="text_shuttle_currmax"></input> mA</td></tr>
-        <tr><td>Forward:</td><td><input class="input_read" id="text_shuttle_currforward"></input> mA</td></tr>
-        <tr><td>Backward:</td><td><input class="input_read" id="text_shuttle_currbackward"></input> mA</td></tr>
-      </table>   
+    
 
     </div>
     <div id="frame_widthadjustmotor" class = "innerframe">
-          <h1>Width Adjustment Motor</h1>          
+      <h1>Width Adjustment Motor</h1>          
       <p align="center"><button id = "btn_WA_calibrate">Calibrate Motor </button></p>
       <p align="center"><button id = "btn_WA_refrun">Reference Run</button></p>
-      <p align="center"><input id="input_WA_position"></input> mm</p>
+      <p align="center"><input id="input_WA_position"></input> um</p>
       <p align="center"><button id = "btn_WA_mvtopos">Move to Positon</button></p>
-      <p align="center"><button id = "btn_WA_checkcurr">Check Motor Current</button></p>
-      <table>
-        <tr id = "row_WA_currmax"><td>Max:</td><td><input class="input_read" id="text_WA_currmax"></input> mA</td></tr>
-        <tr><td>Forward:</td><td><input class="input_read" id="text_WA_currforward"></input> mA</td></tr>
-        <tr><td>Backward:</td><td><input class="input_read" id="text_WA_currbackward"></input> mA</td></tr>
-      </table>   
     </div>
+    
+    <div id = "frame_currentinfo" class = "innerframe">
+    <h1>Current Info Motor</h1>
+    
+    <div class = "currinfo_subframe">
+    <h1>Belt</h1>
+    <table>
+      <tr><td>Forward:</td><td><input class="input_read" id="text_belt_currforward"></input> mA</td></tr>
+      <tr><td>Backward:</td><td><input class="input_read" id="text_belt_currbackward"></input> mA</td></tr>
+    </table>   
+    </div>
+    
+    <div class = "currinfo_subframe">
+    <h1>Width Adjust</h1>    
+    <table>
+      <tr id = "row_WA_currmax"><td>Max:</td><td><input class="input_read" id="text_WA_currmax"></input> mA</td></tr>
+      <tr><td>Forward:</td><td><input class="input_read" id="text_WA_currforward"></input> mA</td></tr>
+      <tr><td>Backward:</td><td><input class="input_read" id="text_WA_currbackward"></input> mA</td></tr>
+    </table>
+    </div>
+    
+    <div class = "currinfo_subframe">
+    <h1>Shuttle</h1> 
+    <table>
+      <tr id="row_shuttle_currmax"><td>Max:</td><td><input class="input_read" id="text_shuttle_currmax"></input> mA</td></tr>
+      <tr><td>Forward:</td><td><input class="input_read" id="text_shuttle_currforward"></input> mA</td></tr>
+      <tr><td>Backward:</td><td><input class="input_read" id="text_shuttle_currbackward"></input> mA</td></tr>
+    </table>   
+    </div>
+    
+    <div id = "frame_currentcheck">    
+      <p><button id = "btn_belt_checkcurr">Check Motor Current</button></p>
+      <p><button id = "btn_WA_checkcurr">Check Motor Current</button></p>
+      <p><button id = "btn_shuttle_checkcurr">Check Motor Current</button></p>
+      <p><button id = "btn_checkcurr">Check Motor Current</button></p>
+    </div>
+
+    </div>
+    
 
 </body>
 </html>
