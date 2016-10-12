@@ -213,9 +213,13 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Do while looping = 1
   'If timer has finished set loop to exit
    'If stop button pressed, or other stops occured.
-     If sig_ERexternalstop.wait(50) Then
+    If sig_ERexternalstop.wait(50) Then
       looping = 0
     End If
+    If ERexternal_stop = 1 Then
+      looping = 0
+    End If
+    
    'Display elapsed time
     time_elapsed = Time - time_start
    Visual.Select("textERelapsedtime").Value = FormatTimeString(time_elapsed)
