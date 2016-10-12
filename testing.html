@@ -2,21 +2,40 @@
 <head>
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
   <link rel="stylesheet" type="text/css" href="Tab1.css"></link>
+  <style>
+  h1
+  {
+    font-family: arial;
+    font-size:15pt;
+    color: white;
+  }
+  #testing1
+  {
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');
+    float:left;
+    border = 2px;
+    border-style = solid;
+    border-color = white;
+    display=inline;
+    margin = 0px 0px 1px 1px;
+    padding = 10px;
+  }
+  </style>
 </head>
+
 
 <body>
   <div id="testing1">
+    <h1>EMC Test</h1>
   <table>
-    <tr><td><button class="testbutton" id ="Send"> Toggle Cycle Run</button></td></tr>
-    <tr><td><button class="testbutton" id ="Send2">Init IOs</button></td></tr>
-    <tr><td><button class="testbutton" id ="Send3">Toggle LED </button></td></tr>
-
+    <tr><td>Interval (s) </td><td><input value = "5" id = "test_interval"></input></td></tr>    
     <tr><td>Timer Start: </td><td><input id = "timer_start"></input></td></tr>
     <tr><td>Timer End: </td><td><input id = "timer_end"></input></td></tr>
     <tr><td>Timer Elapsed: </td><td><input id = "timer_elapsed"></input></td></tr>
-    <tr><td><button class="testbutton" id ="btntestTimer1Start">Cycle Run Start </button></td></tr>
-    <tr><td><button class="testbutton" id ="btntestTimer1Stop">Cycle Run Stop </button></td></tr>
-
+    <tr>
+      <td><br><button class="testbutton" id ="btntestTimer1Start">Cycle Run Start </button></td>
+      <td><br><button class="testbutton" id ="btntestTimer1Stop">Cycle Run Stop </button></td>
+    </tr>
     </table>
   </div>
 </body>

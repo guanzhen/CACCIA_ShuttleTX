@@ -64,6 +64,7 @@ Sub InitCANMgr2
   DebugMessage "CanManager2: FunnelSet:" &  String.Format("0x%03X,0x%03X",CANConfig.CANIDAck,CANConfig.CANIDPub)
   CanManagerPUB.SetArbitrationOrder CAN_ARBITRATION_PRIVATE_OR_PUBLIC
   WithEvents.ConnectObject CanManagerPUB, "CanManagerPUB_"
+  Memory.Set "CanManagerPUB",CanManagerPUB
 End Sub
 
 Function CanManager_Deliver( ByVal CanReadArg )
