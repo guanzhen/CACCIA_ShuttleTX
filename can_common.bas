@@ -84,15 +84,18 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
   Else
     LogAdd "Error! (" & Get_Err_Name(CanReadArg.Data(1))& ")"
     DebugMessage "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " Err: (" & Get_Err_Name(CanReadArg.Data(1))& ")"
-    If Memory.Exists("sig_externalstop") Then
-      LogAdd "SA Run Stopped Due to Error"
-      Memory.sig_externalstop.Set
+    If NOT CanReadArg.Data(1) = &h16  Then
+      If NOT CanReadArg.Data(1) = &h04 Then
+        If Memory.Exists("sig_externalstop") Then
+          LogAdd "SA Run Stopped Due to Error"
+          Memory.sig_externalstop.Set
+        End If
+        If Memory.Exists("sig_ERexternalstop") Then
+          LogAdd "Endurance Run Stopped due to Error"
+          Memory.sig_ERexternalstop.Set
+        End If      
+      End If
     End If
-    If Memory.Exists("sig_ERexternalstop") Then
-      LogAdd "Endurance Run Stopped due to Error"
-      Memory.sig_ERexternalstop.Set
-    End If      
-
   End If  
 
 End Function
@@ -233,7 +236,7 @@ Function Get_Err_Name( ID )
   Select Case ID
   Case	&h02	:	name ="ERR_CONTROL_VOLTAGE"
   Case	&h03	:	name ="ERR_EMERGENCY_STOP"
-  Case	&h04	:	name ="ERR_ABORTED"
+  Case	&h04	:	name ="User Abort Function"
   Case	&h10	:	name ="ERR_MOVE_IN"
   Case	&h11	:	name ="ERR_MOVE_OUT"
   Case	&h12	:	name ="ERR_POSITION_RAIL"
@@ -312,8 +315,8 @@ Function CMD_PrepareWA ( Width , rel_abs, fixedrail)
   ' 0 = right side fixed
   ' 1 = left side fixed
   'abs_rel
-  ' 0 = relative shuttle position 
-  ' 1 = absolute shuttle position
+  ' 0 = relative width position 
+  ' 1 = absolute width position
 
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
@@ -373,7 +376,7 @@ Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
   ' 1 = absolute shuttle position
 
   Error_Flag = 0
-  
+
   If rel_abs < 0 OR rel_abs > 1 Then
     Error_Flag = 1
   End If
@@ -386,7 +389,7 @@ Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
     If Memory.Exists( "CanManager" ) Then
       Memory.Get "CANConfig",CANConfig
       CanSendArg.CanId = CANConfig.CANIDcmd
-      CanSendArg.Data(0) = $(CMD_PREPARE_WIDTH_ADJUSTMENT)
+      CanSendArg.Data(0) = $(CMD_PREPARE_SHUTTLE_POSITION)
       CanSendArg.Data(1) = rel_abs
       CanSendArg.Data(2) = fixedrail
       CanSendArg.Data(3) = 0
@@ -402,10 +405,8 @@ Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
         CMD_PrepareSA = False      
       End If
       
-    Else
-    
-      CMD_PrepareSA = False
-      
+    Else    
+      CMD_PrepareSA = False      
     End if
   
   Else
@@ -437,3 +438,35 @@ Function CmdGetParam ( Param, ByRef Value)
   End if
 
 End Function
+
+Function Command_SetPCBData ( DataID, Value)
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
+    CanSendArg.Data(1) = DataID
+    CanSendArg.Data(2) = 0
+    CanSendArg.Data(3) = 0
+    CanSendArg.Data(4) = Lang.GetByte(Value,0)
+    CanSendArg.Data(5) = Lang.GetByte(Value,1)    
+    CanSendArg.Length = 6
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      Command_SetPCBData = True
+    Else
+      Command_SetPCBData = False
+    End If    
+  Else
+    Command_SetPCBData = False
+  End if
+  
+End Function
+
+Function Command_SetPCBLength (Value)
+  Command_SetPCBLength = Command_SetPCBData($(PCB_DATA_LENGTH),Value)
+End Function 

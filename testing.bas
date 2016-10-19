@@ -1,4 +1,9 @@
-Function OnClick_btntestTimer1Start ( Reason )
+
+  Function OnClick_btntestTimer1Start ( Reason )
+  Command_SetPCBLength 1600
+  
+  End Function
+  Function testing ()
   Dim sig_timerend,sig_cycleloopend,cycleloop,looping
   Dim interval
   Dim start_time,stop_time,now_time

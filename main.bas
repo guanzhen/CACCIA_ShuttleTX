@@ -125,10 +125,10 @@ Function CheckSValue(ByVal nValue)
   'Check if it is a number
   If NOT IsNumeric(nValue) Then
     LogAdd("Value entered is not a valid number")
-    CheckUValue = FALSE
+    CheckSValue = FALSE
     Exit Function
   Else
-    CheckUValue = TRUE  
+    CheckSValue = TRUE  
   End If
 End Function
 

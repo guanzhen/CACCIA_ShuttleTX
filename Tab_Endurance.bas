@@ -1,4 +1,6 @@
 
+const TEST_PCB_LENGTH = 1600
+
 Function Init_WindowEndurance
 DebugMessage "Init Endurance Run Window"
 Visual.Select("textSAstarttime").ReadOnly = true
@@ -253,6 +255,7 @@ external_stop = 0
 
 If en_PCB = True Then
 '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
+  PreparePCBEndurance
   DebugMessage "Send Start SA Run with PCB Command"
   If EnduranceRun_SendCmd(0 , True, True, True, False) = False Then
     'Error occured
@@ -294,6 +297,9 @@ Else
 End If
 'If external stop is triggered, stop the endurance run (skip the w/o PCB step)
 If external_stop = 0 Then
+  If en_PCB = True Then
+    System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
+  End If
   If en_woPCB = True Then
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
     EnduranceRun_SendCmd 0 , False, True, True, True
@@ -334,3 +340,12 @@ Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
 LogAdd "System Acceptance ended!"
 Memory.Free "sig_externalstop"
 End Function
+
+Sub PreparePCBEndurance 
+  CMD_PrepareSA 0,1,0
+  System.Delay 2000
+  CMD_PrepareWA 100000,1,0
+  System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
+  System.Delay 500  
+  Command_SetPCBLength TEST_PCB_LENGTH
+End Sub

@@ -51,7 +51,7 @@ End Function
 '-------------------------------------------------------
 
 Function OnClick_btn_shuttle_mvtopos( Reason )
-  If CheckUValue(Visual.Select("input_shuttle_position").Value) Then
+  If CheckSValue(Visual.Select("input_shuttle_position").Value) Then
     LogAdd "Shuttle Motor Move to position"
     
     CMD_PrepareSA Visual.Select("input_shuttle_position").Value,1,0
