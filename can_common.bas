@@ -243,7 +243,7 @@ Function Get_Err_Name( ID )
   Case	&h13	:	name ="ERR_LANE_WIDTH"
   Case	&h14	:	name ="ERR_OFFSET_WIDTH"
   Case	&h15	:	name ="ERR_SHUTTLE_BLOCKED"
-  Case	&h16	:	name ="ERR_WIDTH_ADJ_BLOCKED"
+  Case	&h16	:	name ="ERR_WIDTH_ADJ_BLOCKED: Check if there is PCB on conveyor or PCB sensor blocked"
   Case	&h17	:	name ="ERR_WA_NOT_REFERENCED"
   Case	&h18	:	name ="ERR_SHUTTLE_NOT_REFERENCED"
   Case	&h19	:	name ="ERR_DELIVERY_UPSTREAM"
@@ -263,7 +263,7 @@ Function Get_Err_Name( ID )
   Case	&h41	:	name ="ERR_BARCODE_SYNTAX"
   Case	&h42	:	name ="ERR_BARCODE_FEEDBACK"
   Case	&h80	:	name ="ERR_ESW_SHUTTLE"
-  Case Else  name = "unknown " & ID
+  Case Else  name = "unknown " & ID & "If existing command is in progress, Abort the command first"
   End Select
   Get_Err_Name = name
 End Function 
@@ -470,3 +470,25 @@ End Function
 Function Command_SetPCBLength (Value)
   Command_SetPCBLength = Command_SetPCBData($(PCB_DATA_LENGTH),Value)
 End Function 
+
+Function Command_DeletePCB
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_DELETE_PCB)
+    CanSendArg.Length = 1
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Delete PCB command sent"
+    Else
+       LogAdd "Delete PCB command failed"
+    End If    
+  Else
+
+  End if  
+End Function

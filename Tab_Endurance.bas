@@ -292,6 +292,7 @@ If en_PCB = True Then
   CANSendAbort
   DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
   Memory.Free "sig_timerend"
+  OnClick_btndeletepcb 0
 Else
   Visual.Select("textSAelapsed_withPCB").Value = "N.A"
 End If
@@ -345,6 +346,7 @@ Sub PreparePCBEndurance
   CMD_PrepareSA 0,1,0
   System.Delay 2000
   CMD_PrepareWA 100000,1,0
+  System.Delay 1000
   System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
   System.Delay 500  
   Command_SetPCBLength TEST_PCB_LENGTH
