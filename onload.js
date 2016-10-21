@@ -9,8 +9,6 @@ function load_tabbar()
   tabbar.setImagePath("../../../codebase/tabbar/imgs/");
   tabbar.setSkin("dhx_skyblue");
 
-
-
   tabbar.addTab("main_tab1","Commands");
   tabbar.addTab("main_tab2","Endurance");
   tabbar.addTab("main_tab3","Motor");
@@ -21,7 +19,7 @@ function load_tabbar()
   tabbar.setContent( "main_tab3", iframe_tab3);
   tabbar.setContent( "main_tab4", iframe_tab4);
   tabbar.setContent( "main_tab5", iframe_tab5);
-  //tabbar.hideTab("main_tab5");
+  tabbar.hideTab("main_tab5");
   for ( var i = 1; i <= tabbar.getNumberOfTabs(); i++ )
   {
     tabbar.setCustomStyle( 'main_tab' + i, 'gray', 'black', 'font-size:10pt;font-family:Arial;font-weight: bold;' );

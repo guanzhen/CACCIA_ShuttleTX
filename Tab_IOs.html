@@ -3,6 +3,7 @@
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
   <!-- <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link> -->
   <style>
+  h1 { font-family=arial;font-size= 12pt; margin=2px 0px; color=white; align = center;}
   td    { font-family=arial; font-size:15px;  color: white;padding : 1px 5px;} 
   body { margin:1px; padding=5px;}
   html { background-color: #DEDFE1;}
@@ -14,7 +15,7 @@
     float :left;
     display:inline;    
     filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1');    
-    height : 88%;
+    height : 65%;
     margin : 0px 2px 2px 0px;
     width: 50%;
   }
@@ -26,11 +27,23 @@
     display:inline;
     float :left;
     filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1');    
-    height : 88%;
+    height : 65%;
     left: 49%;
     margin : 0px 2px 2px 0px;
     width:50%; 
   }
+  #frame_SMEMA
+  {
+      border:2px;
+    border-color:white;
+    border-style:solid;
+    display:inline;
+    float :left;
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1'); 
+    width:100%;
+  }
+  #subframe_Lane1{ float:left;}
+  #subframe_Lane2{ float:left;}
   #frame_hidden{}
   button 
   {
@@ -49,6 +62,7 @@
   </style>
 </head>
 <body>
+
   <div id = "frame_inputs">
     <table>
       <tr><td><img id="led01"></img>Start Button</td></tr>
@@ -70,26 +84,40 @@
       <tr><td><img id="led1C"></img>Activate Barcode Lane 2</td><td><button value = "1C" id="btnoled1C">Toggle</button></td></tr>
       <tr><td><img id="led1D"></img>Cover Lock 1</td><td><button value = "1D" id="btnoled1D">Toggle</button></td></tr>
       <tr><td><img id="led1E"></img>Cover Lock 2</td><td><button value = "1E" id="btnoled1E">Toggle</button></td></tr>      
-      <tr><td><img id="led20"></img>SMEMA U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
-      <tr><td><img id="led21"></img>SMEMA U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
-      <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
-      <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
-      <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
-      <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
     </table>
   </div>
+  <div id = "frame_SMEMA">
+    <h1 style = "padding-left:5px;"> SMEMA Control</h1>
+    <div id = "subframe_Lane1">
+      <h1 style = "padding-left:5px;"> Lane 1</h1>
+      <table>    
+        <tr><td><img id="led10"></img>SMEMA U1 PCB Available</td></tr>
+        <tr><td><img id="led20"></img>SMEMA U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
+        <tr><td><img id="led11"></img>SMEMA U1 Failed Board</td></tr>
+        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
+        <tr><td><img id="led14"></img>SMEMA D1 Machine Rdy</td></tr>
+        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
+      </table>
+    </div>
+    <div id = "subframe_Lane2">
+      <h1 style = "padding-left:5px;"> Lane 2</h1>
+      <table>
+        <tr><td><img id="led12"></img>SMEMA U2 PCB Available</td></tr>
+        <tr><td><img id="led21"></img>SMEMA U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
+        <tr><td><img id="led13"></img>SMEMA U2 Failed Board</td></tr>
+        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
+        <tr><td><img id="led15"></img>SMEMA D2 Machine Rdy</td></tr>
+        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
+      </table>
+    </div>
+  </div>
   <div id="div_btn"><button id="btnUpdateInputs">Refresh</button></div>
+  
+  <!-- Hidden frame -->
   <div id= "frame_hidden" display = "none">
     <table>
       <tr><td><img id="led00"></img></td></tr>
-      <tr><td><img id="led10"></img></td></tr>
-      <tr><td><img id="led11"></img></td></tr>
-      <tr><td><img id="led12"></img></td></tr>
-      <tr><td><img id="led13"></img></td></tr>
-      <tr><td><img id="led14"></img></td></tr>
-      <tr><td><img id="led15"></img></td></tr>
-      <tr><td><img id="led18"></img>Cover Blocked</td><td><button value = "18" id="btnoled18">Toggle</button></td></tr>
-      
+      <tr><td><img id="led18"></img>Cover Blocked</td><td><button value = "18" id="btnoled18">Toggle</button></td></tr>      
       
       <tr><td><img id="led06"></img></td></tr>
       <tr><td><img id="led07"></img></td></tr>
