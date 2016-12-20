@@ -61,7 +61,7 @@ Sub InitWindows
   Window.width = APP_WIDTH
 
   'Create debug log window
-  CreateDebugLogWindow
+  'CreateDebugLogWindow
   DebugMessage "Starting Up"
 
   'Visual.ExecuteScriptFunction("load_tabbar")
@@ -83,6 +83,18 @@ End Sub
 
 Function OnClick_btnLogGridClear( ByVal Reason )
   Visual.Script( "LogGrid").clearAll()
+End Function
+
+'-------------------------------------------------------
+
+Function OnClick_ButtonDebugLog( Reason )
+  If Memory.Exists("DebugLogWindow") Then
+    DebugWindowClose
+    Visual.Select("ButtonDebugLog").Value = "Open DebugLog"
+  Else 
+    CreateDebugLogWindow
+    Visual.Select("ButtonDebugLog").Value = "Close DebugLog"
+  End If
 End Function
 
 '-------------------------------------------------------

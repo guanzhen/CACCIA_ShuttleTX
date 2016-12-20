@@ -4,14 +4,14 @@ Dim FWver_Hi,FWver_Lo
 Dim WidthStat, ShuttleStat
   LogAdd ("Read Firmware Version")
   If Command_getFWVer(0,FWver_Hi,FWver_Lo) = True Then
-    Visual.Select("textAppVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
-  Else
-    Visual.Select("textAppVersion").Value = "--.--"
-  End If
-  If Command_getFWVer(1,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textBiosVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
   Else
     Visual.Select("textBiosVersion").Value = "--.--"
+  End If
+  If Command_getFWVer(1,FWver_Hi,FWver_Lo) = True Then
+    Visual.Select("textAppVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
+  Else
+    Visual.Select("textAppVersion").Value = "--.--"
   End If
 
   If Command_getRefStatus (WidthStat,ShuttleStat) = True Then
@@ -58,9 +58,9 @@ Function Command_getFWVer ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
 
   If App_Bios = 0 Then
-  FWselect = &h00
+  FWselect = $(PARAM_DL_ZIEL_BIOS)
   Else
-  FWselect = &h10
+  FWselect = $(PARAM_DL_ZIEL_APPL)
   End If
   Command_getFWVer = False
 

@@ -31,3 +31,12 @@ Function DebugMessage(sMessage)
   End If
 End Function
 ' +++++++++++++++++++ End of DebugMessage() ++++++++++++
+
+Function DebugWindowClose
+  Dim DebugLogWindow
+  If Memory.Get("DebugLogWindow", DebugLogWindow) Then
+    DebugLogWindow.DeleteContents
+    'DebugLogWindow.Quit
+    Memory.Free "DebugLogWindow"
+  End If
+End Function

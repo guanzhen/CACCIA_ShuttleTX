@@ -61,18 +61,11 @@
 
 </head>
 <body>
+    <!-- this div section is commented out in Tab_motors.bas -->
     <div id="frame_beltmotor" class = "innerframe">
       <h1>Belt Motor</h1>      
     </div>
-    <div id="frame_shuttlemotor" class = "innerframe">
-      <h1>Shuttle Motor</h1>          
-      <p align="center"><button id = "btn_shuttle_calibrate">Calibrate Motor </button></p>
-      <p align="center"><button id = "btn_shuttle_refrun">Reference Run</button></p>
-      <p align="center"><input  id="input_shuttle_position"></input> um</p>
-      <p align="center"><button id = "btn_shuttle_mvtopos">Move to Positon</button></p>
     
-
-    </div>
     <div id="frame_widthadjustmotor" class = "innerframe">
       <h1>Width Adjustment Motor</h1>          
       <p align="center"><button id = "btn_WA_calibrate">Calibrate Motor </button></p>
@@ -81,7 +74,15 @@
       <p align="center"><button id = "btn_WA_mvtopos">Move to Positon</button></p>
     </div>
     
-    <div id = "frame_currentinfo" class = "innerframe">
+    <div id="frame_shuttlemotor" class = "innerframe">
+      <h1>Shuttle Motor</h1>          
+      <p align="center"><button id = "btn_shuttle_calibrate">Calibrate Motor </button></p>
+      <p align="center"><button id = "btn_shuttle_refrun">Reference Run</button></p>
+      <p align="center"><input  id="input_shuttle_position"></input> um</p>
+      <p align="center"><button id = "btn_shuttle_mvtopos">Move to Positon</button></p>
+    </div>
+    
+  <div id = "frame_currentinfo" class = "innerframe">
     <h1>Motor Current</h1>
     
     <div class = "currinfo_subframe">
@@ -89,6 +90,7 @@
     <table>
       <tr><td>Forward:</td><td><input class="input_read" id="text_belt_currforward"></input> mA</td></tr>
       <tr><td>Backward:</td><td><input class="input_read" id="text_belt_currbackward"></input> mA</td></tr>
+      <tr><td colspan = "2"><button id = "btn_belt_checkcurr">Check Current</button></td></tr>
     </table>   
     </div>
     
@@ -98,6 +100,7 @@
       <tr id = "row_WA_currmax"><td>Max:</td><td><input class="input_read" id="text_WA_currmax"></input> mA</td></tr>
       <tr><td>Forward:</td><td><input class="input_read" id="text_WA_currforward"></input> mA</td></tr>
       <tr><td>Backward:</td><td><input class="input_read" id="text_WA_currbackward"></input> mA</td></tr>
+      <tr><td colspan = "2"><button id = "btn_WA_checkcurr">Check Current</button></td></tr>
     </table>
     </div>
     
@@ -107,17 +110,16 @@
       <tr id="row_shuttle_currmax"><td>Max:</td><td><input class="input_read" id="text_shuttle_currmax"></input> mA</td></tr>
       <tr><td>Forward:</td><td><input class="input_read" id="text_shuttle_currforward"></input> mA</td></tr>
       <tr><td>Backward:</td><td><input class="input_read" id="text_shuttle_currbackward"></input> mA</td></tr>
+      <tr><td colspan = "2"><button id = "btn_shuttle_checkcurr">Check Current</button></td></tr>
     </table>   
     </div>
     
+    <!-- this div section is commented out in Tab_motors.bas -->
     <div id = "frame_currentcheck">    
-      <p><button id = "btn_belt_checkcurr">Check Motor Current</button></p>
-      <p><button id = "btn_WA_checkcurr">Check Motor Current</button></p>
-      <p><button id = "btn_shuttle_checkcurr">Check Motor Current</button></p>
       <p><button id = "btn_checkcurr">Check Motor Current</button></p>
     </div>
 
-    </div>
+  </div>
     
 
 </body>

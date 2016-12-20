@@ -15,10 +15,13 @@ iframe {border: 0px; margin:0px;padding:0px;width :100%; height:100%;}
 
 #Layer_MessageLog { padding:1px 5px;height:30%; width :100%;}
 #MessageLogObj { height:80%; width :100%;}
-#btnLogGridClear { height:30px;margin-top:5px;width:150px;}
+#btnLogGridClear {float:left; width: 100px;height:34px;align:right;}
+#ButtonDebugLog  {float:right; width: 100px;height:34px;}
 
 .iframetab
 {
   padding : 0px;
   margin : 0px;
 }
+
+

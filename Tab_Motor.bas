@@ -24,9 +24,11 @@ Visual.Select("input_WA_position").value = "100000"
 Visual.Select("row_WA_currmax").style.display = "none"
 Visual.Select("row_shuttle_currmax").style.display = "none"
 Visual.Select("frame_beltmotor").style.display = "none"
-Visual.Select("btn_belt_checkcurr").style.display = "none"
-Visual.Select("btn_WA_checkcurr").style.display = "none"
-Visual.Select("btn_shuttle_checkcurr").style.display = "none"
+'Visual.Select("btn_belt_checkcurr").style.display = "none"
+'Visual.Select("btn_WA_checkcurr").style.display = "none"
+'Visual.Select("btn_shuttle_checkcurr").style.display = "none"
+Visual.Select("btn_checkcurr").style.display = "none"
+Visual.Select("frame_currentcheck").style.display = "none"
 
 End Sub
 
@@ -139,6 +141,7 @@ Function OnClick_btn_checkcurr( Reason )
   Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
 
   'belt
+  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
   CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
@@ -267,9 +270,9 @@ Function Motor_CheckCurr( Motor )
     CanSendArg.Data(1) = Motor
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Check Current OK"
+      LogAdd "Check current started"
     Else
-      LogAdd "Chck Current Failed"
+      LogAdd "Check current failed to start"
     End If
   End If
 End Function
