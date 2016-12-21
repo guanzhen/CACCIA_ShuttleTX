@@ -3,7 +3,6 @@
   Command_SetPCBLength 1600
   
   End Function
-  
   Function testing ()
   Dim sig_timerend,sig_cycleloopend,cycleloop,looping
   Dim interval
@@ -108,37 +107,14 @@
   LogAdd "EMC Test Stopped"
 End Function
 
-Function OnClick_EventOccur ( Reason )
-  DebugMessage "Event"
+Function OnClick_btntestTimer1Stop ( Reason )
+  DebugMessage "Stop Timer1 Clicked"
   If Memory.Exists("sig_cycleloopend") Then
-    Memory.sig_cycleloopend.Get
-    Visual.Select("item_flag").Value = "Set"
+    Memory.sig_cycleloopend.Set
   End If
-  'Timer_Handler TIMER_STOP,0
-  'DebugMessage "Stop Timer1 Ended"
+  Timer_Handler TIMER_STOP,0
+  DebugMessage "Stop Timer1 Ended"
 End Function
-
-
-Function OnClick_SetWaitFlag ( Reason )
-  DebugMessage "Set Flag"
-  If Memory.Exists("sig_cycleloopend") Then
-    Memory.sig_cycleloopend.Set 1
-    Visual.Select("item_flag").Value = "Set"
-  End If
-  'Timer_Handler TIMER_STOP,0
-  'DebugMessage "Stop Timer1 Ended"
-End Function
-
-Function OnClick_ClearWaitFlag ( Reason )
-  DebugMessage "Clear Flag"
-  If Memory.Exists("sig_cycleloopend") Then
-    Memory.sig_cycleloopend.Set 0
-    Visual.Select("item_flag").Value = "Clear"
-  End If
-  'Timer_Handler TIMER_STOP,0
-  'DebugMessage "Stop Timer1 Ended"
-End Function
-
 
 Function test_moveshuttle ( lane )
   Dim CanSendArg , CanReadArg, CANConfig

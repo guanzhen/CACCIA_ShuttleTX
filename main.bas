@@ -4,6 +4,7 @@ Option Explicit
 #include <Ptkl_shuttle.h>
 #include <Can.bas>
 #include <SubCommon.bas>
+#include <System.bas>
 
 #include "CanSetup.bas"
 #include "can_common.bas"
@@ -13,6 +14,7 @@ Option Explicit
 #include "Tab_IOs.bas"
 #include "Tab_Endurance.bas"
 #include "testing.bas"
+#include "EMC_Test.bas"
 
 '#include "Constants.bas"
 
@@ -193,7 +195,7 @@ Function Timer( TimeOut )
 
     now_time = (Time - start_time)
     count = Hour(now_time)*360 + Minute(now_time)*60 +Second(now_time)
-    Visual.Select("timer_elapsed").Value = count
+    'Visual.Select("timer_elapsed").Value = count
 
     If sig_TimerStop.wait(50) Then
       ls_loopcont = 0

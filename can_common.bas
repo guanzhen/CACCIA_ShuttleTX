@@ -59,6 +59,7 @@ Sub InitCANMgr2
   Memory.Get "CANConfig",CANConfig
   CanManagerPUB.Events = True
   CanManagerPUB.Deliver = True
+
   'CanManagerPUB.Platform = 3  
   CanManagerPUB.ChangeFunnel String.Format("%d,%d",CANConfig.CANIDAck,CANConfig.CANIDPub), True
   DebugMessage "CanManager2: FunnelSet:" &  String.Format("0x%03X,0x%03X",CANConfig.CANIDAck,CANConfig.CANIDPub)
@@ -79,10 +80,12 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
     If CanReadArg.Data(2) = 0 Then
       PUB_Handler CanReadArg
     Else
-      DebugDecodePub CanReadArg  
+      DebugDecodePub CanReadArg
     End If
   Else
+    If NOT CanReadArg.Data(1) = &h04 Then
     LogAdd "Error! (" & Get_Err_Name(CanReadArg.Data(1))& ")"
+    End If
     DebugMessage "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " Err: (" & Get_Err_Name(CanReadArg.Data(1))& ")"
     If NOT CanReadArg.Data(1) = &h16  Then
       If NOT CanReadArg.Data(1) = &h04 Then
@@ -263,7 +266,7 @@ Function Get_Err_Name( ID )
   Case	&h41	:	name ="ERR_BARCODE_SYNTAX"
   Case	&h42	:	name ="ERR_BARCODE_FEEDBACK"
   Case	&h80	:	name ="ERR_ESW_SHUTTLE"
-  Case Else  name = "unknown " & ID & "If existing command is in progress, Abort the command first"
+  Case Else  name = "unknown " & ID & "). If existing command is in progress, Abort the command first"
   End Select
   Get_Err_Name = name
 End Function 
@@ -304,7 +307,7 @@ Dim name
     Case	&hFFF	:	name ="PAR_LAST"
     Case	&hFFF	:	name ="PAR_NEXT"
 
-    Case Else  name = "unknown" & ID
+    Case Else  name = "unknown" & ID & ") "
   End Select
   Get_PUB_PrepareID = name
 End Function

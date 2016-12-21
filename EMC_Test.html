@@ -26,14 +26,15 @@
 
 <body>
   <div id="testing1">
-    <h1>Test</h1>
+    <h1>EMC Test</h1>
   <table>
-    <tr><td>Flag</td><td><input id = "item_flag"></input></td></tr>    
-    <tr><td>Output</td><td><input id = "item_output"></input></td></tr>    
+    <tr><td>Interval (s) </td><td><input value = "5" id = "test_interval"></input></td></tr>    
+    <tr><td>Timer Start: </td><td><input id = "timer_start"></input></td></tr>
+    <tr><td>Timer End: </td><td><input id = "timer_end"></input></td></tr>
+    <tr><td>Timer Elapsed: </td><td><input id = "timer_elapsed"></input></td></tr>
     <tr>
-      <td><br><button class="testbutton" id ="SetWaitFlag">Set </button></td>
-      <td><br><button class="testbutton" id ="ClearWaitFlag">Clear </button></td>
-      <td><br><button class="testbutton" id ="EventOccur">Event </button></td>
+      <td><br><button class="testbutton" id ="btntestTimer1Start">Cycle Run Start </button></td>
+      <td><br><button class="testbutton" id ="btntestTimer1Stop">Cycle Run Stop </button></td>
     </tr>
     </table>
   </div>

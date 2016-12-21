@@ -48,7 +48,7 @@ Function InitWindowIOs ()
     'Assign the attribute to each of the image elements
     Visual.Select(LedName).setAttribute "attr","io_i_image"
 
-  Next
+  Next  
 End Function
 
 '-------------------------------------------------------
@@ -164,7 +164,11 @@ End Function
 Function IO_setToggle ( Target )
   Dim CanSendArg, CanReadArg, CANConfig
   Dim NewValue 
-  NewValue = IO_getValue(Target)
+  If IO_getValue(Target) = 1 Then
+    NewValue = 0
+  Else
+    NewValue = 1
+  End If
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   
@@ -176,11 +180,7 @@ Function IO_setToggle ( Target )
   CanSendArg.Length = 3
   If CANSendCmd(CanSendArg,CanReadArg, 250) = True Then
     LogAdd "Toggle : " & IO_getName(Target)
-    If NewValue = 0 Then
-      IO_setValue Target, 1
-    Else
-      IO_setValue Target, 0
-    End If
+    IO_setValue Target, NewValue
   Else
     LogAdd "Toggle " & IO_getName(Target) & " output failed!"
   End If  

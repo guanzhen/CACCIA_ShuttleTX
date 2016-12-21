@@ -29,8 +29,8 @@ If rc.Success
       SendMsg{CANTXID1}(rc.Data[0],0x01)            
     }
   }
-  ' Refill Start
-  Case 0x54:  
+  ' Check Current
+  Case 0x4A:  
   {
     SendMsg{CANTXID1}(rc.Data[0],0x00,0x00)   
     Delay(20)

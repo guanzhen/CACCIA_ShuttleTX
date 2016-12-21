@@ -197,18 +197,23 @@ CANSendAbort
 
 End Function
 
-Function OnClick_btnmvoutpcb ( Reason )
-  Dim CanSendArg , CanReadArg, CANConfig
-  Dim lane
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
 
+Function OnClick_btnmvoutpcb ( Reason )
+  Dim lane
   If Visual.Exists("opt_destlane") Then
     lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
     DebugMessage "MoveOutPCB "&get_LaneName(lane)
+    Command_moveoutPCB lane
   Else
     DebugMessage "MoveOutPCB Lane invalid! :" &lane
   End If
+
+End Function
+
+Function Command_moveoutPCB(lane)
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
 
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig

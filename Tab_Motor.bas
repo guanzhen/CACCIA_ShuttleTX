@@ -66,17 +66,23 @@ End Function
 ' Check Current Functions
 
 Function OnClick_btn_belt_checkcurr( Reason )
-  Dim CanReadArg
-  Dim Curr_Forw, Curr_Back
+  Dim CanReadArg, looping
+  Dim Curr_Forw, Curr_Back, Count
+  Dim CanManager, MyCanSendArg, MyCanReadArg
+  looping = 1  
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Belt Motor check current"
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
-  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
-  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
-  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
+  LogAdd "Belt Motor check current started"
+  If Motor_CheckCurr( MOTOR_CONVEYOR ) = 1 Then
+    CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
+    Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+    Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
+    CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
+    Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+    Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
+  Else
+    Visual.Select("text_belt_currforward").value = "-"
+    Visual.Select("text_belt_currbackward").value = "-"
+  End If
   
 End Function
 
@@ -86,14 +92,18 @@ Function OnClick_btn_shuttle_checkcurr( Reason )
   Dim CanReadArg
   Dim Curr_Forw, Curr_Back
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Shuttle Motor check current"  
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
+  LogAdd "Shuttle Motor check current started"  
+  If Motor_CheckCurr( MOTOR_SHUTTLE ) = 1 Then
   CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
   CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
+  Else
+    Visual.Select("text_shuttle_currforward").value = "-"
+    Visual.Select("text_shuttle_currbackward").value = "-"
+  End If
 End Function
 
 '-------------------------------------------------------
@@ -103,15 +113,18 @@ Function OnClick_btn_WA_checkcurr( Reason )
   Dim CanReadArg
   Dim Curr_Forw, Curr_Back
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Width Adjustment check current"
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
-  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_FORW)
-  Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_BACKW)
-  Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
-  
+  LogAdd "Width Adjustment check current started"
+  If Motor_CheckCurr( MOTOR_WIDTH_ADJ ) = 1 Then
+    CAN_getparam CanReadArg , $(PAR_WA_CURRENT_FORW)
+    Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+    Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
+    CAN_getparam CanReadArg , $(PAR_WA_CURRENT_BACKW)
+    Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+    Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
+  Else
+    Visual.Select("text_WA_currforward").value = "-"
+    Visual.Select("text_WA_currbackward").value = "-"
+  End If
 End Function
 
 '-------------------------------------------------------
@@ -259,10 +272,12 @@ End Function
 
 Function Motor_CheckCurr( Motor )
 
-  Dim CanSendArg , CanReadArg, CANConfig
+  Dim CanSendArg , CanReadArg, CANConfig, PrepareID
+  Dim loopcnt
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
 
+  loopcnt = 6000
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -270,7 +285,25 @@ Function Motor_CheckCurr( Motor )
     CanSendArg.Data(1) = Motor
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Check current started"
+      PrepareID = CanReadArg.Data(2)
+      Do while loopcnt > 0
+        If Memory.CanManager.PeekMessage (CanReadArg, 10) Then
+          If CanReadArg.Data(0) = &h00 AND CanReadArg.Data(2) = PrepareID Then
+            loopcnt = -1
+            LogAdd "Check current ok"
+            Motor_CheckCurr = 1
+          else
+            loopcnt = loopcnt - 1
+          End If      
+        Else
+          loopcnt = loopcnt - 1
+        End If
+      Loop
+      
+      If loopcnt = 0 Then
+        LogAdd "Check current Timeout"
+        Motor_CheckCurr = 0
+      End If
     Else
       LogAdd "Check current failed to start"
     End If

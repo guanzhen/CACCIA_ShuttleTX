@@ -290,17 +290,21 @@ If en_PCB = True Then
   'Send the CAN abort command, to terminate the current endurance run.
 
   CANSendAbort
+  System.Delay(1000)
   DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
   Memory.Free "sig_timerend"
+  Command_moveoutPCB 1
+  System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
   OnClick_btndeletepcb 0
+
 Else
   Visual.Select("textSAelapsed_withPCB").Value = "N.A"
 End If
 'If external stop is triggered, stop the endurance run (skip the w/o PCB step)
 If external_stop = 0 Then
-  If en_PCB = True Then
-    System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
-  End If
+  'If en_PCB = True Then
+    
+  'End If
   If en_woPCB = True Then
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
     EnduranceRun_SendCmd 0 , False, True, True, True
@@ -340,6 +344,7 @@ End If
 Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
 LogAdd "System Acceptance ended!"
 Memory.Free "sig_externalstop"
+CANSendAbort
 End Function
 
 Sub PreparePCBEndurance 
