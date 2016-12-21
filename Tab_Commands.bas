@@ -2,7 +2,7 @@
 Function OnClick_btnGetApp ( Reason )
 Dim FWver_Hi,FWver_Lo
 Dim WidthStat, ShuttleStat
-  LogAdd ("Read Firmware Version")
+  LogAdd ("Read Shuttle Information")
   If Command_getFWVer(0,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textBiosVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
   Else
@@ -25,6 +25,38 @@ Dim WidthStat, ShuttleStat
     Else
       Visual.Select("textstatusshuttleref").Value = "Referenced"
     End If
+  End If
+  
+  If Command_getLaneFixed(1) = 0 Then
+    Visual.Select("textlane1").Value = "Right Fixed"
+  ElseIf Command_getLaneFixed (1) = 1 Then
+    Visual.Select("textlane1").Value = "Left Fixed"
+  Else
+    Visual.Select("textlane1").Value = "-"  
+  End If
+  
+  If Command_getLaneFixed(2) = 0 Then
+    Visual.Select("textlane2").Value = "Right Fixed"
+  ElseIf Command_getLaneFixed (2) = 1 Then
+    Visual.Select("textlane2").Value = "Left Fixed"
+  Else
+    Visual.Select("textlane2").Value = "-"  
+  End If
+  
+  If Command_getLaneFixed(3) = 0 Then
+    Visual.Select("textlane3").Value = "Right Fixed"
+  ElseIf Command_getLaneFixed (3) = 1 Then
+    Visual.Select("textlane3").Value = "Left Fixed"
+  Else
+    Visual.Select("textlane3").Value = "-"  
+  End If
+  
+  If Command_getLaneFixed(4) = 0 Then
+    Visual.Select("textlane4").Value = "Right Fixed"
+  ElseIf Command_getLaneFixed (4) = 1 Then
+    Visual.Select("textlane4").Value = "Left Fixed"
+  Else
+    Visual.Select("textlane4").Value = "-"  
   End If
   
   GetIOState
@@ -222,12 +254,84 @@ Function Command_moveoutPCB(lane)
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move out PCB from "&get_LaneName(lane)
+      DebugMessage "Move out PCB from "&get_LaneName(lane)
     Else
-      LogAdd "Move out PCB Failed!"
+      DebugMessage "Move out PCB Failed!"
     End If
   End If
 End Function
+
+
+Function Command_MoveConvMotor(Speed)
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_MOTOR_VELOCITY)
+    CanSendArg.Data(1) = $(MOTOR_CONVEYOR)
+    CanSendArg.Data(2) = Lang.GetByte(Speed,0)
+    CanSendArg.Data(3) = Lang.GetByte(Speed,1)
+    CanSendArg.Length = 4
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      DebugMessage "Move Conveyor Motor at " & Speed & "mm/s."
+    Else
+      DebugMessage "Move Conveyor Motor failed"
+    End If
+  End If
+End Function
+
+Function Command_SetLaneParam(lane,param,value)
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_SET_LANE_PAR)
+    CanSendArg.Data(1) = param
+    CanSendArg.Data(2) = lane
+    CanSendArg.Data(3) = 0
+    CanSendArg.Data(4) = Lang.GetByte(value,0)
+    CanSendArg.Data(5) = Lang.GetByte(value,1)
+    CanSendArg.Data(6) = Lang.GetByte(value,2)
+    CanSendArg.Data(7) = Lang.GetByte(value,3)
+    CanSendArg.Length = 8
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      DebugMessage "Set Lane "&get_LaneName(lane) & " param"
+      Command_SetLaneParam = 1
+    Else
+      DebugMessage "Set Lane Param failed"
+      Command_SetLaneParam = -1
+    End If
+  End If
+End Function
+
+Function Command_GetLaneFixed(lane)
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_LANE_PAR)
+    CanSendArg.Data(1) = $(P_LANE_FIXED_RAIL)
+    CanSendArg.Data(2) = lane
+    CanSendArg.Length = 3
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      DebugMessage "Get Lane "&get_LaneName(lane) & " param"
+      Command_getLaneFixed = CanReadArg.Data(4)
+    Else
+      DebugMessage "Read Lane Param failed"
+      Command_getLaneFixed = -1
+    End If
+  End If
+End Function
+
 
 Function OnClick_btnmvshuttle ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig

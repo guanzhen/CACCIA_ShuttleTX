@@ -66,8 +66,10 @@ Function StopSARun()
 If Memory.Exists("sig_externalstop") Then
   LogAdd "SA Run Stopped"
   Memory.sig_externalstop.Set
+  CANSendAbort
 Else
-  LogAdd "No SA run to stop."
+  CANSendAbort
+  'LogAdd "No SA run to stop."
 End If
 End Function
 
@@ -288,14 +290,9 @@ If en_PCB = True Then
    System.Delay(100)
   Loop
   'Send the CAN abort command, to terminate the current endurance run.
-
-  CANSendAbort
-  System.Delay(1000)
-  DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
+  UnLoadPCB
   Memory.Free "sig_timerend"
-  Command_moveoutPCB 1
-  System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
-  OnClick_btndeletepcb 0
+  DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
 
 Else
   Visual.Select("textSAelapsed_withPCB").Value = "N.A"
@@ -306,6 +303,9 @@ If external_stop = 0 Then
     
   'End If
   If en_woPCB = True Then
+    'Delete PCB data again incase user forgotten.
+    Command_moveoutPCB 3
+    Command_DeletePCB
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
     EnduranceRun_SendCmd 0 , False, True, True, True
     DebugMessage "Send Start Endurance Run wo PCB Command"
@@ -348,11 +348,24 @@ CANSendAbort
 End Function
 
 Sub PreparePCBEndurance 
+  ' Move shuttle to middle position
   CMD_PrepareSA 0,1,0
   System.Delay 2000
+  ' Open the shuttle to accomodate test PCB (10cm)
   CMD_PrepareWA 100000,1,0
+  'Command_SetLaneParam 4,$(P_LANE_POS_FIXED_RAIL),0
   System.Delay 1000
   System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
   System.Delay 500  
   Command_SetPCBLength TEST_PCB_LENGTH
+End Sub
+
+Sub UnLoadPCB
+  CANSendAbort
+  System.Delay(1000)
+  CANSendAbort
+  System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
+  Command_moveoutPCB 3
+  Command_DeletePCB
+
 End Sub

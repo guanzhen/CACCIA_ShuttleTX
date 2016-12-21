@@ -1,7 +1,42 @@
 
-  Function OnClick_btntestTimer1Start ( Reason )
-  Command_SetPCBLength 1600
+  Function OnClick_Test1 ( Reason )
+  Dim param
+  param = Command_getLaneFixed(1)
+  If param > -1 Then
+    DebugMessage "Lane 1 Param : " & param
+  Else
+    DebugMessage "Failed"
+  End If
+  End Function
   
+    Function OnClick_Test2 ( Reason )
+  Dim param
+  param = Command_getLaneFixed(2)
+  If param > -1 Then
+    DebugMessage "Lane 2 Param : " & param
+  Else
+    DebugMessage "Failed"
+  End If
+  End Function
+  
+  Function OnClick_Test3 ( Reason )
+  Dim param
+  param = Command_getLaneFixed(3)
+  If param > -1 Then
+    DebugMessage "Lane 3 Param : " & param
+  Else
+    DebugMessage "Failed"
+  End If
+  End Function
+  
+  Function OnClick_Test4 ( Reason )
+  Dim param
+  param = Command_getLaneFixed(4)
+  If param > -1 Then
+    DebugMessage "Lane 4 Param : " & param
+  Else
+    DebugMessage "Failed"
+  End If
   End Function
   
   Function testing ()
