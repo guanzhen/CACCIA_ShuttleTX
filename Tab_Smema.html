@@ -1,0 +1,85 @@
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
+  <style>
+  html { background-color: #DEDFE1;}
+  body { margin:1px; padding=5px;}
+  h1 { font-family=arial;font-size= 10pt; margin=2px 0px; color=white;}
+  button  {    width: 120px;  margin : 1px 2px;}
+  select  {    width: 120px;  }
+  input  { background-color:lightgrey;}
+  th    { font-family=arial;   color: white;padding : 1px 5px;}
+  td    { font-family=arial;   color: white;padding : 1px 5px;}
+  table { margin: 5px }
+  #frame_smemacontrol
+  {
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');
+    border:2px;
+    border-color : white;
+    border-style : solid;
+    width : 100%;
+    height : 20%;
+  }
+  #subframe_Lane1{ float:left;}
+  #subframe_Lane2{ float:left;}
+  #frame_SMEMA
+  {
+    border:2px;
+    border-color:white;
+    border-style:solid;
+    display:inline;
+    float :left;
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1'); 
+    width:100%;
+  }
+  </style>
+
+</head>
+<body>
+  <div id = "frame_smemacontrol">
+    <table>
+      <tr><th colspan="3" align="left">Shuttle Commands</th></tr>
+       <tr><td>Move in PCB</td><td><button id = "btnmvinpcb">Move</button></td>
+        <td>
+          <select id="opt_sourcelane">Source Lane
+            <option value = "1">Upstream 1</option>
+            <option value = "2">Upstream 2</option>
+          </select>
+        </td>
+      </tr>
+      <tr><td>Move out PCB</td><td><button id = "btnmvoutpcb">Move</button></td>
+        <td>
+          <select id="opt_destlane">Destination Lane
+            <option value = "3">Downstream 1</option>
+            <option value = "4">Downstream 2</option>
+          </select>
+        </td>
+      </tr>
+    </table>
+  </div>
+  <div id = "frame_SMEMA">
+    <h1 style = "padding-left:5px;"> SMEMA Control</h1>
+    <div id = "subframe_Lane1">
+      <h1 style = "padding-left:5px;"> Lane 1</h1>
+      <table>    
+        <tr><td><img id="led10"></img>SMEMA U1 PCB Available</td></tr>
+        <tr><td><img id="led20"></img>SMEMA U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
+        <tr><td><img id="led11"></img>SMEMA U1 Failed Board</td></tr>
+        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
+        <tr><td><img id="led14"></img>SMEMA D1 Machine Rdy</td></tr>
+        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
+      </table>
+    </div>
+    <div id = "subframe_Lane2">
+      <h1 style = "padding-left:5px;"> Lane 2</h1>
+      <table>
+        <tr><td><img id="led12"></img>SMEMA U2 PCB Available</td></tr>
+        <tr><td><img id="led21"></img>SMEMA U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
+        <tr><td><img id="led13"></img>SMEMA U2 Failed Board</td></tr>
+        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
+        <tr><td><img id="led15"></img>SMEMA D2 Machine Rdy</td></tr>
+        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
+      </table>
+    </div>
+  </div>
+  </body>

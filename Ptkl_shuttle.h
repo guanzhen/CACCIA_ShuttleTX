@@ -259,6 +259,7 @@
         #define    PAR_VELOCITY_TEST_WA_MOTOR                      0x1C
         #define    PAR_TRAVEL_RANGE_SHUTTLE                        0x1D
         #define    PAR_TRAVEL_RANGE_WA                             0x1E
+        #define    PAR_ENDUR_LIMIT_ADJ                             0x1F
         #define    PAR_SHUTTLE_CURRENT_FORW                        0x31
         #define    PAR_SHUTTLE_CURRENT_BACKW                       0x32
         #define    PAR_WA_CURRENT_FORW                             0x33

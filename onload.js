@@ -13,7 +13,7 @@ function load_tabbar()
   tabbar.addTab("main_tab2","Endurance");
   tabbar.addTab("main_tab3","Motor");
   tabbar.addTab("main_tab4","IO Controls");
-  tabbar.addTab("main_tab5","Testing");
+  tabbar.addTab("main_tab5","SMEMA");
   tabbar.setContent( "main_tab1", iframe_tab1);
   tabbar.setContent( "main_tab2", iframe_tab2);
   tabbar.setContent( "main_tab3", iframe_tab3);

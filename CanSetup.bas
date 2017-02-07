@@ -1,16 +1,17 @@
 Function btn_CanConnect( id, id1 )
-  Dim ShuttleConfig,Net
+  Dim ShuttleConfig,Net,TitleText
   DebugMessage"Launch Can Connect"
   Net = Visual.Script("opt_net")
   ShuttleConfig = Visual.Script("opt_config")
   DebugMessage "Selected Config :"&ShuttleConfig
   DebugMessage "Selected Net :"&Net
+  TitleText = "Shuttle TX Control " & String.Format(  "%01d",AppVersionMax) & "." & String.Format("%02d",AppVersionMin) & " - "
   If ShuttleConfig = 0 Then
-    Window.Title = "Shuttle TX Control - Upstream"
+    TitleText = TitleText & "Upstream"
   Elseif ShuttleConfig = 1 Then
-    Window.Title = "Shuttle TX Control - Downstream"
+    TitleText = TitleText & "Downstream"
   End If
-
+  Window.Title = TitleText
   Visual.Script("dhxWins").unload()
   'Initialise can using the settings by user.
   InitCAN ShuttleConfig,Net,"1000"

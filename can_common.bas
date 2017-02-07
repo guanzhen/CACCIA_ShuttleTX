@@ -417,31 +417,6 @@ Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
   End If
 End Function
 
-Function CmdGetParam ( Param, ByRef Value)
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists( "CanManager" ) Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_GET_PARAM)
-    CanSendArg.Data(1) = Lang.GetByte(Param,0)
-    CanSendArg.Data(2) = Lang.GetByte(Param,1)
-    CanSendArg.Length = 3
-    
-    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      Value = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))      
-    Else
-
-    End If    
-  Else
-
-  End if
-
-End Function
-
 Function Command_SetPCBData ( DataID, Value)
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager

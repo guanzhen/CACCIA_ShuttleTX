@@ -32,23 +32,12 @@
     margin : 0px 2px 2px 0px;
     width:50%; 
   }
-  #frame_SMEMA
-  {
-    border:2px;
-    border-color:white;
-    border-style:solid;
-    display:inline;
-    float :left;
-    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1'); 
-    width:100%;
-  }
   #div_btn
   {
     display:inline;
     float :left;
   }
-  #subframe_Lane1{ float:left;}
-  #subframe_Lane2{ float:left;}
+
   #frame_hidden{}
   button 
   {
@@ -90,31 +79,6 @@
       <tr><td><img id="led1D"></img>Cover Lock 1</td><td><button value = "1D" id="btnoled1D">Toggle</button></td></tr>
       <tr><td><img id="led1E"></img>Cover Lock 2</td><td><button value = "1E" id="btnoled1E">Toggle</button></td></tr>      
     </table>
-  </div>
-  <div id = "frame_SMEMA">
-    <h1 style = "padding-left:5px;"> SMEMA Control</h1>
-    <div id = "subframe_Lane1">
-      <h1 style = "padding-left:5px;"> Lane 1</h1>
-      <table>    
-        <tr><td><img id="led10"></img>SMEMA U1 PCB Available</td></tr>
-        <tr><td><img id="led20"></img>SMEMA U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
-        <tr><td><img id="led11"></img>SMEMA U1 Failed Board</td></tr>
-        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
-        <tr><td><img id="led14"></img>SMEMA D1 Machine Rdy</td></tr>
-        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
-      </table>
-    </div>
-    <div id = "subframe_Lane2">
-      <h1 style = "padding-left:5px;"> Lane 2</h1>
-      <table>
-        <tr><td><img id="led12"></img>SMEMA U2 PCB Available</td></tr>
-        <tr><td><img id="led21"></img>SMEMA U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
-        <tr><td><img id="led13"></img>SMEMA U2 Failed Board</td></tr>
-        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
-        <tr><td><img id="led15"></img>SMEMA D2 Machine Rdy</td></tr>
-        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
-      </table>
-    </div>
   </div>
   <div id="div_btn"><button id="btnUpdateInputs">Refresh</button></div>
 

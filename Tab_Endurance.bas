@@ -22,7 +22,7 @@ Visual.Select("cbwopcbconveyor").Checked = true
 Visual.Select("textwithPCBmins").Value = "60"
 Visual.Select("textwoPCBmins").Value = "60"
 End Function
-
+'-------------------------------------------------------
 Function OnClick_btnSArun_start ( Reason )
 Dim Checked_PCB,Checked_woPCB
 Dim Duration_PCB,Duration_woPCB
@@ -61,7 +61,7 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
   End If
 
 End Function
-
+'-------------------------------------------------------
 Function StopSARun()
 If Memory.Exists("sig_externalstop") Then
   LogAdd "SA Run Stopped"
@@ -72,18 +72,18 @@ Else
   'LogAdd "No SA run to stop."
 End If
 End Function
-
+'-------------------------------------------------------
 Function OnClick_btnSArun_stop ( Reason )
   DebugMessage "Stop Timer1 Clicked"
   StopSARun
   DebugMessage "Stop Timer1 Ended"
 End Function
-
+'-------------------------------------------------------
 Function StopAllEnduranceRuns( )
 StopERRun
 StopSARun
 End Function
-
+'-------------------------------------------------------
 Function OnClick_btnendrun_wpcb_start ( Reason )
 Dim optShuttle,optCyclic
 Dim NoError
@@ -101,11 +101,11 @@ If NoError = 1 Then
   System.Start ERMonitor(optCyclic,optCyclic,optShuttle,false)
 End If
 End Function
-
+'-------------------------------------------------------
 Function OnClick_btnendrun_wpcb_stop ( Reason )
-StopERRun
+  StopERRun
 End Function
-
+'-------------------------------------------------------
 Function OnClick_btnendrun_wopcb_start ( Reason )
 Dim opt_shuttle,opt_WA,opt_conveyor
 Dim NoError
@@ -125,11 +125,11 @@ If NoError = 1 Then
 End If
 
 End Function
-
+'-------------------------------------------------------
 Function OnClick_btnendrun_wopcb_stop ( Reason )
 StopERRun
 End Function
-
+'-------------------------------------------------------
 Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
 
   Dim CanSendArg , CanReadArg, CANConfig
@@ -181,6 +181,45 @@ Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
   End If
 
 End Function
+'-------------------------------------------------------
+Function GetERLimit()
+  Dim CanReadArg
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  CAN_getparam  CanReadArg,$(PAR_ENDUR_LIMIT_ADJ)  
+  DebugMessage "Limit: " & Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
+   
+  End Function
+'-------------------------------------------------------
+Function SetERLimit( Value )
+  Dim CanReadArg,CanSendArg,CANConfig
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_SET_PARAM)
+    CanSendArg.Data(1) = Lang.GetByte ($(PAR_ENDUR_LIMIT_ADJ),0)
+    CanSendArg.Data(2) = Lang.GetByte ($(PAR_ENDUR_LIMIT_ADJ),1)
+    CanSendArg.Data(3) = Lang.GetByte (Value,0)
+    CanSendArg.Data(4) = Lang.GetByte (Value,1)
+    CanSendArg.Data(5) = Lang.GetByte (Value,2)
+    CanSendArg.Data(6) = Lang.GetByte (Value,3)
+    CanSendArg.Length = 7
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      SetERLimit = true
+      DebugMessage "Set ER Limit OK"
+      'LogAdd "Endurance run command sent ok"
+    Else
+      DebugMessage "Set ER Limit NOK"
+      SetERLimit = false
+      'LogAdd "Endurance run command sent failed"
+    End If
+  else
+    LogAdd "No CAN Manager!"
+  End If
+End Function
 
 Function StopERRun( )
 If Memory.Exists("sig_ERexternalstop") Then
@@ -206,6 +245,7 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Visual.Select("textERstoptime").Value = ""
   Visual.Select("textERelapsedtime").Value = ""
   '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
+  SetERLimit 5000
   If EnduranceRun_SendCmd(0 , optPCB, optConveyor, optShuttle, optWA) = False Then
     'Error occured
     ERexternal_stop = 1
@@ -254,6 +294,8 @@ Visual.Select("textSAstoptime").Value = ""
 Set sig_externalstop = Signal.Create
 Memory.Set "sig_externalstop", sig_externalstop
 external_stop = 0
+
+SetERLimit 5000
 
 If en_PCB = True Then
 '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
