@@ -1,7 +1,7 @@
 
   Function OnClick_Test1 ( Reason )
   Dim param
-  param = Command_getLaneFixed(1)
+  param = Command_Get_LaneParam_FixedRail(1)
   If param > -1 Then
     DebugMessage "Lane 1 Param : " & param
   Else
@@ -11,7 +11,7 @@
   
     Function OnClick_Test2 ( Reason )
   Dim param
-  param = Command_getLaneFixed(2)
+  param = Command_Get_LaneParam_FixedRail(2)
   If param > -1 Then
     DebugMessage "Lane 2 Param : " & param
   Else
@@ -21,7 +21,7 @@
   
   Function OnClick_Test3 ( Reason )
   Dim param
-  param = Command_getLaneFixed(3)
+  param = Command_Get_LaneParam_FixedRail(3)
   If param > -1 Then
     DebugMessage "Lane 3 Param : " & param
   Else
@@ -31,7 +31,7 @@
   
   Function OnClick_Test4 ( Reason )
   Dim param
-  param = Command_getLaneFixed(4)
+  param = Command_Get_LaneParam_FixedRail(4)
   If param > -1 Then
     DebugMessage "Lane 4 Param : " & param
   Else

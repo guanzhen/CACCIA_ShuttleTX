@@ -134,6 +134,40 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
 
 End Function
 
+Function btn_CanConnect( id, id1 )
+  Dim ShuttleConfig,Net,TitleText
+  DebugMessage"Launch Can Connect"
+  Net = Visual.Script("opt_net")
+  ShuttleConfig = Visual.Script("opt_config")
+  DebugMessage "Selected Config :"&ShuttleConfig
+  DebugMessage "Selected Net :"&Net
+  TitleText = "Shuttle TX Control " & String.Format(  "%01d",AppVersionMax) & "." & String.Format("%02d",AppVersionMin) & " - "
+  If ShuttleConfig = 0 Then
+    TitleText = TitleText & "Upstream"
+  Elseif ShuttleConfig = 1 Then
+    TitleText = TitleText & "Downstream"
+  End If
+  Window.Title = TitleText
+  Visual.Script("dhxWins").unload()
+  'Initialise can using the settings by user.
+  InitCAN ShuttleConfig,Net,"1000"
+  Visual.Select("Layer_CanSetup").Style.Display = "none"
+  Visual.Select("Layer_MessageLog").Style.Display = "block"
+  Visual.Select("Layer_TabStrip").Style.Display = "block"
+
+End Function
+
+'No longer needed since we are using DHTMLX window
+Function InitWindowCanSetup
+
+  Visual.Select("Layer_CanSetup").Style.Height  = CANSETUP_HEIGHT
+  Visual.Select("Layer_CanSetup").Style.Width   = CANSETUP_WIDTH
+  Visual.Select("Layer_CanSetup").Style.Display = "block"
+  Visual.Select("Layer_CanSetup").Align = "center"
+
+End Function
+
+
 Function CANSendAbort ( )
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
@@ -191,7 +225,7 @@ Function PUB_IO_Handler ( CanReadArg )
 
 End Function
 
-Function CAN_getparam( CanReadArg , Param )
+Function Command_Get_Param( CanReadArg , Param )
 
   Dim CanSendArg , CANConfig
   Dim ParamL,ParamH
@@ -270,6 +304,7 @@ Function Get_Err_Name( ID )
   End Select
   Get_Err_Name = name
 End Function 
+
 Function Get_PUB_PrepareID( ID )
 Dim name
   Select Case ID
@@ -310,163 +345,4 @@ Dim name
     Case Else  name = "unknown" & ID & ") "
   End Select
   Get_PUB_PrepareID = name
-End Function
-
-'Prepare width adjustment
-Function CMD_PrepareWA ( Width , rel_abs, fixedrail)
-  'fixedrail 
-  ' 0 = right side fixed
-  ' 1 = left side fixed
-  'abs_rel
-  ' 0 = relative width position 
-  ' 1 = absolute width position
-
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Dim Error_Flag
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  Error_Flag = 0
-  
-  If rel_abs < 0 OR rel_abs > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If fixedrail < 0 OR fixedrail > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If Error_Flag = 0 Then
-    If Memory.Exists( "CanManager" ) Then
-      Memory.Get "CANConfig",CANConfig
-      CanSendArg.CanId = CANConfig.CANIDcmd
-      CanSendArg.Data(0) = $(CMD_PREPARE_WIDTH_ADJUSTMENT)
-      CanSendArg.Data(1) = rel_abs
-      CanSendArg.Data(2) = fixedrail
-      CanSendArg.Data(3) = 0
-      CanSendArg.Data(4) = Lang.GetByte(Width,0)
-      CanSendArg.Data(5) = Lang.GetByte(Width,1)
-      CanSendArg.Data(6) = Lang.GetByte(Width,2)
-      CanSendArg.Data(7) = Lang.GetByte(Width,3)
-      CanSendArg.Length = 8
-      If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-
-      Else
-
-      End If
-    Else
-
-    End if
-  
-  Else
-    DebugMessage "Invalid Param"
-  End If
-End Function
-
-'Prepare shuttle adjustment
-Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Dim Error_Flag
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-  'fixedrail 
-  ' 0 = right side fixed
-  ' 1 = left side fixed
-  'abs_rel
-  ' 0 = relative shuttle position 
-  ' 1 = absolute shuttle position
-
-  Error_Flag = 0
-
-  If rel_abs < 0 OR rel_abs > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If fixedrail < 0 OR fixedrail > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If Error_Flag = 0 Then
-    If Memory.Exists( "CanManager" ) Then
-      Memory.Get "CANConfig",CANConfig
-      CanSendArg.CanId = CANConfig.CANIDcmd
-      CanSendArg.Data(0) = $(CMD_PREPARE_SHUTTLE_POSITION)
-      CanSendArg.Data(1) = rel_abs
-      CanSendArg.Data(2) = fixedrail
-      CanSendArg.Data(3) = 0
-      CanSendArg.Data(4) = Lang.GetByte(Position,0)
-      CanSendArg.Data(5) = Lang.GetByte(Position,1)
-      CanSendArg.Data(6) = Lang.GetByte(Position,2)
-      CanSendArg.Data(7) = Lang.GetByte(Position,3)
-      CanSendArg.Length = 8
-      
-      If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-        CMD_PrepareSA = True
-      Else
-        CMD_PrepareSA = False      
-      End If
-      
-    Else    
-      CMD_PrepareSA = False      
-    End if
-  
-  Else
-    DebugMessage "Invalid Param"
-  End If
-End Function
-
-Function Command_SetPCBData ( DataID, Value)
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists( "CanManager" ) Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
-    CanSendArg.Data(1) = DataID
-    CanSendArg.Data(2) = 0
-    CanSendArg.Data(3) = 0
-    CanSendArg.Data(4) = Lang.GetByte(Value,0)
-    CanSendArg.Data(5) = Lang.GetByte(Value,1)    
-    CanSendArg.Length = 6
-    
-    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      Command_SetPCBData = True
-    Else
-      Command_SetPCBData = False
-    End If    
-  Else
-    Command_SetPCBData = False
-  End if
-  
-End Function
-
-Function Command_SetPCBLength (Value)
-  Command_SetPCBLength = Command_SetPCBData($(PCB_DATA_LENGTH),Value)
-End Function 
-
-Function Command_DeletePCB
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists( "CanManager" ) Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_DELETE_PCB)
-    CanSendArg.Length = 1
-    
-    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Delete PCB command sent"
-    Else
-       LogAdd "Delete PCB command failed"
-    End If    
-  Else
-
-  End if  
 End Function

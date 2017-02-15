@@ -29,7 +29,7 @@ Const IO_Max            = 37
 ' Init Windows
 '-------------------------------------------------------
 
-Function InitWindowIOs ()
+Function Init_WindowIO ()
   Dim IO_Array
   Dim i
   Dim LEDName
@@ -55,24 +55,24 @@ End Function
 ' Init On Click Functions
 '-------------------------------------------------------
 
-'Function OnClick_btnoled18( Reason ) IO_setToggle(&H18) End Function
-Function OnClick_btnoled19( Reason ) IO_setToggle(&H19) End Function
-Function OnClick_btnoled1A( Reason ) IO_setToggle(&H1A) End Function
-Function OnClick_btnoled1B( Reason ) IO_setToggle(&H1B) End Function
-Function OnClick_btnoled1C( Reason ) IO_setToggle(&H1C) End Function
-Function OnClick_btnoled1D( Reason ) IO_setToggle(&H1D) End Function
-Function OnClick_btnoled1E( Reason ) IO_setToggle(&H1E) End Function
-Function OnClick_btnoled20( Reason ) IO_setToggle(&H20) End Function
-Function OnClick_btnoled21( Reason ) IO_setToggle(&H21) End Function
-Function OnClick_btnoled22( Reason ) IO_setToggle(&H22) End Function
-Function OnClick_btnoled23( Reason ) IO_setToggle(&H23) End Function
-Function OnClick_btnoled24( Reason ) IO_setToggle(&H24) End Function
-Function OnClick_btnoled25( Reason ) IO_setToggle(&H25) End Function
+'Function OnClick_btnoled18( Reason ) Command_Set_OutputToggleIO(&H18) End Function
+Function OnClick_btnoled19( Reason ) Command_Set_OutputToggleIO(&H19) End Function
+Function OnClick_btnoled1A( Reason ) Command_Set_OutputToggleIO(&H1A) End Function
+Function OnClick_btnoled1B( Reason ) Command_Set_OutputToggleIO(&H1B) End Function
+Function OnClick_btnoled1C( Reason ) Command_Set_OutputToggleIO(&H1C) End Function
+Function OnClick_btnoled1D( Reason ) Command_Set_OutputToggleIO(&H1D) End Function
+Function OnClick_btnoled1E( Reason ) Command_Set_OutputToggleIO(&H1E) End Function
+Function OnClick_btnoled20( Reason ) Command_Set_OutputToggleIO(&H20) End Function
+Function OnClick_btnoled21( Reason ) Command_Set_OutputToggleIO(&H21) End Function
+Function OnClick_btnoled22( Reason ) Command_Set_OutputToggleIO(&H22) End Function
+Function OnClick_btnoled23( Reason ) Command_Set_OutputToggleIO(&H23) End Function
+Function OnClick_btnoled24( Reason ) Command_Set_OutputToggleIO(&H24) End Function
+Function OnClick_btnoled25( Reason ) Command_Set_OutputToggleIO(&H25) End Function
 
 '-------------------------------------------------------
 'Refreshes the IO inputs
 Function OnClick_btnUpdateInputs ( Reason )
-  If GetIOState = True Then
+  If Command_Get_IOStates = True Then
     LogAdd "Refresh Input IOs"
   Else
     LogAdd "Refresh Input IOs failed!"  
@@ -159,73 +159,5 @@ Function IO_getName ( Target )
 
 End Function
 
-'-------------------------------------------------------
-'Toggle the output of the selected IO
-Function IO_setToggle ( Target )
-  Dim CanSendArg, CanReadArg, CANConfig
-  Dim NewValue 
-  If IO_getValue(Target) = 1 Then
-    NewValue = 0
-  Else
-    NewValue = 1
-  End If
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
-  Memory.Get "CANConfig",CANConfig
-  CanSendArg.CanID = CANConfig.CANIDcmd
-  CanSendArg.Data(0) = $(CMD_SET_OUTPUT)
-  CanSendArg.Data(1) = Target  
-  CanSendArg.Data(2) = NewValue  
-  CanSendArg.Length = 3
-  If CANSendCmd(CanSendArg,CanReadArg, 250) = True Then
-    LogAdd "Toggle : " & IO_getName(Target)
-    IO_setValue Target, NewValue
-  Else
-    LogAdd "Toggle " & IO_getName(Target) & " output failed!"
-  End If  
-End Function
-
-'-------------------------------------------------------
-' Gets the IO state of ALL the input and outputs
-Function GetIOState()
-  Dim CanSendArg, CanReadArg,CANConfig
-  Dim iByte, iBit, bitCount, exitLoop
-  Dim btncount,btnname
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  bitCount = 0
-  exitLoop = 0
-  Memory.Get "CANConfig",CANConfig
-  CanSendArg.CanID = CANConfig.CANIDcmd
-  CanSendArg.Data(0) = &h37
-  CanSendArg.Data(1) = &h00
-  CanSendArg.Length = 2
-  
-  'Send out Get IO State Command
-  If CANSendCmd(CanSendArg,CanReadArg, 250) = True Then
-    'For iByte = 2 to 7   
-      'Debugmessage "Byte: " & CanReadArg.Data(iByte)
-    'Next
-    
-      For iByte = 2 to 7
-        For iBit = 0 to 7
-          IO_setValue bitCount,Lang.Bit(CanReadArg.Data(iByte),iBit)
-          bitCount = bitCount+1
-          'stop at the maximum number of LEDs to update
-          If bitCount > IO_Max Then
-            exitLoop = 1
-            Exit For
-          End If
-        Next
-        If exitLoop = 1 Then
-          Exit For
-        End If
-      Next
-    GetIOState = True
-  Else
-    GetIOState = False    
-  End If  
-End Function
 
 

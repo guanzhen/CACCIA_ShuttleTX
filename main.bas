@@ -7,15 +7,15 @@ Option Explicit
 #include <System.bas>
 
 #include "Constants.bas"
-#include "CanSetup.bas"
 #include "can_common.bas"
+#include "Can_Commands.bas"
 #include "DebugLog.bas"
 #include "Tab_Commands.bas"
 #include "Tab_Motor.bas"
 #include "Tab_IOs.bas"
 #include "Tab_Endurance.bas"
+#include "Tab_EMC_Test.bas"
 #include "testing.bas"
-#include "EMC_Test.bas"
 
 '#include "Constants.bas"
 
@@ -72,7 +72,7 @@ Sub InitWindows
   'Visual.ExecuteScriptFunction("load_CANsetup")
 
   'Set the images for the IO Tab
-  InitWindowIOs
+  Init_WindowIO
   Init_WindowCommands
   Init_WindowMotor
   Init_WindowEndurance
