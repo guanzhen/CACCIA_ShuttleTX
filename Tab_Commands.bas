@@ -191,21 +191,10 @@ Function OnClick_btnmvshuttle ( Reason )
   Else
     DebugMessage "Move Shuttle destination lane invalid! :" &lane
   End If
-
-
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_SHUTTLE)
-    CanSendArg.Data(1) = lane
-    CanSendArg.Length = 2
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move Shuttle to "&get_LaneName(lane)
-    Else
-      LogAdd "Move Shuttle Failed!"
-    End If
-  End If
-End Function
+  
+  Command_MoveShuttle lane
+  
+End Function 
 
 Function get_LaneName( Lane )
   Select Case lane

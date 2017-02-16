@@ -366,6 +366,20 @@ Function Command_Prepare_MotorReference( Motor )
   End If
 End Function
 
+Function Command_MoveShuttle ( lane )
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_MOVE_SHUTTLE)
+    CanSendArg.Data(1) = lane
+    CanSendArg.Length = 2
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      LogAdd "Move Shuttle to "&get_LaneName(lane)
+    Else
+      LogAdd "Move Shuttle Failed!"
+    End If
+  End If
+End Function
 '-------------------------------------------------------
 Function Command_Reset_FixedRailOffset( Lane )
   Dim CanSendArg,CanReadArg, CANConfig
