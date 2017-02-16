@@ -551,6 +551,49 @@ Function Command_DeletePCB ()
   End if  
 End Function
 
+Function Command_Get_HWOption ( )
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_HW_OPTION)   
+    CanSendArg.Length = 1
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Delete PCB command sent"
+    Else
+       LogAdd "Delete PCB command failed"
+    End If    
+  Else
+
+  End if  
+End Function
+
+Function Command_Set_HWOption ( )
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_HW_OPTION)   
+    CanSendArg.Length = 1
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Get HW Option"
+    Else
+      LogAdd "Get HW Option command failed"
+    End If    
+  Else
+    
+  End if  
+End Function
 
 '-------------------------------------------------------
 ' Gets the IO state of ALL the input and outputs
