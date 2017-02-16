@@ -3,6 +3,35 @@
 '* Input:  none
 '* Output: none
 '**********************************************************************
+Function btn_CanConnect( id, id1 )
+  Dim ShuttleConfig,Net,TitleText, CANData
+  
+  For i = 0  To 7
+  	CANData.Add(0)
+  Next
+  
+  Memory.Set "CANData",CANData  
+  DebugMessage"Launch Can Connect"
+  Net = Visual.Script("opt_net")
+  ShuttleConfig = Visual.Script("opt_config")
+  DebugMessage "Selected Config :"&ShuttleConfig
+  DebugMessage "Selected Net :"&Net
+  TitleText = "Shuttle TX Control " & String.Format(  "%01d",AppVersionMax) & "." & String.Format("%02d",AppVersionMin) & " - "
+  If ShuttleConfig = 0 Then
+    TitleText = TitleText & "Upstream"
+  Elseif ShuttleConfig = 1 Then
+    TitleText = TitleText & "Downstream"
+  End If
+  Window.Title = TitleText
+  Visual.Script("dhxWins").unload()
+  'Initialise can using the settings by user.
+  InitCAN ShuttleConfig,Net,"1000"
+  Visual.Select("Layer_CanSetup").Style.Display = "none"
+  Visual.Select("Layer_MessageLog").Style.Display = "block"
+  Visual.Select("Layer_TabStrip").Style.Display = "block"
+
+End Function
+
 Function InitCAN ( Config, Net, BaudRate )
   Dim CanManager, CanConfig
   set CANConfig = Object.CreateRecord( "Net", "CANIDcmd", "CANIDAck", "CANIDPub","Baudrate" )
@@ -122,6 +151,14 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
     DebugMessage "Cmd:"&CanSendArg.Format(CFM_SHORT)
     If CanManager.SendCmd(CanSendArg,Timeout,SC_CHECK_ERROR_BYTE,CanReadArg) = SCA_NO_ERROR Then    
       DebugMessage "Command " & String.Format("%02X",CanSendArg.Data(0)) &" OK"
+      CANData.Data(0) = CanReadArg.Data(0) 
+      CANData.Data(1) = CanReadArg.Data(1) 
+      CANData.Data(2) = CanReadArg.Data(2) 
+      CANData.Data(3) = CanReadArg.Data(3) 
+      CANData.Data(4) = CanReadArg.Data(4)
+      CANData.Data(5) = CanReadArg.Data(5)
+      CANData.Data(6) = CanReadArg.Data(6)
+      CANData.Data(7) = CanReadArg.Data(7)      
       CANSendCMD = True
     Else
       DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
@@ -134,28 +171,6 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
 
 End Function
 
-Function btn_CanConnect( id, id1 )
-  Dim ShuttleConfig,Net,TitleText
-  DebugMessage"Launch Can Connect"
-  Net = Visual.Script("opt_net")
-  ShuttleConfig = Visual.Script("opt_config")
-  DebugMessage "Selected Config :"&ShuttleConfig
-  DebugMessage "Selected Net :"&Net
-  TitleText = "Shuttle TX Control " & String.Format(  "%01d",AppVersionMax) & "." & String.Format("%02d",AppVersionMin) & " - "
-  If ShuttleConfig = 0 Then
-    TitleText = TitleText & "Upstream"
-  Elseif ShuttleConfig = 1 Then
-    TitleText = TitleText & "Downstream"
-  End If
-  Window.Title = TitleText
-  Visual.Script("dhxWins").unload()
-  'Initialise can using the settings by user.
-  InitCAN ShuttleConfig,Net,"1000"
-  Visual.Select("Layer_CanSetup").Style.Display = "none"
-  Visual.Select("Layer_MessageLog").Style.Display = "block"
-  Visual.Select("Layer_TabStrip").Style.Display = "block"
-
-End Function
 
 'No longer needed since we are using DHTMLX window
 Function InitWindowCanSetup
