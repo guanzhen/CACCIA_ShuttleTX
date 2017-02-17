@@ -128,7 +128,7 @@ Function test_moveshuttle ( lane )
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move Shuttle to "&get_LaneName(lane)
+      LogAdd "Move Shuttle to "&Get_LaneName(lane)
       test_moveshuttle = True
     Else
       LogAdd "Move Shuttle Failed!"
