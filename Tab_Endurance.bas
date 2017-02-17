@@ -33,6 +33,7 @@ NoError = 1
 Checked_PCB = Visual.Select("cbwithPBC").Checked
 Checked_woPCB = Visual.Select("cbwoPBC").Checked
 
+If NOT Memory.Exists("sig_externalstop") Then
   If NOT Checked_PCB AND NOT Checked_woPCB Then
     NoError = 0
     LogAdd "No tests are selected!"
@@ -56,11 +57,15 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
 
   If NoError = 1 Then
     LogAdd "System Acceptance start!"
+    Visual.Select("btnSArun_start").Disabled = True
     System.Start SARun_Monitor(Duration_PCB,Duration_woPCB,Checked_PCB,Checked_woPCB)
   Else
     LogAdd "System Acceptance cannot start."
   End If
-
+Else
+    LogAdd "System Acceptance already started."
+End If
+  DebugMessage "System Acceptance button exit"
 End Function
 
 '-------------------------------------------------------
@@ -89,6 +94,8 @@ End If
 
 If NoError = 1 Then
   LogAdd "Endurance Run with PCB Start"
+  Visual.Select("btnendrun_wpcb_start").Disabled = True
+  Visual.Select("btnendrun_wopcb_start").Disabled = True
   System.Start ERun_Monitor(optCyclic,optCyclic,optShuttle,false)
 End If
 End Function
@@ -118,7 +125,11 @@ End If
 End Function
 '-------------------------------------------------------
 Function OnClick_btnendrun_wopcb_stop ( Reason )
-ERun_Stop
+  ERun_Stop
+End Function
+'-------------------------------------------------------
+Function OnClick_btnunloadPCB ( Reason )
+  UnLoadPCB
 End Function
 '-------------------------------------------------------
 Function ERun_Stop( )
@@ -185,6 +196,7 @@ If Not Memory.Exists("sig_ERexternalstop") Then
    Visual.Select("textERelapsedtime").Value = FormatTimeString(time_elapsed)
    System.Delay(200)
   Loop
+  Command_Abort
   time_stop = Time
   Visual.Select("textERstoptime").Value = FormatTimeString(time_stop)
   If optPCB = 1 Then
@@ -192,6 +204,9 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   End If
   DebugMessage "Endurance Run Stopped. Total Time: "& FormatTimeString(time_elapsed)
   Memory.Free "sig_ERexternalstop"
+  Visual.Select("btnendrun_wpcb_start").Disabled = False
+  Visual.Select("btnendrun_wopcb_start").Disabled = False
+
 Else
   LogAdd "Endurance Run already running!"
 End If
@@ -214,6 +229,8 @@ Memory.Set "sig_externalstop", sig_externalstop
 external_stop = 0
 
 Command_Set_ParamERLimit 5000
+LogAdd "Clearing conveyor of any existing PCB..."
+UnLoadPCB
 
 If en_PCB = True Then
 '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
@@ -250,7 +267,9 @@ If en_PCB = True Then
    System.Delay(100)
   Loop
   'Send the CAN abort command, to terminate the current endurance run.
+  'Do this only if loop exit not due to errors.
   If Not external_stop = 1 Then
+    LogAdd "Unloading Test PCB"
     UnLoadPCB
   End If
   Memory.Free "sig_timerend"
@@ -265,12 +284,6 @@ If external_stop = 0 Then
     
   'End If
   If en_woPCB = True Then
-    '[Removed] Delete PCB data again incase user forgotten.
-    'Command_Prepare_MoveOut 3
-    'System.Delay(2000)  
-    'Command_Abort  
-    'System.Delay(500)  
-    'Command_DeletePCB
     'Wait 2 seconds for previous operation to finish
     System.Delay(2000)  
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
@@ -310,6 +323,7 @@ End If
 
 Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
 LogAdd "System Acceptance ended!"
+Visual.Select("btnSArun_start").Disabled = False    
 Memory.Free "sig_externalstop"
 Command_Abort
 End Function
@@ -336,7 +350,7 @@ Sub UnLoadPCB ()
   System.Delay(1000)
   Command_Prepare_ShuttlePosition 0,1,0
   System.Delay(2000)  
-  Command_Prepare_MotorVelocity 4000,$(MOTOR_CONVEYOR)
+  Command_Prepare_MotorVelocity 3000,$(MOTOR_CONVEYOR)
   System.Delay(2000)
   Command_Abort
   System.Delay(500)
