@@ -75,10 +75,25 @@
     Author: Igor Zimmermann
     Date: 2016-09-23
 
+    Version: 15
+    Description: Added: PAR_ENDUR_LIMIT_ADJ
+    Author: Igor Zimmermann
+    Date: 2017-01-09
+
+    Version: 16
+    Description: Added: PUB_MSG_BARCODE, OPT_HW_EXTENDED_BELTS, OPT_HW_BARCODE_TRIGGER
+    Author: Igor Zimmermann
+    Date: 2017-01-20
+
+    Version: 17
+    Description: Added: PCB_DATA_OPTIONS_SINGLE, Changed OUTPUTS for BARCODE
+    Author: Igor Zimmermann
+    Date: 2017-02-08
+
 */
     //Interface
-        #define    MINOR_VERSION_ISS_SHUTTLE                       0x0000
         #define    MAJOR_VERSION_ISS_SHUTTLE                       0x0000
+        #define    MINOR_VERSION_ISS_SHUTTLE                       0x0003
 
     //************************************************************************
     //*              CAN commands                                            *
@@ -132,14 +147,10 @@
         #define    ACK_SYNTAX_ERR                                  0x0F
         #define    ACK_PARAM_UNDEF                                 0x22
         #define    ACK_PARAM_VALUE_FALSE                           0x23
-
-
         #define    ACK_BUSY                                        0x26
         #define    ACK_OFFSET_FIXED_RAIL                           0x27
         #define    ACK_WIDTH_OFFSET_RANGE                          0x28
         #define    ACK_PCB_ID_FALSE                                0x29
-
-
         #define    ACK_PUB_ERROR                                   0x7F
 
     //************************************************************************
@@ -202,11 +213,14 @@
         #define    OPT_HW_BARCODE_L2B                              0x04
         #define    OPT_HW_UP_FAILED_BOARD                          0x05
         #define    OPT_HW_DOWN_FAILED_BOARD                        0x06
+        #define    OPT_HW_BARCODE_TRIGGER                          0x07
+        #define    OPT_HW_EXTENDED_BELTS                           0x08
 
     //Parameter of CMD_PCB_DATA
         #define    PCB_DATA_LENGTH                                 0x00
         #define    PCB_POS_BARCODE                                 0x01
         #define    PCB_DATA_OPTIONS                                0x02
+        #define    PCB_DATA_OPTIONS_SINGLE                         0x03
 
     //Coding of pcb status
         #define    PCB_STATE_DELETED                               0x00
@@ -308,6 +322,7 @@
         #define    PUB_MSG_IO_STATE                                0x13
         #define    PUB_MSG_MACHINE_INTERFACE                       0x14
         #define    PUB_MSG_PCB_STATE                               0x22
+        #define    PUB_MSG_BARCODE                                 0x23
         #define    PUB_MSG_CONV_MOTOR_POSITION                     0x81
         #define    PUB_MSG_SHUTTLE_MOTOR_POSITION                  0x82
         #define    PUB_MSG_WA_MOTOR_POSITION                       0x83
@@ -376,11 +391,10 @@
         #define    INP_SMEMA_U2_FAILED_BOARD                       0x13
         #define    INP_SMEMA_D1_MACHINE_READY                      0x14
         #define    INP_SMEMA_D2_MACHINE_READY                      0x15
-
         #define    OUTP_BRAKE_WA_MOTOR                             0x19
         #define    OUTP_BRAKE_SHUTTLE_MOTOR                        0x1A
-        #define    OUTP_ACTIVATE_BARCODE_LANE_1                    0x1B
-        #define    OUTP_ACTIVATE_BARCODE_LANE_2                    0x1C
+        #define    OUTP_ACTIVATE_BARCODE_1                         0x1B
+        #define    OUTP_ACTIVATE_BARCODE_2                         0x1C
         #define    OUTP_COVER_LOCK_1                               0x1D
         #define    OUTP_COVER_LOCK_2                               0x1E
         #define    OUTP_SMEMA_U1_MACHINE_READY                     0x20
@@ -389,4 +403,13 @@
         #define    OUTP_SMEMA_D1_FAILED_BOARD                      0x23
         #define    OUTP_SMEMA_D2_PCB_AVAILABLE                     0x24
         #define    OUTP_SMEMA_D2_FAILED_BOARD                      0x25
+        #define    OUTP_ACTIVATE_BARCODE_3                         0x26
+        #define    OUTP_ACTIVATE_BARCODE_4                         0x27
+
+    //************************************************************************
+    //*              Coding of barcode position (bit)                        *
+    //************************************************************************
+        #define    BARCODE_POSITION_UNDEF                          0x00
+        #define    BARCODE_POSITION_TOP                            0x01
+        #define    BARCODE_POSITION_BOTTOM                         0x02
 

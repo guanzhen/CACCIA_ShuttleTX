@@ -3,6 +3,40 @@
 '* Input:  none
 '* Output: none
 '**********************************************************************
+Function btn_CanConnect( id, id1 )
+  Dim ShuttleConfig,Net,TitleText, CANData, i
+  Dim CANDataLength
+  Set CANData = CreateObject( "MATH.Array" )
+  
+  
+  For i = 0  To 7
+  	CANData.Add(0)
+  Next
+  
+  Memory.Set "CANData",CANData  
+  Memory.Set "CANDataLength",CANDataLength  
+  DebugMessage"Launch Can Connect"
+  Net = Visual.Script("opt_net")
+  ShuttleConfig = Visual.Script("opt_config")
+  DebugMessage "Selected Config :"&ShuttleConfig
+  DebugMessage "Selected Net :"&Net
+  TitleText = "Shuttle TX Control " & String.Format(  "%01d",AppVersionMax) & "." & String.Format("%02d",AppVersionMin) & " - "
+  If ShuttleConfig = 0 Then
+    TitleText = TitleText & "Upstream"
+  Elseif ShuttleConfig = 1 Then
+    TitleText = TitleText & "Downstream"
+  End If
+  Window.Title = TitleText
+  Visual.Script("dhxWins").unload()
+  'Initialise can using the settings by user.
+  InitCAN ShuttleConfig,Net,"1000"
+  Visual.Select("Layer_CanSetup").Style.Display = "none"
+  Visual.Select("Layer_MessageLog").Style.Display = "block"
+  Visual.Select("Layer_TabStrip").Style.Display = "block"
+
+End Function
+'------------------------------------------------------------------
+
 Function InitCAN ( Config, Net, BaudRate )
   Dim CanManager, CanConfig
   set CANConfig = Object.CreateRecord( "Net", "CANIDcmd", "CANIDAck", "CANIDPub","Baudrate" )
@@ -43,8 +77,7 @@ Function InitCAN ( Config, Net, BaudRate )
     InitCANMgr2
   Else
     LogAdd "No Can Manager!"
-  End If
-    
+  End If    
     
 End Function
 
@@ -67,10 +100,12 @@ Sub InitCANMgr2
   WithEvents.ConnectObject CanManagerPUB, "CanManagerPUB_"
   Memory.Set "CanManagerPUB",CanManagerPUB
 End Sub
+'------------------------------------------------------------------
 
 Function CanManager_Deliver( ByVal CanReadArg )
   DebugMessage "CanMgr1:" & CanReadArg.Format(CFM_SHORT)
 End Function 
+'------------------------------------------------------------------
 
 Function CanManagerPUB_Deliver( ByVal CanReadArg )
   'DebugMessage "CanPubMgr: " & CanReadArg.Format(CFM_SHORT)  
@@ -80,14 +115,14 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
     If CanReadArg.Data(2) = 0 Then
       PUB_Handler CanReadArg
     Else
-      DebugDecodePub CanReadArg
+      Get_PUB_Info CanReadArg
     End If
   Else
     If NOT CanReadArg.Data(1) = &h04 Then
     LogAdd "Error! (" & Get_Err_Name(CanReadArg.Data(1))& ")"
     End If
     DebugMessage "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " Err: (" & Get_Err_Name(CanReadArg.Data(1))& ")"
-    If NOT CanReadArg.Data(1) = &h16  Then
+    If NOT CanReadArg.Data(1) = &h16  AND Memory.InhibitErrors = 0 Then
       If NOT CanReadArg.Data(1) = &h04 Then
         If Memory.Exists("sig_externalstop") Then
           LogAdd "SA Run Stopped Due to Error"
@@ -102,61 +137,18 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
   End If  
 
 End Function
+'------------------------------------------------------------------
 
-Sub CANSend ( CanSendArg )
-  Dim debug
-  Dim CanManager
-  
-  If Memory.Exists("CanManager") Then 
-    Memory.Get "CanManager",CanManager
-    CanManager.Send CanSendArg
-  'If debug Then
-    DebugMessage CanSendArg.Format(CFM_SHORT)
-  End If  
-End Sub
+'No longer needed since we are using DHTMLX window
+Function InitWindowCanSetup
 
-Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
-  Dim CanManager
-  If Memory.Exists("CanManager") Then 
-    Memory.Get "CanManager",CanManager
-    DebugMessage "Cmd:"&CanSendArg.Format(CFM_SHORT)
-    If CanManager.SendCmd(CanSendArg,Timeout,SC_CHECK_ERROR_BYTE,CanReadArg) = SCA_NO_ERROR Then    
-      DebugMessage "Command " & String.Format("%02X",CanSendArg.Data(0)) &" OK"
-      CANSendCMD = True
-    Else
-      DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
-      CANSendCMD = False
-    End If    
-    CanManager.Deliver = True
-  Else
-      CANSendCMD = False
-  End If
+  Visual.Select("Layer_CanSetup").Style.Height  = CANSETUP_HEIGHT
+  Visual.Select("Layer_CanSetup").Style.Width   = CANSETUP_WIDTH
+  Visual.Select("Layer_CanSetup").Style.Display = "block"
+  Visual.Select("Layer_CanSetup").Align = "center"
 
 End Function
-
-Function CANSendAbort ( )
-  Dim CanSendArg , CanReadArg, CANConfig
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
-  CANSendAbort = False  
-  
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_ABORT)
-    CanSendArg.Length = 1
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      DebugMessage "Current operation aborted"
-      CANSendAbort = True
-    Else
-      DebugMessage "attempt to abort operation failed"
-    End If
-  else
-    LogAdd "No CAN Manager!"
-    
-  End If 
-End Function
+'------------------------------------------------------------------
 
 Function PUB_Handler ( CanReadArg )
   Dim command  
@@ -172,6 +164,7 @@ Function PUB_Handler ( CanReadArg )
   End Select
   
 End Function
+'------------------------------------------------------------------
 
 Function PUB_IO_Handler ( CanReadArg )
   Dim Message
@@ -190,8 +183,44 @@ Function PUB_IO_Handler ( CanReadArg )
   DebugMessage Message
 
 End Function
+'------------------------------------------------------------------
 
-Function CAN_getparam( CanReadArg , Param )
+Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
+  Dim CanManager
+  Dim CANData,CANDataLength
+  If Memory.Exists("CanManager") Then 
+    Memory.Get "CanManager",CanManager
+    Memory.Get "CANData",CANData
+    Memory.Get "CANDataLength",CANDataLength
+
+    DebugMessage "Cmd:"&CanSendArg.Format(CFM_SHORT)
+    If CanManager.SendCmd(CanSendArg,Timeout,SC_CHECK_ERROR_BYTE,CanReadArg) = SCA_NO_ERROR Then    
+      DebugMessage "Command " & String.Format("%02X",CanSendArg.Data(0)) &" OK"
+      CANDataLength = CanReadArg.Length
+      CANData.Data(0) = CanReadArg.Data(0) 
+      CANData.Data(1) = CanReadArg.Data(1) 
+      CANData.Data(2) = CanReadArg.Data(2) 
+      CANData.Data(3) = CanReadArg.Data(3) 
+      CANData.Data(4) = CanReadArg.Data(4)
+      CANData.Data(5) = CanReadArg.Data(5)
+      CANData.Data(6) = CanReadArg.Data(6)
+      CANData.Data(7) = CanReadArg.Data(7)      
+      CANSendCMD = True
+      Memory.Set "CANData",CanData 
+      Memory.Set "CANDataLength",CanDataLength
+    Else
+      DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
+      CANSendCMD = False
+    End If    
+    CanManager.Deliver = True
+  Else
+      CANSendCMD = False
+  End If
+
+End Function
+'------------------------------------------------------------------
+
+Function Command_Get_Param( CanReadArg , Param )
 
   Dim CanSendArg , CANConfig
   Dim ParamL,ParamH
@@ -215,8 +244,9 @@ Function CAN_getparam( CanReadArg , Param )
     End If  
   End If
 End Function
+'------------------------------------------------------------------
 
-Function DebugDecodePub( CanReadArg )
+Function Get_PUB_Info( CanReadArg )
 Dim Active,Running,prepid
 
   If (Lang.Bit( CanReadArg.Data(0),7,1 )) = 1 Then
@@ -233,17 +263,18 @@ Dim Active,Running,prepid
   prepid = CanReadArg.Data(2)
   DebugMessage "PubMsg: "& CanReadArg.Format(CFM_SHORT)  & " ("&Active & Running & " PrepID:" & prepid & ")"
 End Function
+'------------------------------------------------------------------
 
 Function Get_Err_Name( ID )
   Dim name
   Select Case ID
-  Case	&h02	:	name ="ERR_CONTROL_VOLTAGE"
-  Case	&h03	:	name ="ERR_EMERGENCY_STOP"
-  Case	&h04	:	name ="User Abort Function"
-  Case	&h10	:	name ="ERR_MOVE_IN"
-  Case	&h11	:	name ="ERR_MOVE_OUT"
-  Case	&h12	:	name ="ERR_POSITION_RAIL"
-  Case	&h13	:	name ="ERR_LANE_WIDTH"
+  Case	$(ERR_CONTROL_VOLTAGE)	:	name ="ERR_CONTROL_VOLTAGE"
+  Case	$(ERR_EMERGENCY_STOP)	:	name ="ERR_EMERGENCY_STOP"
+  Case	$(ERR_ABORTED)	:	name ="User Abort Function"
+  Case	$(ERR_MOVE_IN)	:	name ="ERR_MOVE_IN"
+  Case	$(ERR_MOVE_OUT)	:	name ="ERR_MOVE_OUT"
+  Case	$(ERR_POSITION_RAIL)	:	name ="ERR_POSITION_RAIL"
+  Case	$(ERR_LANE_WIDTH)	:	name ="ERR_LANE_WIDTH"
   Case	&h14	:	name ="ERR_OFFSET_WIDTH"
   Case	&h15	:	name ="ERR_SHUTTLE_BLOCKED"
   Case	&h16	:	name ="ERR_WIDTH_ADJ_BLOCKED: Check if there is PCB on conveyor or PCB sensor blocked"
@@ -257,6 +288,10 @@ Function Get_Err_Name( ID )
   Case	&h1E	:	name ="ERR_TRAVEL_RANGE_RAIL_L"
   Case	&h1F	:	name ="ERR_MECH_LIMIT_RIGHT_SIDE"
   Case	&h20	:	name ="ERR_MECH_LIMIT_LEFT_SIDE"
+  Case	&h24	:	name ="ERR_PCB_MOVING_IN"
+  Case	&h25	:	name ="ERR_PCB_MOVING_OUT"
+  Case	&h2A	:	name ="ERR_NO_PCB_PRESENT"
+  Case	&h2B	:	name ="ERR_PCB_PRESENT"
   Case	&h30	:	name ="ERR_MOTOR_MOVING"
   Case	&h31	:	name ="ERR_MOTOR_COUNT"
   Case	&h32	:	name ="ERR_MOTOR_INDEX_PULSE"
@@ -270,6 +305,8 @@ Function Get_Err_Name( ID )
   End Select
   Get_Err_Name = name
 End Function 
+'------------------------------------------------------------------
+
 Function Get_PUB_PrepareID( ID )
 Dim name
   Select Case ID
@@ -310,163 +347,4 @@ Dim name
     Case Else  name = "unknown" & ID & ") "
   End Select
   Get_PUB_PrepareID = name
-End Function
-
-'Prepare width adjustment
-Function CMD_PrepareWA ( Width , rel_abs, fixedrail)
-  'fixedrail 
-  ' 0 = right side fixed
-  ' 1 = left side fixed
-  'abs_rel
-  ' 0 = relative width position 
-  ' 1 = absolute width position
-
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Dim Error_Flag
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  Error_Flag = 0
-  
-  If rel_abs < 0 OR rel_abs > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If fixedrail < 0 OR fixedrail > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If Error_Flag = 0 Then
-    If Memory.Exists( "CanManager" ) Then
-      Memory.Get "CANConfig",CANConfig
-      CanSendArg.CanId = CANConfig.CANIDcmd
-      CanSendArg.Data(0) = $(CMD_PREPARE_WIDTH_ADJUSTMENT)
-      CanSendArg.Data(1) = rel_abs
-      CanSendArg.Data(2) = fixedrail
-      CanSendArg.Data(3) = 0
-      CanSendArg.Data(4) = Lang.GetByte(Width,0)
-      CanSendArg.Data(5) = Lang.GetByte(Width,1)
-      CanSendArg.Data(6) = Lang.GetByte(Width,2)
-      CanSendArg.Data(7) = Lang.GetByte(Width,3)
-      CanSendArg.Length = 8
-      If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-
-      Else
-
-      End If
-    Else
-
-    End if
-  
-  Else
-    DebugMessage "Invalid Param"
-  End If
-End Function
-
-'Prepare shuttle adjustment
-Function CMD_PrepareSA ( Position, rel_abs, fixedrail)
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Dim Error_Flag
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-  'fixedrail 
-  ' 0 = right side fixed
-  ' 1 = left side fixed
-  'abs_rel
-  ' 0 = relative shuttle position 
-  ' 1 = absolute shuttle position
-
-  Error_Flag = 0
-
-  If rel_abs < 0 OR rel_abs > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If fixedrail < 0 OR fixedrail > 1 Then
-    Error_Flag = 1
-  End If
-  
-  If Error_Flag = 0 Then
-    If Memory.Exists( "CanManager" ) Then
-      Memory.Get "CANConfig",CANConfig
-      CanSendArg.CanId = CANConfig.CANIDcmd
-      CanSendArg.Data(0) = $(CMD_PREPARE_SHUTTLE_POSITION)
-      CanSendArg.Data(1) = rel_abs
-      CanSendArg.Data(2) = fixedrail
-      CanSendArg.Data(3) = 0
-      CanSendArg.Data(4) = Lang.GetByte(Position,0)
-      CanSendArg.Data(5) = Lang.GetByte(Position,1)
-      CanSendArg.Data(6) = Lang.GetByte(Position,2)
-      CanSendArg.Data(7) = Lang.GetByte(Position,3)
-      CanSendArg.Length = 8
-      
-      If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-        CMD_PrepareSA = True
-      Else
-        CMD_PrepareSA = False      
-      End If
-      
-    Else    
-      CMD_PrepareSA = False      
-    End if
-  
-  Else
-    DebugMessage "Invalid Param"
-  End If
-End Function
-
-Function Command_SetPCBData ( DataID, Value)
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists( "CanManager" ) Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
-    CanSendArg.Data(1) = DataID
-    CanSendArg.Data(2) = 0
-    CanSendArg.Data(3) = 0
-    CanSendArg.Data(4) = Lang.GetByte(Value,0)
-    CanSendArg.Data(5) = Lang.GetByte(Value,1)    
-    CanSendArg.Length = 6
-    
-    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      Command_SetPCBData = True
-    Else
-      Command_SetPCBData = False
-    End If    
-  Else
-    Command_SetPCBData = False
-  End if
-  
-End Function
-
-Function Command_SetPCBLength (Value)
-  Command_SetPCBLength = Command_SetPCBData($(PCB_DATA_LENGTH),Value)
-End Function 
-
-Function Command_DeletePCB
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists( "CanManager" ) Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_DELETE_PCB)
-    CanSendArg.Length = 1
-    
-    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Delete PCB command sent"
-    Else
-       LogAdd "Delete PCB command failed"
-    End If    
-  Else
-
-  End if  
 End Function

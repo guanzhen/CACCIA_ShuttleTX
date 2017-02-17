@@ -1,4 +1,4 @@
 Const CONST_DEBUG = True
 Const AppVersionMax = 00
-Const AppVersionMin = 01
+Const AppVersionMin = 02
 

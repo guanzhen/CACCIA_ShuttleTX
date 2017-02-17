@@ -7,15 +7,15 @@ Option Explicit
 #include <System.bas>
 
 #include "Constants.bas"
-#include "CanSetup.bas"
 #include "can_common.bas"
+#include "Can_Commands.bas"
 #include "DebugLog.bas"
 #include "Tab_Commands.bas"
 #include "Tab_Motor.bas"
 #include "Tab_IOs.bas"
 #include "Tab_Endurance.bas"
+#include "Tab_EMC_Test.bas"
 #include "testing.bas"
-#include "EMC_Test.bas"
 
 '#include "Constants.bas"
 
@@ -59,10 +59,11 @@ End Sub
 '-------------------------------------------------------
 
 Sub InitWindows
-
+  Dim InhibitErrors
   Window.height = APP_HEIGHT
   Window.width = APP_WIDTH
-
+  InhibitErrors = 0
+  Memory.Set "InhibitErrors",InhibitErrors
   'Create debug log window
   'CreateDebugLogWindow
   DebugMessage "Starting Up"
@@ -72,7 +73,7 @@ Sub InitWindows
   'Visual.ExecuteScriptFunction("load_CANsetup")
 
   'Set the images for the IO Tab
-  InitWindowIOs
+  Init_WindowIO
   Init_WindowCommands
   Init_WindowMotor
   Init_WindowEndurance
@@ -107,7 +108,7 @@ Function LogAdd ( ByVal sMessage )
   Set Gridobj = Visual.Script("LogGrid")
   Dim MsgId
   MsgId = Gridobj.uid()
-  If NOT(sMessage = "") Then
+  If NOT(sMessage = "") AND Memory.InhibitErrors = 0 Then
     Gridobj.addRow MsgId, ""& FormatDateTime(Date, vbShortDate) &","& FormatDateTime(Time, vbShortTime)&":"& String.Format("%02d ", Second(Time)) &","& sMessage
     'Wish of SCM (automatically scroll to newest Msg)
     Gridobj.showRow( MsgId )

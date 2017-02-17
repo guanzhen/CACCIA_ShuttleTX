@@ -1,6 +1,7 @@
 
 const TEST_PCB_LENGTH = 1600
 
+'-------------------------------------------------------
 Function Init_WindowEndurance
 DebugMessage "Init Endurance Run Window"
 Visual.Select("textSAstarttime").ReadOnly = true
@@ -32,6 +33,7 @@ NoError = 1
 Checked_PCB = Visual.Select("cbwithPBC").Checked
 Checked_woPCB = Visual.Select("cbwoPBC").Checked
 
+If NOT Memory.Exists("sig_externalstop") Then
   If NOT Checked_PCB AND NOT Checked_woPCB Then
     NoError = 0
     LogAdd "No tests are selected!"
@@ -55,33 +57,27 @@ Checked_woPCB = Visual.Select("cbwoPBC").Checked
 
   If NoError = 1 Then
     LogAdd "System Acceptance start!"
-    System.Start SAEnduranceRunMonitor(Duration_PCB,Duration_woPCB,Checked_PCB,Checked_woPCB)
+    Visual.Select("btnSArun_start").Disabled = True
+    System.Start SARun_Monitor(Duration_PCB,Duration_woPCB,Checked_PCB,Checked_woPCB)
   Else
     LogAdd "System Acceptance cannot start."
   End If
-
-End Function
-'-------------------------------------------------------
-Function StopSARun()
-If Memory.Exists("sig_externalstop") Then
-  LogAdd "SA Run Stopped"
-  Memory.sig_externalstop.Set
-  CANSendAbort
 Else
-  CANSendAbort
-  'LogAdd "No SA run to stop."
+    LogAdd "System Acceptance already started."
 End If
+  DebugMessage "System Acceptance button exit"
 End Function
+
 '-------------------------------------------------------
 Function OnClick_btnSArun_stop ( Reason )
   DebugMessage "Stop Timer1 Clicked"
-  StopSARun
+  SARun_Stop
   DebugMessage "Stop Timer1 Ended"
 End Function
 '-------------------------------------------------------
 Function StopAllEnduranceRuns( )
-StopERRun
-StopSARun
+ERun_Stop
+SARun_Stop
 End Function
 '-------------------------------------------------------
 Function OnClick_btnendrun_wpcb_start ( Reason )
@@ -98,12 +94,14 @@ End If
 
 If NoError = 1 Then
   LogAdd "Endurance Run with PCB Start"
-  System.Start ERMonitor(optCyclic,optCyclic,optShuttle,false)
+  Visual.Select("btnendrun_wpcb_start").Disabled = True
+  Visual.Select("btnendrun_wopcb_start").Disabled = True
+  System.Start ERun_Monitor(optCyclic,optCyclic,optShuttle,false)
 End If
 End Function
 '-------------------------------------------------------
 Function OnClick_btnendrun_wpcb_stop ( Reason )
-  StopERRun
+  ERun_Stop
 End Function
 '-------------------------------------------------------
 Function OnClick_btnendrun_wopcb_start ( Reason )
@@ -121,107 +119,20 @@ End If
 
 If NoError = 1 Then
   LogAdd "Endurance Run without PCB Start"
-  System.Start ERMonitor(false,opt_conveyor,opt_shuttle,opt_WA)
+  System.Start ERun_Monitor(false,opt_conveyor,opt_shuttle,opt_WA)
 End If
 
 End Function
 '-------------------------------------------------------
 Function OnClick_btnendrun_wopcb_stop ( Reason )
-StopERRun
+  ERun_Stop
 End Function
 '-------------------------------------------------------
-Function EnduranceRun_SendCmd ( TimeOut, PCB, Conveyor, Shuttle, WA)
-
-  Dim CanSendArg , CanReadArg, CANConfig
-  Dim Mode,TimeOutSel
-  Dim TO_LL,TO_LH,TO_HL,TO_HH
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-
-  Mode = 0
-  EnduranceRun_SendCmd = false
-  Mode = Lang.SetBit(Mode,0,PCB)
-  Mode = Lang.SetBit(Mode,1,Conveyor)
-  Mode = Lang.SetBit(Mode,2,Shuttle)
-  Mode = Lang.SetBit(Mode,3,WA)
-  DebugMessage PCB & " " & Conveyor & " " & Shuttle & " " & WA
-  If TimeOut = 0 Then
-    'Run without stop
-    TimeOutSel = 0
-  Else
-    'Stop after timeout
-    TimeOutSel = 1
-  End If
-
-  TO_LL = Lang.GetByte(TimeOut,0)
-  TO_LH = Lang.GetByte(TimeOut,1)
-  TO_HL = Lang.GetByte(TimeOut,2)
-  TO_HH = Lang.GetByte(TimeOut,3)
-
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_ENDURANCE_RUN)
-    CanSendArg.Data(1) = 0
-    CanSendArg.Data(2) = Mode
-    CanSendArg.Data(3) = TimeOutSel
-    CanSendArg.Data(4) = TO_LL
-    CanSendArg.Data(5) = TO_LH
-    CanSendArg.Data(6) = TO_HL
-    CanSendArg.Data(7) = TO_HH
-    CanSendArg.Length = 8
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      EnduranceRun_SendCmd = true
-      'LogAdd "Endurance run command sent ok"
-    Else
-      'LogAdd "Endurance run command sent failed"
-    End If
-  else
-    LogAdd "No CAN Manager!"
-  End If
-
+Function OnClick_btnunloadPCB ( Reason )
+  UnLoadPCB
 End Function
 '-------------------------------------------------------
-Function GetERLimit()
-  Dim CanReadArg
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
-  CAN_getparam  CanReadArg,$(PAR_ENDUR_LIMIT_ADJ)  
-  DebugMessage "Limit: " & Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-   
-  End Function
-'-------------------------------------------------------
-Function SetERLimit( Value )
-  Dim CanReadArg,CanSendArg,CANConfig
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_SET_PARAM)
-    CanSendArg.Data(1) = Lang.GetByte ($(PAR_ENDUR_LIMIT_ADJ),0)
-    CanSendArg.Data(2) = Lang.GetByte ($(PAR_ENDUR_LIMIT_ADJ),1)
-    CanSendArg.Data(3) = Lang.GetByte (Value,0)
-    CanSendArg.Data(4) = Lang.GetByte (Value,1)
-    CanSendArg.Data(5) = Lang.GetByte (Value,2)
-    CanSendArg.Data(6) = Lang.GetByte (Value,3)
-    CanSendArg.Length = 7
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      SetERLimit = true
-      DebugMessage "Set ER Limit OK"
-      'LogAdd "Endurance run command sent ok"
-    Else
-      DebugMessage "Set ER Limit NOK"
-      SetERLimit = false
-      'LogAdd "Endurance run command sent failed"
-    End If
-  else
-    LogAdd "No CAN Manager!"
-  End If
-End Function
-
-Function StopERRun( )
+Function ERun_Stop( )
 If Memory.Exists("sig_ERexternalstop") Then
   LogAdd "Endurance Run Stopped"
   Memory.sig_ERexternalstop.Set
@@ -229,8 +140,21 @@ Else
   LogAdd "No Endurance run to stop."
 End If
 End Function
+'-------------------------------------------------------
+Function SARun_Stop()
+If Memory.Exists("sig_externalstop") Then
+  LogAdd "SA Run Stopped"
+  Memory.sig_externalstop.Set
+  Command_Abort
+Else
+  Command_Abort
+  'LogAdd "No SA run to stop."
+End If
+End Function
 
-Function ERMonitor(optPCB, optConveyor, optShuttle, optWA)
+'-------------------------------------------------------
+
+Function ERun_Monitor(optPCB, optConveyor, optShuttle, optWA)
 Dim sig_ERexternalstop,sig_timerend
 Dim ERexternal_stop
 Dim looping
@@ -245,8 +169,11 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Visual.Select("textERstoptime").Value = ""
   Visual.Select("textERelapsedtime").Value = ""
   '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
-  SetERLimit 5000
-  If EnduranceRun_SendCmd(0 , optPCB, optConveyor, optShuttle, optWA) = False Then
+  If optPCB = 1 Then
+    PreparePCBEndurance
+  End If
+  Command_Set_ParamERLimit 5000
+  If Command_Prepare_ERun(0 , optPCB, optConveyor, optShuttle, optWA) = False Then
     'Error occured
     ERexternal_stop = 1
     LogAdd "Unable to communicate with Shuttle TX"
@@ -269,17 +196,23 @@ If Not Memory.Exists("sig_ERexternalstop") Then
    Visual.Select("textERelapsedtime").Value = FormatTimeString(time_elapsed)
    System.Delay(200)
   Loop
+  Command_Abort
   time_stop = Time
   Visual.Select("textERstoptime").Value = FormatTimeString(time_stop)
-  CANSendAbort
+  If optPCB = 1 Then
+    UnLoadPCB
+  End If
   DebugMessage "Endurance Run Stopped. Total Time: "& FormatTimeString(time_elapsed)
   Memory.Free "sig_ERexternalstop"
+  Visual.Select("btnendrun_wpcb_start").Disabled = False
+  Visual.Select("btnendrun_wopcb_start").Disabled = False
+
 Else
   LogAdd "Endurance Run already running!"
 End If
 End Function
 
-Function SAEnduranceRunMonitor ( Time_PCB,Time_woPCB,en_PCB,en_woPCB )
+Function SARun_Monitor ( Time_PCB,Time_woPCB,en_PCB,en_woPCB )
 Dim sig_timerend,sig_updatedisplay_func
 Dim sig_externalstop
 Dim looping
@@ -295,13 +228,15 @@ Set sig_externalstop = Signal.Create
 Memory.Set "sig_externalstop", sig_externalstop
 external_stop = 0
 
-SetERLimit 5000
+Command_Set_ParamERLimit 5000
+LogAdd "Clearing conveyor of any existing PCB..."
+UnLoadPCB
 
 If en_PCB = True Then
 '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
   PreparePCBEndurance
   DebugMessage "Send Start SA Run with PCB Command"
-  If EnduranceRun_SendCmd(0 , True, True, True, False) = False Then
+  If Command_Prepare_ERun(0 , True, True, True, False) = False Then
     'Error occured
     external_stop = 1
     LogAdd "Unable to communicate with Shuttle TX"
@@ -332,7 +267,11 @@ If en_PCB = True Then
    System.Delay(100)
   Loop
   'Send the CAN abort command, to terminate the current endurance run.
-  UnLoadPCB
+  'Do this only if loop exit not due to errors.
+  If Not external_stop = 1 Then
+    LogAdd "Unloading Test PCB"
+    UnLoadPCB
+  End If
   Memory.Free "sig_timerend"
   DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
 
@@ -345,11 +284,10 @@ If external_stop = 0 Then
     
   'End If
   If en_woPCB = True Then
-    'Delete PCB data again incase user forgotten.
-    Command_moveoutPCB 3
-    Command_DeletePCB
+    'Wait 2 seconds for previous operation to finish
+    System.Delay(2000)  
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
-    EnduranceRun_SendCmd 0 , False, True, True, True
+    Command_Prepare_ERun 0 , False, True, True, True
     DebugMessage "Send Start Endurance Run wo PCB Command"
     '2. Set timer
       Set sig_timerend = Signal.Create
@@ -373,7 +311,7 @@ If external_stop = 0 Then
         System.Delay(100)
       Loop
       'Send the CAN abort command, to terminate the current endurance run.
-      CANSendAbort
+      Command_Abort
       DebugMessage "Endurance Run w/o PCB Completed: Total Time: "&FormatTimeString(woPCB_timeelapsed)
       Memory.Free "sig_timerend"
     Else
@@ -385,29 +323,43 @@ End If
 
 Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
 LogAdd "System Acceptance ended!"
+Visual.Select("btnSArun_start").Disabled = False    
 Memory.Free "sig_externalstop"
-CANSendAbort
+Command_Abort
 End Function
 
-Sub PreparePCBEndurance 
+Sub PreparePCBEndurance ()
+  Memory.InhibitErrors = 1
   ' Move shuttle to middle position
-  CMD_PrepareSA 0,1,0
+  Command_Prepare_ShuttlePosition 0,1,0
   System.Delay 2000
   ' Open the shuttle to accomodate test PCB (10cm)
-  CMD_PrepareWA 100000,1,0
-  'Command_SetLaneParam 4,$(P_LANE_POS_FIXED_RAIL),0
+  Command_Prepare_WidthAdjustment 100000,1,0
+  'Command_Set_LaneParameter 4,$(P_LANE_POS_FIXED_RAIL),0
   System.Delay 1000
   System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
   System.Delay 500  
-  Command_SetPCBLength TEST_PCB_LENGTH
+  Memory.InhibitErrors = 0
+  
+  Command_Set_PCBLength TEST_PCB_LENGTH
 End Sub
 
-Sub UnLoadPCB
-  CANSendAbort
+Sub UnLoadPCB ()
+  Memory.InhibitErrors = 1
+  Command_Abort
   System.Delay(1000)
-  CANSendAbort
-  System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
-  Command_moveoutPCB 3
-  Command_DeletePCB
-
+  Command_Prepare_ShuttlePosition 0,1,0
+  System.Delay(2000)  
+  Command_Prepare_MotorVelocity 3000,$(MOTOR_CONVEYOR)
+  System.Delay(2000)
+  Command_Abort
+  System.Delay(500)
+  Command_Prepare_CalibrateSensor  
+  'System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
+  'Command_Prepare_MoveOut 3
+  'System.Delay(2000)  
+  'Command_Abort  
+  'System.Delay(500)  
+  'Command_DeletePCB
+  Memory.InhibitErrors = 0
 End Sub

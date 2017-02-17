@@ -1,4 +1,5 @@
 
+
 Const MOTOR_CONVEYOR = 4
 Const MOTOR_SHUTTLE = 2
 Const MOTOR_WIDTH_ADJ = 3
@@ -40,14 +41,14 @@ End Sub
 
 Function OnClick_btn_shuttle_calibrate( Reason )
 LogAdd "Shuttle Motor calibrate"
-Motor_Calibrate( MOTOR_SHUTTLE )
+Command_Prepare_MotorCalibrate( MOTOR_SHUTTLE )
 End Function
 
 '-------------------------------------------------------
 
 Function OnClick_btn_shuttle_refrun( Reason )
 LogAdd "Shuttle Motor reference run"
-Motor_RefRun( MOTOR_SHUTTLE )
+Command_Prepare_MotorReference( MOTOR_SHUTTLE )
 End Function
 
 '-------------------------------------------------------
@@ -56,7 +57,7 @@ Function OnClick_btn_shuttle_mvtopos( Reason )
   If CheckSValue(Visual.Select("input_shuttle_position").Value) Then
     LogAdd "Shuttle Motor Move to position"
     
-    CMD_PrepareSA Visual.Select("input_shuttle_position").Value,1,0
+    Command_Prepare_ShuttlePosition Visual.Select("input_shuttle_position").Value,1,1
   Else
     LogAdd "Shuttle Motor Move to position failed!"
   End If
@@ -72,11 +73,11 @@ Function OnClick_btn_belt_checkcurr( Reason )
   looping = 1  
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   LogAdd "Belt Motor check current started"
-  If Motor_CheckCurr( MOTOR_CONVEYOR ) = 1 Then
-    CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
+  If Command_Prepare_MotorCurrent( MOTOR_CONVEYOR ) = 1 Then
+    Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_FORW)
     Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
     Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
-    CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
+    Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_BACKW)
     Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
     Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
   Else
@@ -93,11 +94,11 @@ Function OnClick_btn_shuttle_checkcurr( Reason )
   Dim Curr_Forw, Curr_Back
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   LogAdd "Shuttle Motor check current started"  
-  If Motor_CheckCurr( MOTOR_SHUTTLE ) = 1 Then
-  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
+  If Command_Prepare_MotorCurrent( MOTOR_SHUTTLE ) = 1 Then
+  Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
+  Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
   Else
@@ -114,11 +115,11 @@ Function OnClick_btn_WA_checkcurr( Reason )
   Dim Curr_Forw, Curr_Back
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   LogAdd "Width Adjustment check current started"
-  If Motor_CheckCurr( MOTOR_WIDTH_ADJ ) = 1 Then
-    CAN_getparam CanReadArg , $(PAR_WA_CURRENT_FORW)
+  If Command_Prepare_MotorCurrent( MOTOR_WIDTH_ADJ ) = 1 Then
+    Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_FORW)
     Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
     Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
-    CAN_getparam CanReadArg , $(PAR_WA_CURRENT_BACKW)
+    Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_BACKW)
     Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
     Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
   Else
@@ -135,29 +136,29 @@ Function OnClick_btn_checkcurr( Reason )
   Dim Curr_Forw, Curr_Back
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   LogAdd "Width Adjustment check current"
-  Motor_CheckCurr( MOTOR_SHUTTLE ) 
+  Command_Prepare_MotorCurrent( MOTOR_SHUTTLE ) 
   
   'Width Adjust
-  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_FORW)
+  Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_WA_CURRENT_BACKW)
+  Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
   
   'shuttle
-  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
+  Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
+  Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
 
   'belt
-  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_FORW)
+  Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
-  CAN_getparam CanReadArg , $(PAR_CONV_CURRENT_BACKW)
+  Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
   Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
   
@@ -168,14 +169,14 @@ End Function
 
 Function OnClick_btn_WA_calibrate( Reason )
   LogAdd "Width Adjustment Motor calibrate"
-  Motor_Calibrate( MOTOR_WIDTH_ADJ )
+  Command_Prepare_MotorCalibrate( MOTOR_WIDTH_ADJ )
 End Function
 
 '-------------------------------------------------------
 
 Function OnClick_btn_WA_refrun( Reason )
   LogAdd "Width Adjustment Motor reference run"
-  Motor_RefRun( MOTOR_WIDTH_ADJ )
+  Command_Prepare_MotorReference( MOTOR_WIDTH_ADJ )
 End Function
 
 '-------------------------------------------------------
@@ -183,7 +184,7 @@ End Function
 Function OnClick_btn_WA_mvtopos( Reason )
     If CheckUValue(Visual.Select("input_WA_position").Value) Then
     LogAdd "Width Adjustment Motor Move to Position"
-    CMD_PrepareWA Visual.Select("input_WA_position").value,1,0
+    Command_Prepare_WidthAdjustment Visual.Select("input_WA_position").value,1,0
   Else
     LogAdd "Width Adjustment Motor Move to Position failed!"
   End If
@@ -191,126 +192,7 @@ End Function
 
 '-------------------------------------------------------
 
-Function Motor_RefRun( Motor )
-  Dim CanSendArg , CanReadArg, CANConfig
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
 
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_MOTOR_REFERENCE)
-    CanSendArg.Data(1) = Motor
-    CanSendArg.Length = 2
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Reference Run OK"
-    Else
-      LogAdd "Reference Run Failed"
-    End If  
-  End If
-End Function
-
-'-------------------------------------------------------
-
-Function Motor_Calibrate( Motor )
-
-  Dim CanSendArg , CanReadArg, CANConfig
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_MOTOR_CALIBRATE)
-    CanSendArg.Data(1) = Motor
-    CanSendArg.Length = 2
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Calibrate motor OK"
-    Else
-      LogAdd "Calibrate motor Failed"
-    End If  
-  End If
-End Function
-
-'-------------------------------------------------------
-
-Function Motor_MovePos( Motor, MovType, Pos )
-
-  Dim CanSendArg , CanReadArg, CANConfig
-  Dim POS_LL, POS_LH, POS_HL, POS_HH
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-
-  POS_LL = Lang.GetByte(Pos,0)
-  POS_LH = Lang.GetByte(Pos,1)
-  POS_HL = Lang.GetByte(Pos,2)
-  POS_HH = Lang.GetByte(Pos,3)
-  
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_MOTOR_POSITION)
-    CanSendArg.Data(1) = Motor
-    CanSendArg.Data(2) = MovType
-    CanSendArg.Data(3) = 0  
-    CanSendArg.Data(4) = POS_LL
-    CanSendArg.Data(5) = POS_LH
-    CanSendArg.Data(6) = POS_HL
-    CanSendArg.Data(7) = POS_HH
-    
-    CanSendArg.Length = 8
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move to position OK"
-    Else
-      LogAdd "Move to position Failed"
-    End If  
-  End If
-
-End Function 
-
-'-------------------------------------------------------
-
-Function Motor_CheckCurr( Motor )
-
-  Dim CanSendArg , CanReadArg, CANConfig, PrepareID
-  Dim loopcnt
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-
-  loopcnt = 6000
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_MOTOR_CURRENT)
-    CanSendArg.Data(1) = Motor
-    CanSendArg.Length = 2
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      PrepareID = CanReadArg.Data(2)
-      Do while loopcnt > 0
-        If Memory.CanManager.PeekMessage (CanReadArg, 10) Then
-          If CanReadArg.Data(0) = &h00 AND CanReadArg.Data(2) = PrepareID Then
-            loopcnt = -1
-            LogAdd "Check current ok"
-            Motor_CheckCurr = 1
-          else
-            loopcnt = loopcnt - 1
-          End If      
-        Else
-          loopcnt = loopcnt - 1
-        End If
-      Loop
-      
-      If loopcnt = 0 Then
-        LogAdd "Check current Timeout"
-        Motor_CheckCurr = 0
-      End If
-    Else
-      LogAdd "Check current failed to start"
-    End If
-  End If
-End Function
-
-'-------------------------------------------------------
 
 'PAR_SHUTTLE_CURRENT_FORW
 'PAR_SHUTTLE_CURRENT_BACKW

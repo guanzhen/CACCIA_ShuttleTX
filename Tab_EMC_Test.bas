@@ -1,6 +1,6 @@
 
   Function OnClick_btntestTimer1Start ( Reason )
-  Command_SetPCBLength 1600
+  Command_Set_PCBLength 1600
   
   End Function
   Function testing ()
