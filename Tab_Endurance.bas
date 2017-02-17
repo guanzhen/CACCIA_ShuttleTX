@@ -134,9 +134,9 @@ Function SARun_Stop()
 If Memory.Exists("sig_externalstop") Then
   LogAdd "SA Run Stopped"
   Memory.sig_externalstop.Set
-  CANSendAbort
+  Command_Abort
 Else
-  CANSendAbort
+  Command_Abort
   'LogAdd "No SA run to stop."
 End If
 End Function
@@ -184,7 +184,7 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Loop
   time_stop = Time
   Visual.Select("textERstoptime").Value = FormatTimeString(time_stop)
-  CANSendAbort
+  Command_Abort
   DebugMessage "Endurance Run Stopped. Total Time: "& FormatTimeString(time_elapsed)
   Memory.Free "sig_ERexternalstop"
 Else
@@ -286,7 +286,7 @@ If external_stop = 0 Then
         System.Delay(100)
       Loop
       'Send the CAN abort command, to terminate the current endurance run.
-      CANSendAbort
+      Command_Abort
       DebugMessage "Endurance Run w/o PCB Completed: Total Time: "&FormatTimeString(woPCB_timeelapsed)
       Memory.Free "sig_timerend"
     Else
@@ -299,7 +299,7 @@ End If
 Visual.Select("textSAstoptime").Value = FormatTimeString(Time)
 LogAdd "System Acceptance ended!"
 Memory.Free "sig_externalstop"
-CANSendAbort
+Command_Abort
 End Function
 
 Sub PreparePCBEndurance 
@@ -315,12 +315,12 @@ Sub PreparePCBEndurance
   Command_Set_PCBLength TEST_PCB_LENGTH
 End Sub
 
-Sub UnLoadPCB
-  CANSendAbort
+Sub UnLoadPCB ()
+  Command_Abort
   System.Delay(1000)
-  CANSendAbort
+  'Command_Abort
   System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
   Command_Prepare_MoveOut 3
-  Command_DeletePCB
+  'Command_DeletePCB
 
 End Sub

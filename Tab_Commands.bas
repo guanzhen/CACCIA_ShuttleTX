@@ -162,7 +162,7 @@ End Function
 
 Function OnClick_btnabort ( Reason )
 
-CANSendAbort
+Command_Abort
 
 End Function
 

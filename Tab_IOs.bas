@@ -141,8 +141,11 @@ Function IO_getName ( Target )
   'Case $(OUTP_COVER_BLOCKED):  Message = "Cover Blocked" 
   Case $(OUTP_BRAKE_WA_MOTOR):  Message = "Brake WA Motor" 
   Case $(OUTP_BRAKE_SHUTTLE_MOTOR):  Message = "Brake Shuttle Motor" 
-  Case $(OUTP_ACTIVATE_BARCODE_LANE_1):  Message = "Activate barcode Lane 1" 
-  Case $(OUTP_ACTIVATE_BARCODE_LANE_2):  Message = "Activate barcode Lane 2" 
+  Case $(OUTP_ACTIVATE_BARCODE_1):  Message = "Activate barcode 1" 
+  Case $(OUTP_ACTIVATE_BARCODE_2):  Message = "Activate barcode 2" 
+  Case $(OUTP_ACTIVATE_BARCODE_3):  Message = "Activate barcode 3" 
+  Case $(OUTP_ACTIVATE_BARCODE_4):  Message = "Activate barcode 4" 
+
   Case $(OUTP_COVER_LOCK_1):  Message = "Output Cover Lock 1" 
   Case $(OUTP_COVER_LOCK_2):  Message = "Output Cover Lock 2" 
 
@@ -152,6 +155,7 @@ Function IO_getName ( Target )
   Case $(OUTP_SMEMA_D1_FAILED_BOARD):  Message = "SMEMA D1 Failed Board" 
   Case $(OUTP_SMEMA_D2_PCB_AVAILABLE):  Message = "SMEMA D2 PCB Available" 
   Case $(OUTP_SMEMA_D2_FAILED_BOARD):  Message = "SMEMA D2 Failed board" 
+
   Case Else Message = "invalid IO" & Target
   End Select
 

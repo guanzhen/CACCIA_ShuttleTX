@@ -47,7 +47,35 @@ Function Command_GetVersion ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo 
   End If
 
 End Function
+
 '-------------------------------------------------------
+
+Function Command_Abort ( )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  Command_Abort = False  
+  
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_ABORT)
+    CanSendArg.Length = 1
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      DebugMessage "Current operation aborted"
+      Command_Abort = True
+    Else
+      DebugMessage "attempt to abort operation failed"
+    End If
+  else
+    LogAdd "No CAN Manager!"
+    
+  End If 
+End Function
+
+'-------------------------------------------------------
+
 Function Command_Prepare_WidthAdjustment ( Width , rel_abs, fixedrail)
   'fixedrail 
   ' 0 = right side fixed
@@ -365,7 +393,7 @@ Function Command_Prepare_MotorReference( Motor )
     End If  
   End If
 End Function
-
+'-------------------------------------------------------
 Function Command_MoveShuttle ( lane )
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig

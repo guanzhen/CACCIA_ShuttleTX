@@ -34,6 +34,7 @@ Function btn_CanConnect( id, id1 )
   Visual.Select("Layer_TabStrip").Style.Display = "block"
 
 End Function
+'------------------------------------------------------------------
 
 Function InitCAN ( Config, Net, BaudRate )
   Dim CanManager, CanConfig
@@ -75,8 +76,7 @@ Function InitCAN ( Config, Net, BaudRate )
     InitCANMgr2
   Else
     LogAdd "No Can Manager!"
-  End If
-    
+  End If    
     
 End Function
 
@@ -99,10 +99,12 @@ Sub InitCANMgr2
   WithEvents.ConnectObject CanManagerPUB, "CanManagerPUB_"
   Memory.Set "CanManagerPUB",CanManagerPUB
 End Sub
+'------------------------------------------------------------------
 
 Function CanManager_Deliver( ByVal CanReadArg )
   DebugMessage "CanMgr1:" & CanReadArg.Format(CFM_SHORT)
 End Function 
+'------------------------------------------------------------------
 
 Function CanManagerPUB_Deliver( ByVal CanReadArg )
   'DebugMessage "CanPubMgr: " & CanReadArg.Format(CFM_SHORT)  
@@ -112,7 +114,7 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
     If CanReadArg.Data(2) = 0 Then
       PUB_Handler CanReadArg
     Else
-      DebugDecodePub CanReadArg
+      Get_PUB_Info CanReadArg
     End If
   Else
     If NOT CanReadArg.Data(1) = &h04 Then
@@ -134,23 +136,61 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
   End If  
 
 End Function
+'------------------------------------------------------------------
 
-Sub CANSend ( CanSendArg )
-  Dim debug
-  Dim CanManager
+'No longer needed since we are using DHTMLX window
+Function InitWindowCanSetup
+
+  Visual.Select("Layer_CanSetup").Style.Height  = CANSETUP_HEIGHT
+  Visual.Select("Layer_CanSetup").Style.Width   = CANSETUP_WIDTH
+  Visual.Select("Layer_CanSetup").Style.Display = "block"
+  Visual.Select("Layer_CanSetup").Align = "center"
+
+End Function
+'------------------------------------------------------------------
+
+Function PUB_Handler ( CanReadArg )
+  Dim command  
+  'DebugMessage "Spontanous Public Message RX"
+  Select Case  CanReadArg.Data(3)
+    case $(PUB_MSG_ERR_PARAM):  
+        'DebugMessage "Additonal Error Parameters"
+        'LogAdd "Pub Msg: Additonal Error Parameters"
+    case $(PUB_MSG_IO_STATE):
+        'DebugMessage "IO State"
+        'LogAdd "Pub Msg: IO State "& CanReadArg.Format(CFM_SHORT)
+      PUB_IO_Handler CanReadArg
+  End Select
   
-  If Memory.Exists("CanManager") Then 
-    Memory.Get "CanManager",CanManager
-    CanManager.Send CanSendArg
-  'If debug Then
-    DebugMessage CanSendArg.Format(CFM_SHORT)
-  End If  
-End Sub
+End Function
+'------------------------------------------------------------------
+
+Function PUB_IO_Handler ( CanReadArg )
+  Dim Message
+  Dim status
+  
+  If CanReadArg.Data(5) = 0 Then 
+    Status = "Off"
+  Elseif CanReadArg.Data(5) = 1 Then
+    Status = "On"
+  Else
+    Status = "Invalid Input"
+  End If
+  
+  IO_setValue CanReadArg.Data(4),CanReadArg.Data(5) 
+  Message = "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " " & IO_getName(CanReadArg.Data(4)) & " " & Status
+  DebugMessage Message
+
+End Function
+'------------------------------------------------------------------
 
 Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
   Dim CanManager
+  Dim CANData
   If Memory.Exists("CanManager") Then 
     Memory.Get "CanManager",CanManager
+    Memory.Get "CANData",CANData
+
     DebugMessage "Cmd:"&CanSendArg.Format(CFM_SHORT)
     If CanManager.SendCmd(CanSendArg,Timeout,SC_CHECK_ERROR_BYTE,CanReadArg) = SCA_NO_ERROR Then    
       DebugMessage "Command " & String.Format("%02X",CanSendArg.Data(0)) &" OK"
@@ -173,75 +213,7 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
   End If
 
 End Function
-
-
-'No longer needed since we are using DHTMLX window
-Function InitWindowCanSetup
-
-  Visual.Select("Layer_CanSetup").Style.Height  = CANSETUP_HEIGHT
-  Visual.Select("Layer_CanSetup").Style.Width   = CANSETUP_WIDTH
-  Visual.Select("Layer_CanSetup").Style.Display = "block"
-  Visual.Select("Layer_CanSetup").Align = "center"
-
-End Function
-
-
-Function CANSendAbort ( )
-  Dim CanSendArg , CanReadArg, CANConfig
-  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
-  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  
-  CANSendAbort = False  
-  
-  If Memory.Exists("CANManager") Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanID = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_ABORT)
-    CanSendArg.Length = 1
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      DebugMessage "Current operation aborted"
-      CANSendAbort = True
-    Else
-      DebugMessage "attempt to abort operation failed"
-    End If
-  else
-    LogAdd "No CAN Manager!"
-    
-  End If 
-End Function
-
-Function PUB_Handler ( CanReadArg )
-  Dim command  
-  'DebugMessage "Spontanous Public Message RX"
-  Select Case  CanReadArg.Data(3)
-    case $(PUB_MSG_ERR_PARAM):  
-        'DebugMessage "Additonal Error Parameters"
-        'LogAdd "Pub Msg: Additonal Error Parameters"
-    case $(PUB_MSG_IO_STATE):
-        'DebugMessage "IO State"
-        'LogAdd "Pub Msg: IO State "& CanReadArg.Format(CFM_SHORT)
-      PUB_IO_Handler CanReadArg
-  End Select
-  
-End Function
-
-Function PUB_IO_Handler ( CanReadArg )
-  Dim Message
-  Dim status
-  
-  If CanReadArg.Data(5) = 0 Then 
-    Status = "Off"
-  Elseif CanReadArg.Data(5) = 1 Then
-    Status = "On"
-  Else
-    Status = "Invalid Input"
-  End If
-  
-  IO_setValue CanReadArg.Data(4),CanReadArg.Data(5) 
-  Message = "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " " & IO_getName(CanReadArg.Data(4)) & " " & Status
-  DebugMessage Message
-
-End Function
+'------------------------------------------------------------------
 
 Function Command_Get_Param( CanReadArg , Param )
 
@@ -267,8 +239,9 @@ Function Command_Get_Param( CanReadArg , Param )
     End If  
   End If
 End Function
+'------------------------------------------------------------------
 
-Function DebugDecodePub( CanReadArg )
+Function Get_PUB_Info( CanReadArg )
 Dim Active,Running,prepid
 
   If (Lang.Bit( CanReadArg.Data(0),7,1 )) = 1 Then
@@ -327,6 +300,7 @@ Function Get_Err_Name( ID )
   End Select
   Get_Err_Name = name
 End Function 
+'------------------------------------------------------------------
 
 Function Get_PUB_PrepareID( ID )
 Dim name
