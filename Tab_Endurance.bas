@@ -350,7 +350,7 @@ Sub UnLoadPCB ()
   System.Delay(1000)
   Command_Prepare_ShuttlePosition 0,1,0
   System.Delay(2000)  
-  Command_Prepare_MotorVelocity 3000,$(MOTOR_CONVEYOR)
+  Command_Prepare_MotorVelocity 500,$(MOTOR_CONVEYOR)
   System.Delay(2000)
   Command_Abort
   System.Delay(500)
