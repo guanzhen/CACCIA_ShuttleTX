@@ -285,17 +285,18 @@ Dim Active,Running,prepid
   prepid = CanReadArg.Data(2)
   DebugMessage "PubMsg: "& CanReadArg.Format(CFM_SHORT)  & " ("&Active & Running & " PrepID:" & prepid & ")"
 End Function
+'------------------------------------------------------------------
 
 Function Get_Err_Name( ID )
   Dim name
   Select Case ID
-  Case	&h02	:	name ="ERR_CONTROL_VOLTAGE"
-  Case	&h03	:	name ="ERR_EMERGENCY_STOP"
-  Case	&h04	:	name ="User Abort Function"
-  Case	&h10	:	name ="ERR_MOVE_IN"
-  Case	&h11	:	name ="ERR_MOVE_OUT"
-  Case	&h12	:	name ="ERR_POSITION_RAIL"
-  Case	&h13	:	name ="ERR_LANE_WIDTH"
+  Case	$(ERR_CONTROL_VOLTAGE)	:	name ="ERR_CONTROL_VOLTAGE"
+  Case	$(ERR_EMERGENCY_STOP)	:	name ="ERR_EMERGENCY_STOP"
+  Case	$(ERR_ABORTED)	:	name ="User Abort Function"
+  Case	$(ERR_MOVE_IN)	:	name ="ERR_MOVE_IN"
+  Case	$(ERR_MOVE_OUT)	:	name ="ERR_MOVE_OUT"
+  Case	$(ERR_POSITION_RAIL)	:	name ="ERR_POSITION_RAIL"
+  Case	$(ERR_LANE_WIDTH)	:	name ="ERR_LANE_WIDTH"
   Case	&h14	:	name ="ERR_OFFSET_WIDTH"
   Case	&h15	:	name ="ERR_SHUTTLE_BLOCKED"
   Case	&h16	:	name ="ERR_WIDTH_ADJ_BLOCKED: Check if there is PCB on conveyor or PCB sensor blocked"
@@ -309,6 +310,10 @@ Function Get_Err_Name( ID )
   Case	&h1E	:	name ="ERR_TRAVEL_RANGE_RAIL_L"
   Case	&h1F	:	name ="ERR_MECH_LIMIT_RIGHT_SIDE"
   Case	&h20	:	name ="ERR_MECH_LIMIT_LEFT_SIDE"
+  Case	&h24	:	name ="ERR_PCB_MOVING_IN"
+  Case	&h25	:	name ="ERR_PCB_MOVING_OUT"
+  Case	&h2A	:	name ="ERR_NO_PCB_PRESENT"
+  Case	&h2B	:	name ="ERR_PCB_PRESENT"
   Case	&h30	:	name ="ERR_MOTOR_MOVING"
   Case	&h31	:	name ="ERR_MOTOR_COUNT"
   Case	&h32	:	name ="ERR_MOTOR_INDEX_PULSE"
