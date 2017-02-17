@@ -220,7 +220,7 @@ Function Command_Prepare_MoveOut(lane)
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      DebugMessage "Move out PCB from "&get_LaneName(lane)
+      DebugMessage "Move out PCB from "&Get_LaneName(lane)
     Else
       DebugMessage "Move out PCB Failed!"
     End If
@@ -462,7 +462,7 @@ Function Command_MoveShuttle ( lane )
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move Shuttle to "&get_LaneName(lane)
+      LogAdd "Move Shuttle to "&Get_LaneName(lane)
     Else
       LogAdd "Move Shuttle Failed!"
     End If
@@ -513,7 +513,7 @@ Function Command_Set_LaneParameter(lane,param,value)
     CanSendArg.Data(7) = Lang.GetByte(value,3)
     CanSendArg.Length = 8
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      DebugMessage "Set Lane "&get_LaneName(lane) & " param"
+      DebugMessage "Set Lane "&Get_LaneName(lane) & " param"
       Command_Set_LaneParameter = 1
     Else
       DebugMessage "Set Lane Param failed"
@@ -739,7 +739,7 @@ Function Command_Get_LaneParam_FixedRail(lane)
     CanSendArg.Data(2) = lane
     CanSendArg.Length = 3
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      DebugMessage "Get Lane "&get_LaneName(lane) & " param"
+      DebugMessage "Get Lane "&Get_LaneName(lane) & " param"
       Command_Get_LaneParam_FixedRail = CanReadArg.Data(4)
     Else
       DebugMessage "Read Lane Param failed"

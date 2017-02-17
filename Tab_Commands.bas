@@ -90,34 +90,6 @@ Dim CANData,CANDataLength
   'MsgBox Visual.Select("txtValue1").Value
 End Function
 
-Function Get_PCBState ( StateByte )
-  Dim State
-  Dim TextOut
-  State = Lang.Bit(StateByte,0,7)
-  Select Case State
-  Case $(PCB_STATE_DELETED) : TextOut = "Deleted"
-  Case $(PCB_STATE_INSERTED) : TextOut = "Inserted"
-  Case $(PCB_STATE_REMOVED) : TextOut = "Removed"
-  Case $(PCB_STATE_MOVING) : TextOut = "Moving"
-  Case $(PCB_STATE_MOVED) : TextOut = "Moved"
-  Case $(PCB_STATE_MOVING_SHUTTLE) : TextOut = "Moving Shuttle"
-  Case $(PCB_STATE_MOVED_SHUTTLE) : TextOut = "Moved Shuttle"
-  Case $(PCB_STATE_MOVED_SHUTTLE) : TextOut = "Error"
-  Case Else : TextOut = "Error"
-  End Select
-  
-  If Lang.Bit(StateByte,4) Then
-  TextOut = "Failed:" & TextOut
-  End If
-  
-  If Lang.Bit(StateByte,5) Then
-  TextOut = "Manual:" & TextOut
-  Else
-  TextOut = "Line:" & TextOut  
-  End If  
-  Get_PCBState = TextOut
-End Function
-
 Function OnClick_btnrefrun ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
@@ -156,7 +128,7 @@ Function OnClick_btnmvinpcb ( Reason )
     CanSendArg.Data(1) = lane
     CanSendArg.Length = 2
     If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      LogAdd "Move in PCB from "&get_LaneName(lane)
+      LogAdd "Move in PCB from "&Get_LaneName(lane)
     Else
       LogAdd "Move in PCB Failed!"
     End If
@@ -189,7 +161,7 @@ Function OnClick_btnmvoutpcb ( Reason )
   Dim lane
   If Visual.Exists("opt_destlane") Then
     lane = Visual.Select("opt_destlane").SelectedItemAttribute("value")
-    DebugMessage "MoveOutPCB "&get_LaneName(lane)
+    DebugMessage "MoveOutPCB "&Get_LaneName(lane)
     Command_Prepare_MoveOut lane
   Else
     DebugMessage "MoveOutPCB Lane invalid! :" &lane
@@ -205,7 +177,7 @@ Function OnClick_btnmvshuttle ( Reason )
 
   If Visual.Exists("opt_mvshuttlelane") Then
     lane = Visual.Select("opt_mvshuttlelane").SelectedItemAttribute("value")
-    DebugMessage "Move Shuttle to "&get_LaneName(lane)
+    DebugMessage "Move Shuttle to "&Get_LaneName(lane)
   Else
     DebugMessage "Move Shuttle destination lane invalid! :" &lane
   End If
@@ -214,12 +186,40 @@ Function OnClick_btnmvshuttle ( Reason )
   
 End Function 
 
-Function get_LaneName( Lane )
+Function Get_LaneName( Lane )
   Select Case lane
-  Case 1:  get_LaneName = "Upstream 1"
-  Case 2:  get_LaneName = "Upstream 2"
-  Case 3:  get_LaneName = "Downstream 1"
-  Case 4:  get_LaneName = "Downstream 2"
-  Case Else get_LaneName = "invalid"
+  Case 1:  Get_LaneName = "Upstream 1"
+  Case 2:  Get_LaneName = "Upstream 2"
+  Case 3:  Get_LaneName = "Downstream 1"
+  Case 4:  Get_LaneName = "Downstream 2"
+  Case Else Get_LaneName = "invalid"
   End Select
+End Function
+
+Function Get_PCBState ( StateByte )
+  Dim State
+  Dim TextOut
+  State = Lang.Bit(StateByte,0,7)
+  Select Case State
+  Case $(PCB_STATE_DELETED) : TextOut = "Deleted"
+  Case $(PCB_STATE_INSERTED) : TextOut = "Inserted"
+  Case $(PCB_STATE_REMOVED) : TextOut = "Removed"
+  Case $(PCB_STATE_MOVING) : TextOut = "Moving"
+  Case $(PCB_STATE_MOVED) : TextOut = "Moved"
+  Case $(PCB_STATE_MOVING_SHUTTLE) : TextOut = "Moving Shuttle"
+  Case $(PCB_STATE_MOVED_SHUTTLE) : TextOut = "Moved Shuttle"
+  Case $(PCB_STATE_MOVED_SHUTTLE) : TextOut = "Error"
+  Case Else : TextOut = "Error"
+  End Select
+  
+  If Lang.Bit(StateByte,4) Then
+  TextOut = "Failed:" & TextOut
+  End If
+  
+  If Lang.Bit(StateByte,5) Then
+  TextOut = "Manual:" & TextOut
+  Else
+  TextOut = "Line:" & TextOut  
+  End If  
+  Get_PCBState = TextOut
 End Function
