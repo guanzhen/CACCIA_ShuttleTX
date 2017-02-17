@@ -13,6 +13,7 @@ End Function
 Function OnClick_btnGetApp ( Reason )
 Dim FWver_Hi,FWver_Lo
 Dim WidthStat, ShuttleStat
+Dim CANData,CANDataLength
   LogAdd ("Read Shuttle Information")
   If Command_GetVersion(0,FWver_Hi,FWver_Lo) = True Then
     Visual.Select("textBiosVersion").Value = String.Format("%02X.%02X", FWver_Hi,FWver_Lo)
@@ -70,10 +71,52 @@ Dim WidthStat, ShuttleStat
     Visual.Select("textlane4").Value = "-"  
   End If
   
+  If Command_Get_PCBState($(PARAM_PCB_STATE_START)) = True Then
+    Memory.Get "CANDataLength",CANDataLength
+    Memory.Get "CANData",CANData
+
+    If CANDataLength = 2 Then
+      Visual.Select("textPCBstatus").Value = "No PCB"
+      'Visual.Select("textPCBloc").Value = "No PCB"
+    Else
+      Visual.Select("textPCBstatus").Value = Get_PCBState ( CANData(6) )      
+      'Visual.Select("textPCBloc").Value = Get_PCBlocation ( CANData(6) )      
+    End If
+  Else
+    Visual.Select("textPCBstatus").Value = "-"
+    'Visual.Select("textPCBloc").Value = "-"
+  End If
   Command_Get_IOStates
   'MsgBox Visual.Select("txtValue1").Value
 End Function
 
+Function Get_PCBState ( StateByte )
+  Dim State
+  Dim TextOut
+  State = Lang.Bit(StateByte,0,7)
+  Select Case State
+  Case $(PCB_STATE_DELETED) : TextOut = "Deleted"
+  Case $(PCB_STATE_INSERTED) : TextOut = "Inserted"
+  Case $(PCB_STATE_REMOVED) : TextOut = "Removed"
+  Case $(PCB_STATE_MOVING) : TextOut = "Moving"
+  Case $(PCB_STATE_MOVED) : TextOut = "Moved"
+  Case $(PCB_STATE_MOVING_SHUTTLE) : TextOut = "Moving Shuttle"
+  Case $(PCB_STATE_MOVED_SHUTTLE) : TextOut = "Moved Shuttle"
+  Case $(PCB_STATE_MOVED_SHUTTLE) : TextOut = "Error"
+  Case Else : TextOut = "Error"
+  End Select
+  
+  If Lang.Bit(StateByte,4) Then
+  TextOut = "Failed:" & TextOut
+  End If
+  
+  If Lang.Bit(StateByte,5) Then
+  TextOut = "Manual:" & TextOut
+  Else
+  TextOut = "Line:" & TextOut  
+  End If  
+  Get_PCBState = TextOut
+End Function
 
 Function OnClick_btnrefrun ( Reason )
   Dim CanSendArg , CanReadArg, CANConfig

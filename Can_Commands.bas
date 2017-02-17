@@ -22,6 +22,34 @@ Function Command_GetRefenceStatus( WidthStat, ShuttleStat)
   End If
 End Function
 '-------------------------------------------------------
+
+Function Command_Get_PCBState ( StartNext )
+
+Dim CanSendArg , CanReadArg, CANConfig
+Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+ 
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_PCB_STATE)
+    CanSendArg.Data(1) = StartNext
+    CanSendArg.Length = 2
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      Command_Get_PCBState = True
+    Else
+      Command_Get_PCBState = False
+    End If
+  else
+    LogAdd "No CAN Manager!"
+    
+  End If 
+ 
+End Function
+
+'-------------------------------------------------------
+
+
 Function Command_GetVersion ( ByVal App_Bios,  ByRef FWver_High, ByRef FWver_Lo )
   Dim CanSendArg, CANConfig, FWselect
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
@@ -395,6 +423,10 @@ Function Command_Prepare_MotorReference( Motor )
 End Function
 '-------------------------------------------------------
 Function Command_MoveShuttle ( lane )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd

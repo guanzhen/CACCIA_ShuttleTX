@@ -5,7 +5,7 @@
 '**********************************************************************
 Function btn_CanConnect( id, id1 )
   Dim ShuttleConfig,Net,TitleText, CANData, i
-  
+  Dim CANDataLength
   Set CANData = CreateObject( "MATH.Array" )
   
   
@@ -14,6 +14,7 @@ Function btn_CanConnect( id, id1 )
   Next
   
   Memory.Set "CANData",CANData  
+  Memory.Set "CANDataLength",CANDataLength  
   DebugMessage"Launch Can Connect"
   Net = Visual.Script("opt_net")
   ShuttleConfig = Visual.Script("opt_config")
@@ -186,14 +187,16 @@ End Function
 
 Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
   Dim CanManager
-  Dim CANData
+  Dim CANData,CANDataLength
   If Memory.Exists("CanManager") Then 
     Memory.Get "CanManager",CanManager
     Memory.Get "CANData",CANData
+    Memory.Get "CANDataLength",CANDataLength
 
     DebugMessage "Cmd:"&CanSendArg.Format(CFM_SHORT)
     If CanManager.SendCmd(CanSendArg,Timeout,SC_CHECK_ERROR_BYTE,CanReadArg) = SCA_NO_ERROR Then    
       DebugMessage "Command " & String.Format("%02X",CanSendArg.Data(0)) &" OK"
+      CANDataLength = CanReadArg.Length
       CANData.Data(0) = CanReadArg.Data(0) 
       CANData.Data(1) = CanReadArg.Data(1) 
       CANData.Data(2) = CanReadArg.Data(2) 
@@ -203,6 +206,8 @@ Function CANSendCMD( CanSendArg , CanReadArg, Timeout )
       CANData.Data(6) = CanReadArg.Data(6)
       CANData.Data(7) = CanReadArg.Data(7)      
       CANSendCMD = True
+      Memory.Set "CANData",CanData 
+      Memory.Set "CANDataLength",CanDataLength
     Else
       DebugMessage "Error with Command " & String.Format("%02X",CanSendArg.Data(0))
       CANSendCMD = False
