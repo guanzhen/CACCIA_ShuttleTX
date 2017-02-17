@@ -227,7 +227,7 @@ Function Command_Prepare_MoveOut(lane)
   End If
 End Function
 '-------------------------------------------------------
-Function Command_Prepare_MotorVelocity(Speed)
+Function Command_Prepare_MotorVelocity(Speed,Axis)
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
@@ -236,7 +236,7 @@ Function Command_Prepare_MotorVelocity(Speed)
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
     CanSendArg.Data(0) = $(CMD_PREPARE_MOTOR_VELOCITY)
-    CanSendArg.Data(1) = $(MOTOR_CONVEYOR)
+    CanSendArg.Data(1) = Axis
     CanSendArg.Data(2) = Lang.GetByte(Speed,0)
     CanSendArg.Data(3) = Lang.GetByte(Speed,1)
     CanSendArg.Length = 4
@@ -421,6 +421,34 @@ Function Command_Prepare_MotorReference( Motor )
     End If  
   End If
 End Function
+
+'-------------------------------------------------------
+
+Function Command_Prepare_CalibrateSensor ()
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_CALIBRATE_SENSOR)
+    CanSendArg.Length = 1
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Calibrate sensor command sent"
+      Command_Prepare_CalibrateSensor = 1
+    Else
+      Command_Prepare_CalibrateSensor = 0
+      LogAdd "Calibrate sensor command failed"
+    End If    
+  Else
+
+  End if
+  
+End Function
+
 '-------------------------------------------------------
 Function Command_MoveShuttle ( lane )
   Dim CanSendArg , CanReadArg, CANConfig

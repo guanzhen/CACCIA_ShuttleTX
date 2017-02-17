@@ -122,7 +122,7 @@ Function CanManagerPUB_Deliver( ByVal CanReadArg )
     LogAdd "Error! (" & Get_Err_Name(CanReadArg.Data(1))& ")"
     End If
     DebugMessage "PubMsg: " & CanReadArg.Format(CFM_SHORT) & " Err: (" & Get_Err_Name(CanReadArg.Data(1))& ")"
-    If NOT CanReadArg.Data(1) = &h16  Then
+    If NOT CanReadArg.Data(1) = &h16  AND Memory.InhibitErrors = 0 Then
       If NOT CanReadArg.Data(1) = &h04 Then
         If Memory.Exists("sig_externalstop") Then
           LogAdd "SA Run Stopped Due to Error"

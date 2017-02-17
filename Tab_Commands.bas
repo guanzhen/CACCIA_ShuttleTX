@@ -168,7 +168,7 @@ Function OnClick_btndeletepcb ( Reason )
 End Function
 
 Function OnClick_btncalsensor ( Reason )
-  CMD_CalibrateSensor
+  Command_Prepare_CalibrateSensor
 End Function
 
 Function OnClick_btnresetoffset ( Reason )
@@ -176,31 +176,6 @@ Function OnClick_btnresetoffset ( Reason )
   Command_Reset_FixedRailOffset 2
   Command_Reset_FixedRailOffset 3
   Command_Reset_FixedRailOffset 4  
-End Function
-
-Function CMD_CalibrateSensor
-  Dim CanSendArg,CanReadArg, CANConfig
-  Dim CanManager
-  Set CanSendArg = CreateObject("ICAN.CanSendArg")
-  Set CanReadArg = CreateObject("ICAN.CanReadArg")
-
-  If Memory.Exists( "CanManager" ) Then
-    Memory.Get "CANConfig",CANConfig
-    CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_PREPARE_CALIBRATE_SENSOR)
-    CanSendArg.Length = 1
-    
-    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Calibrate sensor command sent"
-      CMD_CalibrateSensor = 1
-    Else
-      CMD_CalibrateSensor = 0
-      LogAdd "Calibrate sensor command failed"
-    End If    
-  Else
-
-  End if
-  
 End Function
 
 Function OnClick_btnabort ( Reason )

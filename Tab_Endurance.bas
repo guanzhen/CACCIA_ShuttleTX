@@ -158,6 +158,9 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Visual.Select("textERstoptime").Value = ""
   Visual.Select("textERelapsedtime").Value = ""
   '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
+  If optPCB = 1 Then
+    PreparePCBEndurance
+  End If
   Command_Set_ParamERLimit 5000
   If Command_Prepare_ERun(0 , optPCB, optConveyor, optShuttle, optWA) = False Then
     'Error occured
@@ -184,7 +187,9 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   Loop
   time_stop = Time
   Visual.Select("textERstoptime").Value = FormatTimeString(time_stop)
-  Command_Abort
+  If optPCB = 1 Then
+    UnLoadPCB
+  End If
   DebugMessage "Endurance Run Stopped. Total Time: "& FormatTimeString(time_elapsed)
   Memory.Free "sig_ERexternalstop"
 Else
@@ -258,9 +263,14 @@ If external_stop = 0 Then
     
   'End If
   If en_woPCB = True Then
-    'Delete PCB data again incase user forgotten.
-    Command_Prepare_MoveOut 3
-    Command_DeletePCB
+    '[Removed] Delete PCB data again incase user forgotten.
+    'Command_Prepare_MoveOut 3
+    'System.Delay(2000)  
+    'Command_Abort  
+    'System.Delay(500)  
+    'Command_DeletePCB
+    'Wait 2 seconds for previous operation to finish
+    System.Delay(2000)  
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
     Command_Prepare_ERun 0 , False, True, True, True
     DebugMessage "Send Start Endurance Run wo PCB Command"
@@ -302,7 +312,8 @@ Memory.Free "sig_externalstop"
 Command_Abort
 End Function
 
-Sub PreparePCBEndurance 
+Sub PreparePCBEndurance ()
+  Memory.InhibitErrors = 1
   ' Move shuttle to middle position
   Command_Prepare_ShuttlePosition 0,1,0
   System.Delay 2000
@@ -312,15 +323,27 @@ Sub PreparePCBEndurance
   System.Delay 1000
   System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
   System.Delay 500  
+  Memory.InhibitErrors = 0
+  
   Command_Set_PCBLength TEST_PCB_LENGTH
 End Sub
 
 Sub UnLoadPCB ()
+  Memory.InhibitErrors = 1
   Command_Abort
   System.Delay(1000)
-  'Command_Abort
-  System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
-  Command_Prepare_MoveOut 3
+  Command_Prepare_ShuttlePosition 0,1,0
+  System.Delay(2000)  
+  Command_Prepare_MotorVelocity 4000,$(MOTOR_CONVEYOR)
+  System.Delay(2000)
+  Command_Abort
+  System.Delay(500)
+  Command_Prepare_CalibrateSensor  
+  'System.MessageBox "Please Remove PCB from shuttle","Remove Test PCB",MB_OK
+  'Command_Prepare_MoveOut 3
+  'System.Delay(2000)  
+  'Command_Abort  
+  'System.Delay(500)  
   'Command_DeletePCB
-
+  Memory.InhibitErrors = 0
 End Sub

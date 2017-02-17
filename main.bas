@@ -59,10 +59,11 @@ End Sub
 '-------------------------------------------------------
 
 Sub InitWindows
-
+  Dim InhibitErrors
   Window.height = APP_HEIGHT
   Window.width = APP_WIDTH
-
+  InhibitErrors = 0
+  Memory.Set "InhibitErrors",InhibitErrors
   'Create debug log window
   'CreateDebugLogWindow
   DebugMessage "Starting Up"
@@ -107,7 +108,7 @@ Function LogAdd ( ByVal sMessage )
   Set Gridobj = Visual.Script("LogGrid")
   Dim MsgId
   MsgId = Gridobj.uid()
-  If NOT(sMessage = "") Then
+  If NOT(sMessage = "") AND Memory.InhibitErrors = 0 Then
     Gridobj.addRow MsgId, ""& FormatDateTime(Date, vbShortDate) &","& FormatDateTime(Time, vbShortTime)&":"& String.Format("%02d ", Second(Time)) &","& sMessage
     'Wish of SCM (automatically scroll to newest Msg)
     Gridobj.showRow( MsgId )
