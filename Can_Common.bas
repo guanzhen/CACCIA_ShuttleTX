@@ -4,7 +4,10 @@
 '* Output: none
 '**********************************************************************
 Function btn_CanConnect( id, id1 )
-  Dim ShuttleConfig,Net,TitleText, CANData
+  Dim ShuttleConfig,Net,TitleText, CANData, i
+  
+  Set CANData = CreateObject( "MATH.Array" )
+  
   
   For i = 0  To 7
   	CANData.Add(0)
