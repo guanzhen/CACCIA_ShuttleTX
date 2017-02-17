@@ -250,7 +250,9 @@ If en_PCB = True Then
    System.Delay(100)
   Loop
   'Send the CAN abort command, to terminate the current endurance run.
-  UnLoadPCB
+  If Not external_stop = 1 Then
+    UnLoadPCB
+  End If
   Memory.Free "sig_timerend"
   DebugMessage "SA Run with PCB Completed: Total Time: "& FormatTimeString(PCB_timeelapsed)
 

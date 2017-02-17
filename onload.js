@@ -10,10 +10,10 @@ function load_tabbar()
   tabbar.setSkin("dhx_skyblue");
 
   tabbar.addTab("main_tab1","Commands");
-  tabbar.addTab("main_tab2","Endurance");
-  tabbar.addTab("main_tab3","Motor");
-  tabbar.addTab("main_tab4","IO Controls");
-  tabbar.addTab("main_tab5","SMEMA");
+  tabbar.addTab("main_tab2","Motor");
+  tabbar.addTab("main_tab3","IO Controls");
+  tabbar.addTab("main_tab4","SMEMA");
+  tabbar.addTab("main_tab5","Endurance");
   tabbar.setContent( "main_tab1", iframe_tab1);
   tabbar.setContent( "main_tab2", iframe_tab2);
   tabbar.setContent( "main_tab3", iframe_tab3);

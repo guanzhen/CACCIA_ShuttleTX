@@ -38,6 +38,18 @@
 <body>
   <div id = "frame_smemacontrol">
     <table>
+        <tr><td>Reference Run</td><td><button id = "btnrefrun">Reference Run</button></td></tr>
+      
+        <tr><td>Move Shuttle</td><td><button id = "btnmvshuttle">Move</button></td>
+        <td>
+          <select id = "opt_mvshuttlelane">Target lane
+            <option value = "1">Upstream 1</option>
+            <option value = "2">Upstream 2</option>
+            <option value = "3">Downstream 1</option>
+            <option value = "4">Downstream 2</option>
+          </select>
+        </td>
+      </tr>
       <tr><th colspan="3" align="left">Shuttle Commands</th></tr>
        <tr><td>Move in PCB</td><td><button id = "btnmvinpcb">Move</button></td>
         <td>
@@ -55,6 +67,7 @@
           </select>
         </td>
       </tr>
+      
     </table>
   </div>
   <div id = "frame_SMEMA">
@@ -62,23 +75,23 @@
     <div id = "subframe_Lane1">
       <h1 style = "padding-left:5px;"> Lane 1</h1>
       <table>    
-        <tr><td><img id="led10"></img>SMEMA U1 PCB Available</td></tr>
-        <tr><td><img id="led20"></img>SMEMA U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
-        <tr><td><img id="led11"></img>SMEMA U1 Failed Board</td></tr>
-        <tr><td><img id="led22"></img>SMEMA D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
-        <tr><td><img id="led14"></img>SMEMA D1 Machine Rdy</td></tr>
-        <tr><td><img id="led23"></img>SMEMA D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
+        <tr><td><img id="led10"></img>U1 PCB Available</td></tr>
+        <tr><td><img id="led20"></img>U1 Machine Rdy</td><td><button value = "20" id="btnoled20">Toggle</button></td></tr>
+        <tr><td><img id="led11"></img>U1 Failed Board</td></tr>
+        <tr><td><img id="led22"></img>D1 PCB Available</td><td><button value = "22" id="btnoled22">Toggle</button></td></tr>
+        <tr><td><img id="led14"></img>D1 Machine Rdy</td></tr>
+        <tr><td><img id="led23"></img>D1 Failed Board</td><td><button value = "23" id="btnoled23">Toggle</button></td></tr>
       </table>
     </div>
     <div id = "subframe_Lane2">
       <h1 style = "padding-left:5px;"> Lane 2</h1>
       <table>
-        <tr><td><img id="led12"></img>SMEMA U2 PCB Available</td></tr>
-        <tr><td><img id="led21"></img>SMEMA U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
-        <tr><td><img id="led13"></img>SMEMA U2 Failed Board</td></tr>
-        <tr><td><img id="led24"></img>SMEMA D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
-        <tr><td><img id="led15"></img>SMEMA D2 Machine Rdy</td></tr>
-        <tr><td><img id="led25"></img>SMEMA D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
+        <tr><td><img id="led12"></img>U2 PCB Available</td></tr>
+        <tr><td><img id="led21"></img>U2 Machine Rdy</td><td><button value = "21" id="btnoled21">Toggle</button></td></tr>
+        <tr><td><img id="led13"></img>U2 Failed Board</td></tr>
+        <tr><td><img id="led24"></img>D2 PCB Avaliable</td><td><button value = "24" id="btnoled24">Toggle</button></td></tr>
+        <tr><td><img id="led15"></img>D2 Machine Rdy</td></tr>
+        <tr><td><img id="led25"></img>D2 Failed Board</td><td><button value = "25"  id="btnoled25">Toggle</button></td></tr>
       </table>
     </div>
   </div>
