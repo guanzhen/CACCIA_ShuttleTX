@@ -24,7 +24,7 @@
   }
   #frame_firmwareversion  {float :left; display:inline;}
   #subgrp_FWDownload {float:left; display:inline; padding:5px;}
-  #frame_displayrefstatus  {float :left;margin:0px 0px 0px 20px }
+  #frame_displayrefstatus  {float :left;margin:0px 0px 0px 10px }
   #btnGetApp { margin: 10px 10 px;}
   #div_btngetapp { clear:left;}
   #frame_Commands
@@ -73,20 +73,21 @@
         </table>
 
       </div>
+        <!-- Lane values in the below sections are predefined in SHUTTLE_ISS -->
       <div id = "frame_displayIFstatus">
         <table>
           <tr><th colspan="2"  align = "left">Lane Status</th></tr>
-          <tr><td>Up 1</td><td><input id="textlane1"></input></td></tr>
-          <tr><td>Up 2</td><td><input id="textlane2"></input></td></tr>
-          <tr><td>Down 1</td><td><input id="textlane3"></input></td></tr>
-          <tr><td>Down 2</td><td><input id="textlane4"></input></td></tr>
+          <tr><td>Lane 1 [U1]</td><td><input id="textlane1"></input></td></tr>
+          <tr><td>Lane 2 [U2]</td><td><input id="textlane2"></input></td></tr>
+          <tr><td>Lane 3 [D1]</td><td><input id="textlane3"></input></td></tr>
+          <tr><td>Lane 4 [D2]</td><td><input id="textlane4"></input></td></tr>
         </table>
       </div>
       <div id="div_btngetapp"><button id = "btnGetApp" class = "BtnClick">Read</button> </div>
 
   </div>
   <br>
-  <!-- Lane values in the below sections are predefined in SHUTTLE_ISS -->
+
   <div id = "frame_Commands">
     <table>
       <tr><th colspan="3" align="left">Shuttle Commands</th></tr>

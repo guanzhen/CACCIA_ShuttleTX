@@ -54,10 +54,13 @@ End Function
 '-------------------------------------------------------
 
 Function OnClick_btn_shuttle_mvtopos( Reason )
+  Dim Rail
+  
+  Rail = Visual.Select("opt_Sfixedrail").SelectedItemAttribute("value")
   If CheckSValue(Visual.Select("input_shuttle_position").Value) Then
     LogAdd "Shuttle Motor Move to position"
     
-    Command_Prepare_ShuttlePosition Visual.Select("input_shuttle_position").Value,1,1
+    Command_Prepare_ShuttlePosition Visual.Select("input_shuttle_position").Value,1,Rail
   Else
     LogAdd "Shuttle Motor Move to position failed!"
   End If
@@ -182,9 +185,12 @@ End Function
 '-------------------------------------------------------
 
 Function OnClick_btn_WA_mvtopos( Reason )
-    If CheckUValue(Visual.Select("input_WA_position").Value) Then
+  Dim Rail
+  
+  Rail = Visual.Select("opt_WAfixedrail").SelectedItemAttribute("value")
+  If CheckUValue(Visual.Select("input_WA_position").Value) Then
     LogAdd "Width Adjustment Motor Move to Position"
-    Command_Prepare_WidthAdjustment Visual.Select("input_WA_position").value,1,0
+    Command_Prepare_WidthAdjustment Visual.Select("input_WA_position").value,1,Rail
   Else
     LogAdd "Width Adjustment Motor Move to Position failed!"
   End If
