@@ -40,7 +40,7 @@ If NOT Memory.Exists("sig_externalstop") Then
   End If
 
   If CheckUValue(Visual.Select("textwithPCBmins").Value) Then
-    Duration_PCB = String.SafeParse (Visual.Select("textwithPCBmins").Value) * 60
+    Duration_PCB = (String.SafeParse (Visual.Select("textwithPCBmins").Value)) * 60
     DebugMessage "PCB Duration: "& Duration_PCB
   Else
     LogAdd "Invalid value for PCB duration."
@@ -211,7 +211,7 @@ Else
   LogAdd "Endurance Run already running!"
 End If
 End Function
-
+'-------------------------------------------------------
 Function SARun_Monitor ( Time_PCB,Time_woPCB,en_PCB,en_woPCB )
 Dim sig_timerend,sig_updatedisplay_func
 Dim sig_externalstop

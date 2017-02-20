@@ -186,7 +186,11 @@ Function Timer( TimeOut )
   Set sig_TimerStop = Signal.Create
 
   Memory.Set "sig_TimerStop", sig_TimerStop
-  DebugMessage "Timer Started"
+  If TimeOut > 0 Then
+    DebugMessage "Timer Started with timeout" & TimeOut
+  Else
+    DebugMessage "Timer Started without timeout"
+  End If
 
   ls_loopcont = 1
   start_time = Time
@@ -196,10 +200,9 @@ Function Timer( TimeOut )
   Do while ls_loopcont = 1
 
     now_time = (Time - start_time)
-    count = Hour(now_time)*360 + Minute(now_time)*60 +Second(now_time)
-    'Visual.Select("timer_elapsed").Value = count
+    count = Hour(now_time)*3600 + Minute(now_time)*60 +Second(now_time)
 
-    If sig_TimerStop.wait(50) Then
+    If sig_TimerStop.wait(500) Then
       ls_loopcont = 0
     End If
 
@@ -214,11 +217,17 @@ Function Timer( TimeOut )
   If Memory.Exists("sig_timerend") Then
     Memory.sig_timerend.Set
     DebugMessage "Memory Set sig_timerend"
+  Else
+    DebugMessage "Error : Memory sig_timerend does not exists!"
+
   End If
 
   If Memory.Exists("sig_TimerStop") Then
     Memory.Free "sig_TimerStop"
     DebugMessage "Memory Free sig_TimerStop"
-  End If
+  Else
+    DebugMessage "Error: Memory sig_TimerStop does not exists!"
 
+  End If
+  DebugMessage "Timer Exit"
 End Function
