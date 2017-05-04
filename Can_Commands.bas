@@ -111,7 +111,8 @@ Function Command_Prepare_WidthAdjustment ( Width , rel_abs, fixedrail)
   'abs_rel
   ' 0 = relative width position 
   ' 1 = absolute width position
-
+  DebugMessage "Width Adjustment :" & Width
+  
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Dim Error_Flag
@@ -613,9 +614,9 @@ End Function
 
 '-------------------------------------------------------
 Function Command_Set_PCBLength (Value)
+  DebugMessage "Set PCB length: " & Value
   Command_Set_PCBLength = Command_Set_PCBData($(PCB_DATA_LENGTH),Value)
 End Function 
-
 '-------------------------------------------------------
 Function Command_DeletePCB ()
   Dim CanSendArg,CanReadArg, CANConfig
@@ -639,6 +640,7 @@ Function Command_DeletePCB ()
   End if  
 End Function
 
+'-------------------------------------------------------
 Function Command_Get_HWOption ( )
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
@@ -652,16 +654,17 @@ Function Command_Get_HWOption ( )
     CanSendArg.Length = 1
     
     If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Delete PCB command sent"
+      LogAdd "Get HW option command sent"
     Else
-       LogAdd "Delete PCB command failed"
+       LogAdd "Get HW option command failed"
     End If    
   Else
 
   End if  
 End Function
 
-Function Command_Set_HWOption ( )
+'-------------------------------------------------------
+Function Command_Set_HWOption ( Param , Value )
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Set CanSendArg = CreateObject("ICAN.CanSendArg")
@@ -670,13 +673,15 @@ Function Command_Set_HWOption ( )
   If Memory.Exists( "CanManager" ) Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_GET_HW_OPTION)   
-    CanSendArg.Length = 1
+    CanSendArg.Data(0) = $(CMD_SET_HW_OPTION)   
+    CanSendArg.Data(1) = Param
+    CanSendArg.Data(2) = Value    
+    CanSendArg.Length = 3
     
     If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Get HW Option"
+      LogAdd "Set HW Option"
     Else
-      LogAdd "Get HW Option command failed"
+      LogAdd "Set HW Option command failed"
     End If    
   Else
     

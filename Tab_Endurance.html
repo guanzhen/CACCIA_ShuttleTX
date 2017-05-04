@@ -10,6 +10,19 @@
   td    {font-family=arial;color: white;padding : 1px 5px;}
   p { margin:1px;}
   table {width= 100%;}
+  #frame_PCB_Options
+  {
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');
+    float=left;
+    clear = left;
+    border = 2px;
+    border-style = solid;
+    border-color = white;
+    display=inline;
+    margin = 0px 1px 1px 0px;
+    padding = 2px;
+    width = 49.5%;
+  }
   #frame_Systemacceptance
   {
    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');
@@ -83,7 +96,22 @@
 
     </p>
   </div>
-
+  <div id="frame_PCB_Options">
+    <h1> PCB options</h1>    
+    <div class="innerframe" id ="frame_innerBarcode">
+      <table>
+      <td><input type=checkbox id="cbbarcode">Barcode Option</input></td>
+      <td><input type=checkbox id="cbbarcodetop">Top</input></td>
+      <td><input type=checkbox id="cbbarcodebot">Bottom</input></td>
+      </table>
+    </div>
+    <div class="innerframe" id ="frame_innerPCBinfo">
+        <table>
+        <tr><td>PCB Width</td><td><input id="textPCBwidth">mm</input></td></tr>
+        <tr><td>PCB Length</td><td><input id="textPCBlength">mm</input></td></tr>
+        </table>
+    </div>
+  </div>
   <div id="frame_endurancerun">
   <h1>Endurance Run</h1>
   <div class ="innerframe" id ="frame_innerwPCB">
@@ -111,7 +139,7 @@
     </p>
 
 
-  </div>
+  </div>  
   <div class ="innerframe" id ="frame_timing">
     <table>
     <tr><td>Start Time</td><td><input class="input_read" id="textERstarttime"></input></td></tr>
