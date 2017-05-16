@@ -1,3 +1,4 @@
+
 '**********************************************************************
 '* Purpose: Init CAN module listening to Async and Pub Messages (0x408,0x008)
 '* Input:  none

@@ -583,8 +583,8 @@ Function Command_Set_OutputToggleIO ( Target )
 End Function
 
 '-------------------------------------------------------
-'Prepare width adjustment
-Function Command_Set_PCBData ( DataID, Value)
+'Set PCB Data
+Function Command_Set_PCBData ( PCB_Ref, DataID, Value)
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Set CanSendArg = CreateObject("ICAN.CanSendArg")
@@ -595,7 +595,7 @@ Function Command_Set_PCBData ( DataID, Value)
     CanSendArg.CanId = CANConfig.CANIDcmd
     CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
     CanSendArg.Data(1) = DataID
-    CanSendArg.Data(2) = 0
+    CanSendArg.Data(2) = PCB_Ref
     CanSendArg.Data(3) = 0
     CanSendArg.Data(4) = Lang.GetByte(Value,0)
     CanSendArg.Data(5) = Lang.GetByte(Value,1)    
@@ -613,9 +613,41 @@ Function Command_Set_PCBData ( DataID, Value)
 End Function
 
 '-------------------------------------------------------
+Function Command_Set_PCBData_Single ( PCB_Ref,DataID,Value )
+
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
+    CanSendArg.Data(1) = $(PCB_DATA_OPTIONS_SINGLE)
+    CanSendArg.Data(2) = PCB_Ref
+    CanSendArg.Data(3) = 0
+    CanSendArg.Data(4) = DataID
+    CanSendArg.Data(5) = Value
+    CanSendArg.Length = 6
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      Command_Set_PCBData_Single = True
+    Else
+      Command_Set_PCBData_Single = False
+    End If    
+  Else
+    Command_Set_PCBData_Single = False
+  End if
+  
+End Function
+
+'-------------------------------------------------------
 Function Command_Set_PCBLength (Value)
   DebugMessage "Set PCB length: " & Value
-  Command_Set_PCBLength = Command_Set_PCBData($(PCB_DATA_LENGTH),Value)
+  Command_Set_PCBLength = Command_Set_PCBData(PCB_LANE1,$(PCB_DATA_LENGTH),Value)
+  Command_Set_PCBLength = Command_Set_PCBData(PCB_LANE2,$(PCB_DATA_LENGTH),Value)
+  Command_Set_PCBLength = Command_Set_PCBData(PCB_SHUTTLE,$(PCB_DATA_LENGTH),Value)
 End Function 
 '-------------------------------------------------------
 Function Command_DeletePCB ()
@@ -679,9 +711,9 @@ Function Command_Set_HWOption ( Param , Value )
     CanSendArg.Length = 3
     
     If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Set HW Option"
+      DebugMessage "Set HW Option"
     Else
-      LogAdd "Set HW Option command failed"
+      DebugMessage "Set HW Option command failed"
     End If    
   Else
     

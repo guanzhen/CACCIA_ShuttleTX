@@ -200,6 +200,8 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
   If optPCB = 1 Then
     PreparePCBEndurance
+  Else
+    EnableBarcode 0
   End If
   Command_Set_ParamERLimit 5000
   If Command_Prepare_ERun(0 , optPCB, optConveyor, optShuttle, optWA) = False Then
@@ -316,6 +318,7 @@ If external_stop = 0 Then
     'Wait 2 seconds for previous operation to finish
     System.Delay(2000)  
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
+    EnableBarcode 0
     Command_Prepare_ERun 0 , False, True, True, True
     DebugMessage "Send Start Endurance Run wo PCB Command"
     '2. Set timer
@@ -360,10 +363,14 @@ End Function
 '-------------------------------------------------------
 Sub PreparePCBEndurance ()
   'Disable errors while moving width for test PCB
-  Memory.InhibitErrors = 1  
-    If Visual.Select("cbbarcode").Checked = True Then
+  Memory.InhibitErrors = 1
+  
+  If Visual.Select("cbbarcode").Checked = True Then
     DebugMessage "Barcode option Selected"
-    PrepareBarcode
+    EnableBarcode 1
+  Else
+    DebugMessage "Barcode option Deactivated"  
+    EnableBarcode 0
   End If
   ' Move shuttle to middle position
   Command_Prepare_ShuttlePosition 0,1,0
@@ -380,18 +387,44 @@ Sub PreparePCBEndurance ()
 End Sub
 
 '-------------------------------------------------------
-Sub PrepareBarcode (  )
-Command_Set_HWOption $(OPT_HW_EXTENDED_BELTS),1
-Command_Set_HWOption $(OPT_HW_BARCODE_L2T),1
-Command_Set_HWOption $(OPT_HW_BARCODE_L2B),1
+Function EnableBarcode ( Enable )
+  'Enable 1 = Enable barcode reader and set PCB data to use Barcode scanner.
+  If Enable = 1 Then
+    Command_Set_HWOption $(OPT_HW_EXTENDED_BELTS),1
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2T),1
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2B),1
 
-If Visual.Select("cbbarcodetop").Checked = True Then
-  Command_Set_PCBData  $(PCB_DATA_OPTIONS_SINGLE),$(OPT_USE_BARCODE_TOP)
-Else
-  Command_Set_PCBData  $(PCB_DATA_OPTIONS_SINGLE),$(OPT_USE_BARCODE_BOTTOM)
-End If
+    If Visual.Select("cbbarcodetop").Checked = True Then
+      Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_TOP),1
+      Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_TOP),1
+      Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_TOP),1
+    End If    
+    
+    If Visual.Select("cbbarcodebot").Checked = True Then
+      Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_BOTTOM),1
+      Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_BOTTOM),1
+      Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_BOTTOM),1
+    End If
+    
+  'Enable 0 = Enable barcode reader and set PCB data to use Barcode scanner.  
+  Else  
+    Command_Set_HWOption $(OPT_HW_EXTENDED_BELTS),0
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2T),0
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2B),0
+    Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_TOP),0    
+    Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_TOP),0    
+    Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_TOP),0    
+  End If
 
-End Sub
+End Function
+
+Function SetPCBDData ()
+
+End Function
+
 '-------------------------------------------------------
 
 Sub UnLoadPCB ()
@@ -429,18 +462,18 @@ End If
 
 End Function
 '-------------------------------------------------------
-Function OnClick_cbbarcodetop ( Reason )
-  If Visual.Select("cbbarcodetop").Checked = True Then
-    Visual.Select("cbbarcodebot").Checked = False
-  Else
-    Visual.Select("cbbarcodebot").Checked = True
-  End If
-End Function
+'Function OnClick_cbbarcodetop ( Reason )
+'  If Visual.Select("cbbarcodetop").Checked = True Then
+'    Visual.Select("cbbarcodebot").Checked = False
+'  Else
+'    Visual.Select("cbbarcodebot").Checked = True
+'  End If
+'End Function
 '-------------------------------------------------------
-Function OnClick_cbbarcodebot ( Reason )
-  If Visual.Select("cbbarcodebot").Checked = True Then
-    Visual.Select("cbbarcodetop").Checked = False
-  Else
-    Visual.Select("cbbarcodetop").Checked = True
-  End If
-End Function
+'Function OnClick_cbbarcodebot ( Reason )
+'  If Visual.Select("cbbarcodebot").Checked = True Then
+'    Visual.Select("cbbarcodetop").Checked = False
+'  Else
+'    Visual.Select("cbbarcodetop").Checked = True
+'  End If
+'End Function
