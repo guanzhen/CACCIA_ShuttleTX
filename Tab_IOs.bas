@@ -23,7 +23,11 @@ Const IO_O_SMEMA_op_lane1_failed_PCB  = &H22
 Const IO_O_SMEMA_ip_lane2_machine_rdy = &H23
 Const IO_O_SMEMA_op_lane2_PCB_avail   = &H24
 Const IO_O_SMEMA_op_lane2_failed_PCB  = &H25
-Const IO_Max            = 37
+Const IO_O_barcodescan_lane3          = &H26
+Const IO_O_barcodescan_lane4          = &H27
+
+
+Const IO_Max            = 39
 
 '-------------------------------------------------------
 ' Init Windows
@@ -68,6 +72,8 @@ Function OnClick_btnoled22( Reason ) Command_Set_OutputToggleIO(&H22) End Functi
 Function OnClick_btnoled23( Reason ) Command_Set_OutputToggleIO(&H23) End Function
 Function OnClick_btnoled24( Reason ) Command_Set_OutputToggleIO(&H24) End Function
 Function OnClick_btnoled25( Reason ) Command_Set_OutputToggleIO(&H25) End Function
+Function OnClick_btnoled26( Reason ) Command_Set_OutputToggleIO(&H26) End Function
+Function OnClick_btnoled27( Reason ) Command_Set_OutputToggleIO(&H27) End Function
 
 '-------------------------------------------------------
 'Refreshes the IO inputs

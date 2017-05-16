@@ -1,8 +1,8 @@
 <html>
 <head>
-  <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
+  <meta http-equiv="content-type" content="text/ html;charset=utf-8" />  
+  <link rel="stylesheet" type="text/css" href="main.css">
   <style>
-  html { background-color: #DEDFE1;}
   body { margin:1px; padding=5px;}
   h1 { font-family=arial;font-size= 10pt; margin=2px 0px; color=white;}
   button  {    width: 120px;  margin : 1px 2px;}
@@ -13,10 +13,7 @@
   table { margin: 5px }
   #frame_smemacontrol
   {
-    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');
-    border:2px;
-    border-color : white;
-    border-style : solid;
+    
     width : 100%;
     height : 20%;
   }
@@ -24,19 +21,16 @@
   #subframe_Lane2{ float:left;}
   #frame_SMEMA
   {
-    border:2px;
-    border-color:white;
-    border-style:solid;
+    margin-top:5px;
     display:inline;
     float :left;
-    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1'); 
     width:100%;
   }
   </style>
 
 </head>
 <body>
-  <div id = "frame_smemacontrol">
+  <div id = "frame_smemacontrol" class = "GrpFrame">
     <table>
       <tr><th colspan="3" align="left">Shuttle Commands</th></tr>
         <tr><td>Reference Run</td><td><button id = "btnrefrun">Reference Run</button></td></tr>
@@ -69,7 +63,7 @@
       
     </table>
   </div>
-  <div id = "frame_SMEMA">
+  <div id = "frame_SMEMA" class = "GrpFrame">
     <h1 style = "padding-left:5px;"> SMEMA Control</h1>
     <div id = "subframe_Lane1">
       <h1 style = "padding-left:5px;"> Lane 1</h1>

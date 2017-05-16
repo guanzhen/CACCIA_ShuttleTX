@@ -151,21 +151,100 @@ End Function
 '------------------------------------------------------------------
 
 Function PUB_Handler ( CanReadArg )
-  Dim command  
-  'DebugMessage "Spontanous Public Message RX"
+  
+  DebugMessage "PUB Msg: " & CanReadArg.Format
   Select Case  CanReadArg.Data(3)
     case $(PUB_MSG_ERR_PARAM):  
-        'DebugMessage "Additonal Error Parameters"
+        DebugMessage "PubErr_Add " & CanReadArg.Format
         'LogAdd "Pub Msg: Additonal Error Parameters"
     case $(PUB_MSG_IO_STATE):
         'DebugMessage "IO State"
         'LogAdd "Pub Msg: IO State "& CanReadArg.Format(CFM_SHORT)
       PUB_IO_Handler CanReadArg
+    case $(PUB_MSG_BARCODE):
+      PUB_Barcode_Handler CanReadArg
+    case $(PUB_MSG_PCB_STATE):
+      PUB_PCBState_Handler CanReadArg
+    case $(PUB_MSG_MACHINE_INTERFACE):
+    case $(PUB_MSG_ENDURANCE_RUN):
+    case $(PUB_MSG_CONV_MOTOR_POSITION):
+    case $(PUB_MSG_SHUTTLE_MOTOR_POSITION):
+    case $(PUB_MSG_WA_MOTOR_POSITION):
+      
   End Select
   
 End Function
 '------------------------------------------------------------------
-
+Function PUB_PCBState_Handler ( CanReadArg )
+  Dim PCBState,PCBStateorg
+  Dim Status1,Status2
+  Dim Location
+  Dim PCBID
+  Dim Message
+  
+  'PCB ID Bytes 4 & 5 
+  PCBID = Lang.MakeInt(CanReadArg.Data(4),CanReadArg.Data(5))
+  
+  'PCB Status Byte 6 Failed field
+  If ( CanReadArg.Data(6) AND &H10 ) Then
+    Status1 = " Failed"
+  Else
+    Status1 = " OK"
+  End If
+  
+  'PCB Location Byte 6 inserted field
+  If (CanReadArg.Data(6) AND &H20 ) Then
+    Status2 = " Manually inserted"
+  Else
+    Status2 = " From Machine"
+  End If
+  'PCB Location Byte 6 Status field (byte 0-3)
+  'PCBStateorg = CanReadArg.Data(6) AND &h0F 
+  Select Case ( CanReadArg.Data(6) AND &h0F )
+    case 0: PCBState = "State:Deleted"
+    case 1: PCBState = "State:Inserted"
+    case 2: PCBState = "State:Removed"
+    case 3: PCBState = "State:Moving"
+    case 4: PCBState = "State:Moved"
+    case 5: PCBState = "State:MovingShuttle"
+    case 6: PCBState = "State:MovedShuttle"
+    case 7: PCBState = "State:Error"
+    case else PCBState = "???"
+  End Select
+  
+  Select Case  CanReadArg.Data(7)
+    case &h01 : Location = "Upstream,right lane"
+    case &h02 : Location = "Upstream,left lane"
+    case &h10 : Location = "In Shuttle,undefined lane"
+    case &h11 : Location = "In Shuttle,move in from right lane"
+    case &h12 : Location = "In Shuttle,move in from left lane"
+    case &h13 : Location = "In Shuttle,to move out right lane"
+    case &h14 : Location = "In Shuttle,to move out left lane"
+    case &h23 : Location = "Downstream,right lane"
+    case &h24 : Location = "Downstream,right lane"
+    case else Location = "???"
+  End Select
+  
+  DebugMessage "PCBID:" & PCBID & ":" & Status1 &","&Status2&","&PCBState&","&Location
+End Function
+'------------------------------------------------------------------
+Function PUB_Barcode_Handler ( CanReadArg )
+  Dim PCBID
+  Dim TopBottom
+  If CanReadArg.Data(1) = ACK_OK Then
+    PCBID = Lang.MakeInt(CanReadArg.Data(4),CanReadArg.Data(5))
+    If CanReadArg.Data(6) = 0 Then
+      TopBottom = "Top Barcode Scanner"
+    Else
+      TopBottom = "Bottom Barcode Scanner"  
+    End If  
+    LogAdd TopBottom & " read PCBID: " & PCBID
+  Else
+    LogAdd "Barcode Scanner Module Error"
+  End If 
+  
+End Function
+'------------------------------------------------------------------
 Function PUB_IO_Handler ( CanReadArg )
   Dim Message
   Dim status

@@ -1,8 +1,8 @@
 
   Function OnClick_btntestTimer1Start ( Reason )
-  Command_Set_PCBLength 1600
-  
+    Command_Set_PCBLength 1600  
   End Function
+  
   Function testing ()
   Dim sig_timerend,sig_cycleloopend,cycleloop,looping
   Dim interval

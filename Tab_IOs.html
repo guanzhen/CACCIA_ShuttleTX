@@ -1,32 +1,23 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
-  <!-- <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link> -->
+  <link rel="stylesheet" type="text/css" href="main.css">
   <style>
   h1 { font-family=arial;font-size= 12pt; margin=2px 0px; color=white; align = center;}
   td    { font-family=arial; font-size:15px;  color: white;padding : 1px 5px;} 
   body { margin:1px; padding=5px;}
-  html { background-color: #DEDFE1;}
   #frame_inputs
   {
-    border:2px;
-    border-color:white;
-    border-style:solid;
     float :left;
     display:inline;    
-    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1');    
     height : 65%;
     margin : 0px 2px 2px 0px;
     width: 50%;
   }
   #frame_outputs
   {
-    border:2px;
-    border-color:white;
-    border-style:solid;
     display:inline;
     float :left;
-    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#CA5151',gradientType='1');    
     height : 65%;
     left: 49%;
     margin : 0px 2px 2px 0px;
@@ -57,7 +48,7 @@
 </head>
 <body>
 
-  <div id = "frame_inputs">
+  <div id = "frame_inputs"  class = "GrpFrame">
     <table>
       <tr><td><img id="led01"></img>Start Button</td></tr>
       <tr><td><img id="led02"></img>Stop Button</td></tr>
@@ -70,12 +61,14 @@
       <tr><td><img id="led0B"></img>Bar Code Scanner Present</td></tr>
     </table>    
   </div>
-  <div id = "frame_outputs">
+  <div id = "frame_outputs"  class = "GrpFrame">
     <table>
       <tr><td><img id="led19"></img>WA Brake On</td><td><button value = "19" id="btnoled19">Toggle</button></td></tr>
       <tr><td><img id="led1A"></img>Shuttle Brake On</td><td><button value = "1A" id="btnoled1A">Toggle</button></td></tr>
-      <tr><td><img id="led1B"></img>Activate Barcode Lane 1</td><td><button value = "1B" id="btnoled1B">Toggle</button></td></tr>
-      <tr><td><img id="led1C"></img>Activate Barcode Lane 2</td><td><button value = "1C" id="btnoled1C">Toggle</button></td></tr>
+      <tr><td><img id="led1B"></img>Activate Barcode 1</td><td><button value = "1B" id="btnoled1B">Toggle</button></td></tr>
+      <tr><td><img id="led1C"></img>Activate Barcode 2</td><td><button value = "1C" id="btnoled1C">Toggle</button></td></tr>
+      <tr><td><img id="led26"></img>Activate Barcode 3</td><td><button value = "26" id="btnoled26">Toggle</button></td></tr>
+      <tr><td><img id="led27"></img>Activate Barcode 4</td><td><button value = "27" id="btnoled27">Toggle</button></td></tr>
       <tr><td><img id="led1D"></img>Cover Lock 1</td><td><button value = "1D" id="btnoled1D">Toggle</button></td></tr>
       <tr><td><img id="led1E"></img>Cover Lock 2</td><td><button value = "1E" id="btnoled1E">Toggle</button></td></tr>      
     </table>
