@@ -449,7 +449,33 @@ Function Command_Prepare_CalibrateSensor ()
   End if
   
 End Function
+'-------------------------------------------------------
 
+Function Command_Prepare_BarcodeScanner (Lane,ScannerPos)
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_BARCODE_SCANNER)
+    CanSendArg.Data(1) = Lane
+    CanSendArg.Data(2) = ScannerPos
+    CanSendArg.Length = 3
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Prepare barcode command sent"
+      Command_Prepare_CalibrateSensor = 1
+    Else
+      Command_Prepare_CalibrateSensor = 0
+      LogAdd "Prepare barcode command failed"
+    End If    
+  Else
+
+  End if
+End Function 
 '-------------------------------------------------------
 Function Command_MoveShuttle ( lane )
   Dim CanSendArg , CanReadArg, CANConfig
@@ -583,8 +609,8 @@ Function Command_Set_OutputToggleIO ( Target )
 End Function
 
 '-------------------------------------------------------
-'Set PCB Data
 Function Command_Set_PCBData ( PCB_Ref, DataID, Value)
+'Set PCB Data
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Set CanSendArg = CreateObject("ICAN.CanSendArg")

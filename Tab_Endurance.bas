@@ -209,7 +209,9 @@ If Not Memory.Exists("sig_ERexternalstop") Then
     ERexternal_stop = 1
     LogAdd "Unable to communicate with Shuttle TX"
   End If
-
+' Wait for PCB to be instantiated before setting the PCB data.
+  System.Delay(5000)
+  SetPCBDData
   looping = 1
 
   Do while looping = 1
@@ -280,7 +282,11 @@ If en_PCB = True Then
   'Visual.Select("textSAstarttime").Value = FormatTimeString(PCB_timestart)
   Timer_Handler TIMER_START,Time_PCB
   looping = 1
-'3. wait for timerend signal
+'3. Wait for PCB to be instantiated before setting the PCB data.
+  System.Delay(5000)
+  SetPCBDData
+ 
+'4. wait for timerend signal
   Do while looping = 1
   'If timer has finished set loop to exit
    If sig_timerend.wait(50) Then
@@ -365,13 +371,6 @@ Sub PreparePCBEndurance ()
   'Disable errors while moving width for test PCB
   Memory.InhibitErrors = 1
   
-  If Visual.Select("cbbarcode").Checked = True Then
-    DebugMessage "Barcode option Selected"
-    EnableBarcode 1
-  Else
-    DebugMessage "Barcode option Deactivated"  
-    EnableBarcode 0
-  End If
   ' Move shuttle to middle position
   Command_Prepare_ShuttlePosition 0,1,0
   System.Delay 2000
@@ -381,8 +380,7 @@ Sub PreparePCBEndurance ()
   System.Delay 1000
   System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
   System.Delay 500  
-  Memory.InhibitErrors = 0  
-  Command_Set_PCBLength Visual.Select("textPCBlength").Value*10
+  Memory.InhibitErrors = 0
 
 End Sub
 
@@ -421,8 +419,17 @@ Function EnableBarcode ( Enable )
 
 End Function
 
-Function SetPCBDData ()
 
+
+Function SetPCBDData()
+  If Visual.Select("cbbarcode").Checked = True Then
+    DebugMessage "Barcode option Selected"
+    EnableBarcode 1
+  Else
+    DebugMessage "Barcode option Deactivated"  
+    EnableBarcode 0
+  End If  
+  Command_Set_PCBLength Visual.Select("textPCBlength").Value*10
 End Function
 
 '-------------------------------------------------------
