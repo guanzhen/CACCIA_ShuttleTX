@@ -111,7 +111,8 @@ Function Command_Prepare_WidthAdjustment ( Width , rel_abs, fixedrail)
   'abs_rel
   ' 0 = relative width position 
   ' 1 = absolute width position
-
+  DebugMessage "Width Adjustment :" & Width
+  
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Dim Error_Flag
@@ -448,7 +449,33 @@ Function Command_Prepare_CalibrateSensor ()
   End if
   
 End Function
+'-------------------------------------------------------
 
+Function Command_Prepare_BarcodeScanner (Lane,ScannerPos)
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_PREPARE_BARCODE_SCANNER)
+    CanSendArg.Data(1) = Lane
+    CanSendArg.Data(2) = ScannerPos
+    CanSendArg.Length = 3
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      LogAdd "Prepare barcode command sent"
+      Command_Prepare_CalibrateSensor = 1
+    Else
+      Command_Prepare_CalibrateSensor = 0
+      LogAdd "Prepare barcode command failed"
+    End If    
+  Else
+
+  End if
+End Function 
 '-------------------------------------------------------
 Function Command_MoveShuttle ( lane )
   Dim CanSendArg , CanReadArg, CANConfig
@@ -582,8 +609,8 @@ Function Command_Set_OutputToggleIO ( Target )
 End Function
 
 '-------------------------------------------------------
-'Prepare width adjustment
-Function Command_Set_PCBData ( DataID, Value)
+Function Command_Set_PCBData ( PCB_Ref, DataID, Value)
+'Set PCB Data
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Set CanSendArg = CreateObject("ICAN.CanSendArg")
@@ -594,7 +621,7 @@ Function Command_Set_PCBData ( DataID, Value)
     CanSendArg.CanId = CANConfig.CANIDcmd
     CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
     CanSendArg.Data(1) = DataID
-    CanSendArg.Data(2) = 0
+    CanSendArg.Data(2) = PCB_Ref
     CanSendArg.Data(3) = 0
     CanSendArg.Data(4) = Lang.GetByte(Value,0)
     CanSendArg.Data(5) = Lang.GetByte(Value,1)    
@@ -612,10 +639,42 @@ Function Command_Set_PCBData ( DataID, Value)
 End Function
 
 '-------------------------------------------------------
-Function Command_Set_PCBLength (Value)
-  Command_Set_PCBLength = Command_Set_PCBData($(PCB_DATA_LENGTH),Value)
-End Function 
+Function Command_Set_PCBData_Single ( PCB_Ref,DataID,Value )
 
+  Dim CanSendArg,CanReadArg, CANConfig
+  Dim CanManager
+  Set CanSendArg = CreateObject("ICAN.CanSendArg")
+  Set CanReadArg = CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists( "CanManager" ) Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanId = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_SET_PCB_DATA)
+    CanSendArg.Data(1) = $(PCB_DATA_OPTIONS_SINGLE)
+    CanSendArg.Data(2) = PCB_Ref
+    CanSendArg.Data(3) = 0
+    CanSendArg.Data(4) = DataID
+    CanSendArg.Data(5) = Value
+    CanSendArg.Length = 6
+    
+    If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
+      Command_Set_PCBData_Single = True
+    Else
+      Command_Set_PCBData_Single = False
+    End If    
+  Else
+    Command_Set_PCBData_Single = False
+  End if
+  
+End Function
+
+'-------------------------------------------------------
+Function Command_Set_PCBLength (Value)
+  DebugMessage "Set PCB length: " & Value
+  Command_Set_PCBLength = Command_Set_PCBData(PCB_LANE1,$(PCB_DATA_LENGTH),Value)
+  Command_Set_PCBLength = Command_Set_PCBData(PCB_LANE2,$(PCB_DATA_LENGTH),Value)
+  Command_Set_PCBLength = Command_Set_PCBData(PCB_SHUTTLE,$(PCB_DATA_LENGTH),Value)
+End Function 
 '-------------------------------------------------------
 Function Command_DeletePCB ()
   Dim CanSendArg,CanReadArg, CANConfig
@@ -639,6 +698,7 @@ Function Command_DeletePCB ()
   End if  
 End Function
 
+'-------------------------------------------------------
 Function Command_Get_HWOption ( )
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
@@ -652,16 +712,17 @@ Function Command_Get_HWOption ( )
     CanSendArg.Length = 1
     
     If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Delete PCB command sent"
+      LogAdd "Get HW option command sent"
     Else
-       LogAdd "Delete PCB command failed"
+       LogAdd "Get HW option command failed"
     End If    
   Else
 
   End if  
 End Function
 
-Function Command_Set_HWOption ( )
+'-------------------------------------------------------
+Function Command_Set_HWOption ( Param , Value )
   Dim CanSendArg,CanReadArg, CANConfig
   Dim CanManager
   Set CanSendArg = CreateObject("ICAN.CanSendArg")
@@ -670,13 +731,15 @@ Function Command_Set_HWOption ( )
   If Memory.Exists( "CanManager" ) Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanId = CANConfig.CANIDcmd
-    CanSendArg.Data(0) = $(CMD_GET_HW_OPTION)   
-    CanSendArg.Length = 1
+    CanSendArg.Data(0) = $(CMD_SET_HW_OPTION)   
+    CanSendArg.Data(1) = Param
+    CanSendArg.Data(2) = Value    
+    CanSendArg.Length = 3
     
     If CANSendCMD(CanSendArg,CanReadArg,250) = True Then
-      LogAdd "Get HW Option"
+      DebugMessage "Set HW Option"
     Else
-      LogAdd "Get HW Option command failed"
+      DebugMessage "Set HW Option command failed"
     End If    
   Else
     

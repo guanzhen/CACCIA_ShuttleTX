@@ -1,2 +1,5 @@
+V0.05
+Removed Delete PCB button
+
 V0.04
 Fixed bug with endurance run. Endurance run stop time over 60mins now works correctly.

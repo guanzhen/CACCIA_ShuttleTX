@@ -1,9 +1,8 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/ html;charset=utf-8" />
-  <!-- <link rel="stylesheet" type="text/css" href="Tab_IOs.css"></link> -->
+  <link rel="stylesheet" type="text/css" href="main.css">
   <style>
-  html { background-color = #DEDFE1}
   body { margin:1px; padding=5px;}
 
   input { width:80px;}
@@ -13,7 +12,7 @@
   button { width: 150px;}  
   .innerframe
   {
-    filter= progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA3131',endColorStr='#DA6161',gradientType='1');    
+    filter = progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA312C',endColorStr='#A4312C',gradientType='1');
     border = 2px;
     border-style = solid;
     border-color = white;
@@ -26,11 +25,12 @@
   }
   .currinfo_subframe
   {
+    filter: progid:DXImageTransform.Microsoft.Gradient(startColorStr='#AA312C',endColorStr='#A4312C',gradientType='1');
     float:left;
     margin: 10px;
     padding: 5px;
     height = 60%;
-    border = 2px;
+    border = 1px;
     border-style = solid;
     border-color = white;
   }
@@ -49,6 +49,7 @@
   .input_read {background-color:lightgrey; }
   #frame_currentinfo
   {
+    margin-top:5px;
     width = 100%;
     height = 40%;    
   }
@@ -77,7 +78,7 @@
         <option value = "1">Left Fixed</option>
       </select>
       </p>
-      <p align="center"><button id = "btn_WA_mvtopos">Move to Positon</button></p>
+      <p align="center"><button id = "btn_WA_mvtopos">Move to Position</button></p>
     </div>
     
     <div id="frame_shuttlemotor" class = "innerframe">
@@ -91,7 +92,7 @@
         <option value = "1">Left Fixed</option>
       </select>
       
-      <p align="center"><button id = "btn_shuttle_mvtopos">Move to Positon</button></p>
+      <p align="center"><button id = "btn_shuttle_mvtopos">Move to Position</button></p>
     </div>
     
   <div id = "frame_currentinfo" class = "innerframe">

@@ -2,7 +2,7 @@
 const TEST_PCB_LENGTH = 1600
 
 '-------------------------------------------------------
-Function Init_WindowEndurance
+Function Init_WindowEndurance ()
 DebugMessage "Init Endurance Run Window"
 Visual.Select("textSAstarttime").ReadOnly = true
 Visual.Select("textSAstoptime").ReadOnly = true
@@ -19,6 +19,12 @@ Visual.Select("cbpcbcyclicrun").Checked = true
 Visual.Select("cbwopcbshuttle").Checked = true
 Visual.Select("cbwopcbWA").Checked = true
 Visual.Select("cbwopcbconveyor").Checked = true
+
+Visual.Select("textPCBwidth").Value = "100"
+Visual.Select("textPCBlength").Value = "160"
+
+Visual.Select("cbbarcodetop").Disabled = True
+Visual.Select("cbbarcodebot").Disabled = True
 
 Visual.Select("textwithPCBmins").Value = "60"
 Visual.Select("textwoPCBmins").Value = "60"
@@ -55,6 +61,16 @@ If NOT Memory.Exists("sig_externalstop") Then
     NoError = 0
   End If
 
+  If Not CheckUValue(Visual.Select("textPCBlength").Value)  Then
+    NoError = 0
+    LogAdd "Invalid PCB Length!"
+  End If
+
+  If Not CheckUValue(Visual.Select("textPCBwidth").Value)  Then
+    NoError = 0
+    LogAdd "Invalid PCB Width!"
+  End If
+
   If NoError = 1 Then
     LogAdd "System Acceptance start!"
     Visual.Select("btnSArun_start").Disabled = True
@@ -74,11 +90,13 @@ Function OnClick_btnSArun_stop ( Reason )
   SARun_Stop
   DebugMessage "Stop Timer1 Ended"
 End Function
+
 '-------------------------------------------------------
 Function StopAllEnduranceRuns( )
 ERun_Stop
 SARun_Stop
 End Function
+
 '-------------------------------------------------------
 Function OnClick_btnendrun_wpcb_start ( Reason )
 Dim optShuttle,optCyclic
@@ -92,11 +110,22 @@ If NOT optShuttle AND NOT optCyclic Then
   LogAdd "No tests are selected!"
 End If
 
+If Not CheckUValue(Visual.Select("textPCBlength").Value)  Then
+  NoError = 0
+  LogAdd "Invalid PCB Length!"
+End If
+
+If Not CheckUValue(Visual.Select("textPCBwidth").Value)  Then
+  NoError = 0
+  LogAdd "Invalid PCB Width!"
+End If
+
 If NoError = 1 Then
   LogAdd "Endurance Run with PCB Start"
   Visual.Select("btnendrun_wpcb_start").Disabled = True
   Visual.Select("btnendrun_wopcb_start").Disabled = True
-  System.Start ERun_Monitor(optCyclic,optCyclic,optShuttle,false)
+  System.Start ERun_Monitor(1,optCyclic,optShuttle,0)
+  
 End If
 End Function
 '-------------------------------------------------------
@@ -119,7 +148,7 @@ End If
 
 If NoError = 1 Then
   LogAdd "Endurance Run without PCB Start"
-  System.Start ERun_Monitor(false,opt_conveyor,opt_shuttle,opt_WA)
+  System.Start ERun_Monitor(0,opt_conveyor,opt_shuttle,opt_WA)
 End If
 
 End Function
@@ -171,6 +200,8 @@ If Not Memory.Exists("sig_ERexternalstop") Then
   '1. Send command (PCB, Conveyor, Shuttle = True, WA = False)
   If optPCB = 1 Then
     PreparePCBEndurance
+  Else
+    EnableBarcode 0
   End If
   Command_Set_ParamERLimit 5000
   If Command_Prepare_ERun(0 , optPCB, optConveyor, optShuttle, optWA) = False Then
@@ -178,7 +209,9 @@ If Not Memory.Exists("sig_ERexternalstop") Then
     ERexternal_stop = 1
     LogAdd "Unable to communicate with Shuttle TX"
   End If
-
+' Wait for PCB to be instantiated before setting the PCB data.
+  System.Delay(5000)
+  SetPCBDData
   looping = 1
 
   Do while looping = 1
@@ -249,7 +282,11 @@ If en_PCB = True Then
   'Visual.Select("textSAstarttime").Value = FormatTimeString(PCB_timestart)
   Timer_Handler TIMER_START,Time_PCB
   looping = 1
-'3. wait for timerend signal
+'3. Wait for PCB to be instantiated before setting the PCB data.
+  System.Delay(5000)
+  SetPCBDData
+ 
+'4. wait for timerend signal
   Do while looping = 1
   'If timer has finished set loop to exit
    If sig_timerend.wait(50) Then
@@ -287,6 +324,7 @@ If external_stop = 0 Then
     'Wait 2 seconds for previous operation to finish
     System.Delay(2000)  
     '1. Send command ( WA, Conveyor, Shuttle = True, PCB = False)
+    EnableBarcode 0
     Command_Prepare_ERun 0 , False, True, True, True
     DebugMessage "Send Start Endurance Run wo PCB Command"
     '2. Set timer
@@ -328,21 +366,73 @@ Memory.Free "sig_externalstop"
 Command_Abort
 End Function
 
+'-------------------------------------------------------
 Sub PreparePCBEndurance ()
+  'Disable errors while moving width for test PCB
   Memory.InhibitErrors = 1
+  
   ' Move shuttle to middle position
   Command_Prepare_ShuttlePosition 0,1,0
   System.Delay 2000
   ' Open the shuttle to accomodate test PCB (10cm)
-  Command_Prepare_WidthAdjustment 100000,1,0
+  Command_Prepare_WidthAdjustment Visual.Select("textPCBwidth").Value*1000,1,0
   'Command_Set_LaneParameter 4,$(P_LANE_POS_FIXED_RAIL),0
   System.Delay 1000
   System.MessageBox "Please insert Test PCB", "Insert Test PCB", MB_OK
   System.Delay 500  
   Memory.InhibitErrors = 0
-  
-  Command_Set_PCBLength TEST_PCB_LENGTH
+
 End Sub
+
+'-------------------------------------------------------
+Function EnableBarcode ( Enable )
+  'Enable 1 = Enable barcode reader and set PCB data to use Barcode scanner.
+  If Enable = 1 Then
+    Command_Set_HWOption $(OPT_HW_EXTENDED_BELTS),1
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2T),1
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2B),1
+
+    If Visual.Select("cbbarcodetop").Checked = True Then
+      Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_TOP),1
+      Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_TOP),1
+      Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_TOP),1
+    End If    
+    
+    If Visual.Select("cbbarcodebot").Checked = True Then
+      Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_BOTTOM),1
+      Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_BOTTOM),1
+      Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_BOTTOM),1
+    End If
+    
+  'Enable 0 = Enable barcode reader and set PCB data to use Barcode scanner.  
+  Else  
+    Command_Set_HWOption $(OPT_HW_EXTENDED_BELTS),0
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2T),0
+    Command_Set_HWOption $(OPT_HW_BARCODE_L2B),0
+    Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_TOP),0    
+    Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_TOP),0    
+    Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_TOP),0    
+  End If
+
+End Function
+
+
+
+Function SetPCBDData()
+  If Visual.Select("cbbarcode").Checked = True Then
+    DebugMessage "Barcode option Selected"
+    EnableBarcode 1
+  Else
+    DebugMessage "Barcode option Deactivated"  
+    EnableBarcode 0
+  End If  
+  Command_Set_PCBLength Visual.Select("textPCBlength").Value*10
+End Function
+
+'-------------------------------------------------------
 
 Sub UnLoadPCB ()
   Memory.InhibitErrors = 1
@@ -363,3 +453,34 @@ Sub UnLoadPCB ()
   'Command_DeletePCB
   Memory.InhibitErrors = 0
 End Sub
+
+'-------------------------------------------------------
+Function OnClick_cbbarcode ( Reason )
+
+If Visual.Select("cbbarcode").Checked = True Then
+  Visual.Select("cbbarcodetop").Disabled = False
+  Visual.Select("cbbarcodebot").Disabled = False
+  Visual.Select("cbbarcodetop").Checked = True
+  Visual.Select("cbbarcodebot").Checked = False  
+Else  
+  Visual.Select("cbbarcodetop").Disabled = True
+  Visual.Select("cbbarcodebot").Disabled = True  
+End If
+
+End Function
+'-------------------------------------------------------
+'Function OnClick_cbbarcodetop ( Reason )
+'  If Visual.Select("cbbarcodetop").Checked = True Then
+'    Visual.Select("cbbarcodebot").Checked = False
+'  Else
+'    Visual.Select("cbbarcodebot").Checked = True
+'  End If
+'End Function
+'-------------------------------------------------------
+'Function OnClick_cbbarcodebot ( Reason )
+'  If Visual.Select("cbbarcodebot").Checked = True Then
+'    Visual.Select("cbbarcodetop").Checked = False
+'  Else
+'    Visual.Select("cbbarcodetop").Checked = True
+'  End If
+'End Function
