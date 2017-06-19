@@ -90,6 +90,11 @@
     Author: Igor Zimmermann
     Date: 2017-02-08
 
+    Version: 18
+    Description: Added: PAR_BARCODE_DELAY
+    Author: Igor Zimmermann
+    Date: 2017-05-31
+
 */
     //Interface
         #define    MAJOR_VERSION_ISS_SHUTTLE                       0x0000
@@ -274,6 +279,7 @@
         #define    PAR_TRAVEL_RANGE_SHUTTLE                        0x1D
         #define    PAR_TRAVEL_RANGE_WA                             0x1E
         #define    PAR_ENDUR_LIMIT_ADJ                             0x1F
+        #define    PAR_BARCODE_DELAY                               0x20
         #define    PAR_SHUTTLE_CURRENT_FORW                        0x31
         #define    PAR_SHUTTLE_CURRENT_BACKW                       0x32
         #define    PAR_WA_CURRENT_FORW                             0x33
