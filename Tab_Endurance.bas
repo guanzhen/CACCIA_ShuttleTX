@@ -391,6 +391,14 @@ Function EnableBarcode ( Enable )
     Command_Set_HWOption $(OPT_HW_EXTENDED_BELTS),1
     Command_Set_HWOption $(OPT_HW_BARCODE_L2T),1
     Command_Set_HWOption $(OPT_HW_BARCODE_L2B),1
+    
+    'clear these bits first.
+    Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_BOTTOM),0
+    Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_TOP),0    
+    Command_Set_PCBData_Single  PCB_LANE2,$(OPT_USE_BARCODE_TOP),0    
+    Command_Set_PCBData_Single  PCB_SHUTTLE,$(OPT_USE_BARCODE_TOP),0    
 
     If Visual.Select("cbbarcodetop").Checked = True Then
       Command_Set_PCBData_Single  PCB_LANE1,$(OPT_USE_BARCODE_TOP),1
