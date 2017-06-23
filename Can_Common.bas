@@ -234,10 +234,12 @@ Function PUB_Barcode_Handler ( CanReadArg )
   Dim TopBottom
   If CanReadArg.Data(1) = ACK_OK Then
     PCBID = Lang.MakeInt(CanReadArg.Data(4),CanReadArg.Data(5))
-    If CanReadArg.Data(6) = 0 Then
+    If CanReadArg.Data(6) = 1 Then
       TopBottom = "Top Barcode Scanner"
-    Else
+    Else If CanReadArg.Data(6) = 1 Then
       TopBottom = "Bottom Barcode Scanner"  
+    Else
+      TopBottom = "Unknown Pos BCScanner"      
     End If  
     LogAdd TopBottom & " read PCBID: " & PCBID
   Else
