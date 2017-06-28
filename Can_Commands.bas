@@ -789,6 +789,39 @@ Function Command_Get_IOStates()
 End Function
 
 '-------------------------------------------------------
+Function Command_Get_BarcodeLabel ( startline, pcbid, topbottom )
+  Dim CanSendArg , CanReadArg, CANConfig
+  Dim Data[6]
+  Set CanSendArg =  CreateObject("ICAN.CanSendArg")
+  Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  
+  CanReadArg =  CreateObject("ICAN.CanReadArg")
+
+  If Memory.Exists("CANManager") Then
+    Memory.Get "CANConfig",CANConfig
+    CanSendArg.CanID = CANConfig.CANIDcmd
+    CanSendArg.Data(0) = $(CMD_GET_BARCODE_LABEL)
+    CanSendArg.Data(1) = startline
+    CanSendArg.Data(2) = Lang.GetByte(0,pcbid)
+    CanSendArg.Data(3) = Lang.GetByte(1,pcbid)
+    CanSendArg.Data(4) = topbottom
+    CanSendArg.Length = 5
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
+      If CanReadArg.Data(1) = ACK_OK Then
+        DebugMessage "Get barcode label " & CanReadArg.Format
+        
+        Command_Get_BarcodeLabel = 1
+      Else
+        DebugMessage "Get barcode no more data or error" & CanReadArg.Format
+        Command_Get_BarcodeLabel = -1
+      End If
+    Else
+      DebugMessage "Read Barcodelabel failed"
+      Command_Get_BarcodeLabel = -1
+    End If
+  End If
+End Function
+'-------------------------------------------------------
 Function Command_Get_LaneParam_FixedRail(lane)
   Dim CanSendArg , CanReadArg, CANConfig
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")

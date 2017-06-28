@@ -236,14 +236,16 @@ Function PUB_Barcode_Handler ( CanReadArg )
     PCBID = Lang.MakeInt(CanReadArg.Data(4),CanReadArg.Data(5))
     If CanReadArg.Data(6) = 1 Then
       TopBottom = "Top Barcode Scanner"
-    Else If CanReadArg.Data(6) = 1 Then
+      Get_BarcodeLabel ( CanReadArg.Data(6) )
+    ElseIf CanReadArg.Data(6) = 2 Then
       TopBottom = "Bottom Barcode Scanner"  
+      Get_BarcodeLabel ( CanReadArg.Data(6) )
     Else
       TopBottom = "Unknown Pos BCScanner"      
     End If  
     LogAdd TopBottom & " read PCBID: " & PCBID
   Else
-    LogAdd "Barcode Scanner Module Error"
+    LogAdd "Barcode Scanner Error"
   End If 
   
 End Function
@@ -347,6 +349,23 @@ Dim Active,Running,prepid
 End Function
 '------------------------------------------------------------------
 
+Function Get_BarcodeLabel ( topbottom )
+  Dim BarcodeContents,exitloop
+  
+  exitloop = 0
+  BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,topbottom)
+  Do  
+    BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,topbottom)
+    If Not BarcodeContents = -1 Then
+        'Append data to string
+    Else
+       exitloop = 1       
+    End If 
+  Loop Until exitloop = 1
+  LogAdd "Barcode: " & BarcodeContents
+End Function
+
+'------------------------------------------------------------------
 Function Get_Err_Name( ID )
   Dim name
   Select Case ID
