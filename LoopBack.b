@@ -12,7 +12,7 @@ If rc.Success
   Delay(10)
   Switch rc.Data[0]
   {
-  Case 0x00:
+  Case 0xFF:
   {
     LoopCont = 0
   }
@@ -86,6 +86,15 @@ If rc.Success
     SendMsg{CANTXID2}(0x90,0x00,0x04)
     Delay(20)
     SendMsg{CANTXID2}(0x40,0x00,0x04) 
+  }
+  'CMD_GET_BARCODE
+  Case 0x26:
+  {
+    Switch rc.Data[1]
+    {
+      Case 0x20: {SendMsg{CANTXID1}(rc.Data[0],0x00,0x31,0x32,0x33,0x34,0x35,0x36) }
+      Case 0x21: {SendMsg{CANTXID1}(rc.Data[0],0x10,0x37,0x38,0x39,0x40,0x41) }
+    }
   }
   'CMD_GET_PARAM 
   Case 0x33:

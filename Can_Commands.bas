@@ -791,12 +791,11 @@ End Function
 '-------------------------------------------------------
 Function Command_Get_BarcodeLabel ( startline, pcbid, topbottom )
   Dim CanSendArg , CanReadArg, CANConfig
-  Dim Data[6]
+  Dim Data(7),i,stringcontents,StringArray 
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
+  Set StringArray = CreateObject("MATH.StringArray")
   
-  CanReadArg =  CreateObject("ICAN.CanReadArg")
-
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
@@ -806,19 +805,29 @@ Function Command_Get_BarcodeLabel ( startline, pcbid, topbottom )
     CanSendArg.Data(3) = Lang.GetByte(1,pcbid)
     CanSendArg.Data(4) = topbottom
     CanSendArg.Length = 5
-    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then
-      If CanReadArg.Data(1) = ACK_OK Then
-        DebugMessage "Get barcode label " & CanReadArg.Format
-        
-        Command_Get_BarcodeLabel = 1
-      Else
-        DebugMessage "Get barcode no more data or error" & CanReadArg.Format
-        Command_Get_BarcodeLabel = -1
-      End If
+    
+    CANSendCMD CanSendArg,CanReadArg, 250
+    If CanReadArg.Data(1) = ACK_OK Then
+      DebugMessage "Get barcode label " & CanReadArg.Format
+      For i = 2 To CanReadArg.Length - 1 
+        StringArray.Add(Chr(CanReadArg.Data(i)))
+        'DebugMessage i & " " & Chr(CanReadArg.Data(i))
+        'If i = 8 Then
+        '  Exit For
+        'End If
+      Next
+      'Data(7) = "\n"
+      'StringArray.Add(Data)
+      'DebugMessage "End " & Data
+      stringcontents = StringArray.ComposeString("")
+      'stringcontents = String.SafeParse(Data)
+      'stringcontents = String.ComposeString(Data,,CanReadArg.Length - 3)
+      'DebugMessage "String " & stringcontents      
+      Command_Get_BarcodeLabel = stringcontents
     Else
-      DebugMessage "Read Barcodelabel failed"
+      DebugMessage "Get barcode no more data or error " & CanReadArg.Format
       Command_Get_BarcodeLabel = -1
-    End If
+    End If   
   End If
 End Function
 '-------------------------------------------------------

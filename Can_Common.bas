@@ -232,6 +232,8 @@ End Function
 Function PUB_Barcode_Handler ( CanReadArg )
   Dim PCBID
   Dim TopBottom
+  Dim Barcode
+  Barcode = ""
   If CanReadArg.Data(1) = ACK_OK Then
     PCBID = Lang.MakeInt(CanReadArg.Data(4),CanReadArg.Data(5))
     If CanReadArg.Data(6) = 1 Then
@@ -239,11 +241,14 @@ Function PUB_Barcode_Handler ( CanReadArg )
       Get_BarcodeLabel ( CanReadArg.Data(6) )
     ElseIf CanReadArg.Data(6) = 2 Then
       TopBottom = "Bottom Barcode Scanner"  
-      Get_BarcodeLabel ( CanReadArg.Data(6) )
     Else
       TopBottom = "Unknown Pos BCScanner"      
-    End If  
-    LogAdd TopBottom & " read PCBID: " & PCBID
+    End If 
+    
+    If CanReadArg.Data(6) = 1 OR  CanReadArg.Data(6) = 2 Then
+      Barcode = Get_BarcodeLabel (CanReadArg.Data(6))
+    End If
+    LogAdd TopBottom & " read PCBID: " & PCBID & " Barcode:" & Barcode    
   Else
     LogAdd "Barcode Scanner Error"
   End If 
@@ -350,19 +355,24 @@ End Function
 '------------------------------------------------------------------
 
 Function Get_BarcodeLabel ( topbottom )
-  Dim BarcodeContents,exitloop
+  Dim BarcodeContents,exitloop,Barcode
   
   exitloop = 0
-  BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,topbottom)
-  Do  
-    BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,topbottom)
-    If Not BarcodeContents = -1 Then
+  Barcode = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,topbottom)
+  DebugMessage "Finish start"
+  DebugMessage "START" & Barcode
+  Do
+    BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_NEXT),0,topbottom)
+    DebugMessage "LINE" & BarcodeContents
+    If Not BarcodeContents = -1  Then
         'Append data to string
+        Barcode = Barcode & BarcodeContents
     Else
        exitloop = 1       
     End If 
   Loop Until exitloop = 1
-  LogAdd "Barcode: " & BarcodeContents
+  'LogAdd "Barcode: " & Barcode
+  Get_BarcodeLabel = Barcode
 End Function
 
 '------------------------------------------------------------------
