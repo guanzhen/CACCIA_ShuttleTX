@@ -68,11 +68,21 @@ Function OnClick_btnGetBarcode ( Reason )
     Exit Function
   End If
   
+  If Barcode = $(ACK_NO_MORE_DATA) Then
+    LogAdd "Barcode No more data!"
+    Exit Function
+  End If
+  
+  If Barcode = $(ACK_NOK) Then
+    LogAdd "Barcode command error!"
+    Exit Function
+  End If  
+  
   DebugMessage "START " & Barcode
   Do
     BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_NEXT),&h0000,01)
     DebugMessage "LINE " & BarcodeContents
-    If Not BarcodeContents = -1  Then
+    If Not BarcodeContents = $(ACK_NOK)  AND Not BarcodeContents = $(ACK_NO_MORE_DATA) Then
         'Append data to string
         Barcode = Barcode & BarcodeContents
     Else
