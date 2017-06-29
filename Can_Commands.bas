@@ -795,14 +795,16 @@ Function Command_Get_BarcodeLabel ( startline, pcbid, topbottom )
   Set CanSendArg =  CreateObject("ICAN.CanSendArg")
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
   Set StringArray = CreateObject("MATH.StringArray")
-  
+  DebugMessage "Start:" & startline &  " PCBDID: " & pcbid & " topbottom:" & topbottom
   If Memory.Exists("CANManager") Then
     Memory.Get "CANConfig",CANConfig
     CanSendArg.CanID = CANConfig.CANIDcmd
     CanSendArg.Data(0) = $(CMD_GET_BARCODE_LABEL)
     CanSendArg.Data(1) = startline
-    CanSendArg.Data(2) = Lang.GetByte(0,pcbid)
-    CanSendArg.Data(3) = Lang.GetByte(1,pcbid)
+    CanSendArg.Data(2) = 0
+    CanSendArg.Data(3) = 0
+    'CanSendArg.Data(2) = Lang.GetByte(0,pcbid)
+    'CanSendArg.Data(3) = Lang.GetByte(1,pcbid)
     CanSendArg.Data(4) = topbottom
     CanSendArg.Length = 5
     
