@@ -58,6 +58,29 @@ End Function
 '-------------------------------------------------------
 ' Init On Click Functions
 '-------------------------------------------------------
+Function OnClick_btnGetBarcode ( Reason )
+  Dim BarcodeContents,exitloop,Barcode  
+  exitloop = 0
+  Barcode = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,01)  
+  'Read barcode failed
+  If Barcode = "NOREAD" Then
+    LogAdd "Barcode reader failed to read data"
+    Exit Function
+  End If
+  
+  DebugMessage "START " & Barcode
+  Do
+    BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_NEXT),&h0000,01)
+    DebugMessage "LINE " & BarcodeContents
+    If Not BarcodeContents = -1  Then
+        'Append data to string
+        Barcode = Barcode & BarcodeContents
+    Else
+       exitloop = 1       
+    End If 
+  Loop Until exitloop = 1
+  LogAdd "Barcode Data : " & Barcode
+End Function
 
 'Function OnClick_btnoled18( Reason ) Command_Set_OutputToggleIO(&H18) End Function
 Function OnClick_btnoled19( Reason ) Command_Set_OutputToggleIO(&H19) End Function
