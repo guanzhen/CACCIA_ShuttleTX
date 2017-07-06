@@ -1,6 +1,8 @@
 
 Dim CANID,CANTXID1,CANTXID2
 Dim LoopCont,rc
+Dim BarcodeCnt
+BarcodeCnt = 0
 CANID = 0x644
 CANTXID1 = 0x645
 CANTXID2 = 0x647
@@ -89,11 +91,26 @@ If rc.Success
   }
   'CMD_GET_BARCODE
   Case 0x26:
-  {
+  {    
     Switch rc.Data[1]
     {
-      Case 0x20: {SendMsg{CANTXID1}(rc.Data[0],0x00,0x31,0x32,0x33,0x34,0x35,0x36) }
-      Case 0x21: {SendMsg{CANTXID1}(rc.Data[0],0x10,0x37,0x38,0x39,0x40,0x41) }
+      Case 0x20: 
+      {
+        SendMsg{CANTXID1}(rc.Data[0],0x00,0x31,0x32,0x33,0x34,0x35,0x36)          
+        BarcodeCnt = 0
+      }
+      Case 0x21: 
+      {
+        If (BarcodeCnt == 0)
+        {
+          SendMsg{CANTXID1}(rc.Data[0],0x00,0x37,0x38,0x39,0x41,0x42,0x43)            
+        }
+        Else
+        {
+          SendMsg{CANTXID1}(rc.Data[0],0x10)           
+        }
+        BarcodeCnt = BarcodeCnt + 1      
+      }
     }
   }
   'CMD_GET_PARAM 

@@ -229,30 +229,27 @@ Function PUB_PCBState_Handler ( CanReadArg )
   DebugMessage "PCBID:" & PCBID & ":" & Status1 &","&Status2&","&PCBState&","&Location
 End Function
 '------------------------------------------------------------------
+
 Function PUB_Barcode_Handler ( CanReadArg )
   Dim PCBID
   Dim TopBottom
+  Dim TopBottomData
   Dim Barcode
-  Barcode = ""
   If CanReadArg.Data(1) = ACK_OK Then
     PCBID = Lang.MakeInt(CanReadArg.Data(4),CanReadArg.Data(5))
-    If CanReadArg.Data(6) = 1 Then
+    TopBottomData = CanReadArg.Data(6)
+    If TopBottomData = 1 Then
       TopBottom = "Top Barcode Scanner"
-    ElseIf CanReadArg.Data(6) = 2 Then
+      Get_BarcodeLabel CanReadArg.Data(6),Barcode
+    ElseIf TopBottomData = 2 Then
       TopBottom = "Bottom Barcode Scanner"  
+      Get_BarcodeLabel CanReadArg.Data(6),Barcode
     Else
       TopBottom = "Unknown Pos BCScanner"      
     End If 
     
-    If CanReadArg.Data(6) = 1 OR  CanReadArg.Data(6) = 2 Then
-      Barcode = Get_BarcodeLabel (CanReadArg.Data(6))
-    End If
-    
-    If Barcode = -1 Then
-      LogAdd TopBottom & " read PCBID: " & PCBID & " Failed"    
-    Else
-      LogAdd TopBottom & " read PCBID: " & PCBID & " Barcode:" & Barcode    
-    End If
+    LogAdd TopBottom & " read PCBID: " & PCBID & " Barcode: " & Barcode   
+  
   Else
     LogAdd "Barcode Scanner Error"
   End If 
@@ -358,36 +355,41 @@ Dim Active,Running,prepid
 End Function
 '------------------------------------------------------------------
 
-Function Get_BarcodeLabel ( topbottom )
-  Dim BarcodeContents,exitloop,Barcode
-  
+Function Get_BarcodeLabel ( TopBottom, ByRef Barcode )
+  Dim Barcode_Line,Barcode_Start
+  Dim exitloop
   exitloop = 0
-  Barcode = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,topbottom)
+  Barcode_Start = Command_Get_Barcodelabel($(PARAM_BARCODE_START),0,TopBottom)  
   
-  'Read barcode failed
-  If Barcode = "NOREAD" Then
-    LogAdd "Barcode reader failed to read data"
+  If Barcode_Start = $(ACK_OK)  Then
+    Memory.Get "BarcodeData",Barcode_Start
+    If Barcode_Start = "NOREAD" Then    
+      Barcode = "Failed to read Data!"
+      Exit Function      
+    End If
+  'Read Barcode_Start failed
+  Elseif Barcode_Start = $(ACK_NOK) Then
+    Barcode = "Command Error!"
     Exit Function
-  ElseIf Barcode = $(ACK_OK) Then
-    LogAdd "Barcode No more data!"
+  Elseif Barcode_Start = $(ACK_NO_MORE_DATA) Then
+    Barcode = "No More Data!"
     Exit Function
-  ElseIf Barcode = $(ACK_NO_MORE_DATA) Then
-    LogAdd "Barcode command error!"
-    Exit Function
-  Else
-    DebugMessage "START " & Barcode
-    Do
-      BarcodeContents = Command_Get_Barcodelabel($(PARAM_BARCODE_NEXT),&h0000,topbottom)
-      DebugMessage "LINE " & BarcodeContents
-      If Not BarcodeContents = $(ACK_NOK)  AND Not BarcodeContents = $(ACK_NO_MORE_DATA) Then
-          'Append data to string
-          Barcode = Barcode & BarcodeContents
-      Else
-         exitloop = 1       
-      End If 
-    Loop Until exitloop = 1
-    Get_BarcodeLabel = Barcode
   End If
+
+  Barcode = Barcode_Start
+  
+  DebugMessage "START " & Barcode_Start
+  Do
+    Barcode_Line = Command_Get_Barcodelabel($(PARAM_BARCODE_NEXT),&h0000,TopBottom)
+    DebugMessage "LINE " & Barcode_Line
+    If Barcode_Line = $(ACK_OK) Then
+        'Append data to string
+        Memory.Get "BarcodeData",Barcode_Line
+        Barcode = Barcode & Barcode_Line
+    Else
+       exitloop = 1       
+    End If 
+  Loop Until exitloop = 1  
 End Function
 
 '------------------------------------------------------------------

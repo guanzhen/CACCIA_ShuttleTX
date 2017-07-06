@@ -808,21 +808,21 @@ Function Command_Get_BarcodeLabel ( startline, pcbid, topbottom )
     CanSendArg.Data(4) = topbottom
     CanSendArg.Length = 5
     
-    CANSendCMD CanSendArg,CanReadArg, 250
-    If CanReadArg.Data(1) = $(ACK_OK) Then
-      DebugMessage "Get barcode label " & CanReadArg.Format
+    If CANSendCMD(CanSendArg,CanReadArg, 250) = True Then    
+      DebugMessage "Command_Get_BarcodeLabel:GetData " & CanReadArg.Format
       For i = 2 To CanReadArg.Length - 1 
         StringArray.Add(Chr(CanReadArg.Data(i)))
       Next
       stringcontents = StringArray.ComposeString("")
-      Command_Get_BarcodeLabel = stringcontents
+      Memory.Set "BarcodeData",stringcontents
+      Command_Get_BarcodeLabel = $(ACK_OK)
     ElseIf CanReadArg.Data(1) = $(ACK_NO_MORE_DATA) Then
-      DebugMessage "Get barcode no more data" & CanReadArg.Format    
+      DebugMessage "Command_Get_BarcodeLabel:ACK_NO_MORE_DATA " & CanReadArg.Format    
       Command_Get_BarcodeLabel = $(ACK_NO_MORE_DATA)
     Else
-      DebugMessage "Get barcode error " & CanReadArg.Format
+      DebugMessage "Command_Get_BarcodeLabel:ACK Error " & CanReadArg.Format
       Command_Get_BarcodeLabel = $(ACK_NOK)
-    End If   
+    End If
   End If
 End Function
 '-------------------------------------------------------
