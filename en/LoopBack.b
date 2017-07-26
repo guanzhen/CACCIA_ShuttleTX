@@ -34,13 +34,13 @@ If rc.Success
   ' Check Current
   Case 0x4A:  
   {
-    SendMsg{CANTXID1}(rc.Data[0],0x00,0x00)   
+    SendMsg{CANTXID1}(rc.Data[0],0x00,0x01)   
     Delay(20)
     SendMsg{CANTXID2}(0x90,0x00,0x01,rc.Data[2])   
     Delay(20)
     SendMsg{CANTXID2}(0x40,0x00,0x01,rc.Data[2])    
     Delay(20)    
-    SendMsg{CANTXID2}(0x20,0x00,0x01,rc.Data[2])    
+    SendMsg{CANTXID2}(0x00,0x00,0x01,rc.Data[2])    
   }
   'Cmd Get IO State
   Case 0x37:
@@ -120,8 +120,8 @@ If rc.Success
     {
       Case 0x31: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x6F,0x00,0x00,0x00) }  'PAR_SHUTTLE_CURRENT_FORW
       Case 0x32: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0xDE,0x00,0x00,0x00) }  'PAR_SHUTTLE_CURRENT_BACKW
-      Case 0x33: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x4D,0x01,0x00,0x00) }  'PAR_WA_CURRENT_FORW
-      Case 0x34: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0xBC,0x01,0x00,0x00) }  'PAR_WA_CURRENT_BACKW
+      Case 0x33: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x2D,0x01,0x00,0x00) }  'PAR_WA_CURRENT_FORW
+      Case 0x34: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0xBD,0x02,0x00,0x00) }  'PAR_WA_CURRENT_BACKW
       Case 0x35: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x2B,0x02,0x00,0x00) }  'PAR_CONV_CURRENT_FORW
       Case 0x36: { SendMsg{CANTXID1}(rc.Data[0],0x00,rc.Data[1],rc.Data[2],0x9B,0x02,0x00,0x00) }  'PAR_CONV_CURRENT_BACKW
       

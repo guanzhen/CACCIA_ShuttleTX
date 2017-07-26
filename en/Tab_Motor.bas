@@ -4,6 +4,13 @@ Const MOTOR_CONVEYOR = 4
 Const MOTOR_SHUTTLE = 2
 Const MOTOR_WIDTH_ADJ = 3
 
+Const MOTOR_WA_LIM_L = 300
+Const MOTOR_WA_LIM_H = 700
+Const MOTOR_S_LIM_L = 500
+Const MOTOR_S_LIM_H = 1200
+Const MOTOR_C_LIM_L = 100
+Const MOTOR_C_LIM_H = 300
+
 '-------------------------------------------------------
 ' Init Windows
 '-------------------------------------------------------
@@ -66,6 +73,7 @@ Function OnClick_btn_shuttle_mvtopos( Reason )
   End If
 End Function
 
+
 '-------------------------------------------------------
 ' Check Current Functions
 
@@ -79,10 +87,11 @@ Function OnClick_btn_belt_checkcurr( Reason )
   If Command_Prepare_MotorCurrent( MOTOR_CONVEYOR ) = 1 Then
     Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_FORW)
     Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-    Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
+    ValidateCurrent MOTOR_CONVEYOR,Curr_Forw,"text_belt_currforward"
+    
     Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_BACKW)
     Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-    Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
+    ValidateCurrent MOTOR_CONVEYOR,Curr_Back,"text_belt_currbackward"    
   Else
     Visual.Select("text_belt_currforward").value = "-"
     Visual.Select("text_belt_currbackward").value = "-"
@@ -100,10 +109,12 @@ Function OnClick_btn_shuttle_checkcurr( Reason )
   If Command_Prepare_MotorCurrent( MOTOR_SHUTTLE ) = 1 Then
   Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
+  ValidateCurrent MOTOR_SHUTTLE,Curr_Forw,"text_shuttle_currforward"    
+  
   Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
+  ValidateCurrent MOTOR_SHUTTLE,Curr_Back,"text_shuttle_currbackward"    
+  
   Else
     Visual.Select("text_shuttle_currforward").value = "-"
     Visual.Select("text_shuttle_currbackward").value = "-"
@@ -121,10 +132,11 @@ Function OnClick_btn_WA_checkcurr( Reason )
   If Command_Prepare_MotorCurrent( MOTOR_WIDTH_ADJ ) = 1 Then
     Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_FORW)
     Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-    Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
+    ValidateCurrent MOTOR_WIDTH_ADJ,Curr_Forw,"text_WA_currforward"    
+    
     Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_BACKW)
     Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-    Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
+    ValidateCurrent MOTOR_WIDTH_ADJ,Curr_Back,"text_WA_currbackward"    
   Else
     Visual.Select("text_WA_currforward").value = "-"
     Visual.Select("text_WA_currbackward").value = "-"
@@ -138,32 +150,57 @@ Function OnClick_btn_checkcurr( Reason )
   Dim CanReadArg
   Dim Curr_Forw, Curr_Back
   Set CanReadArg =  CreateObject("ICAN.CanReadArg")
-  LogAdd "Width Adjustment check current"
+  LogAdd "Shuttle check current"
   Command_Prepare_MotorCurrent( MOTOR_SHUTTLE ) 
   
   'Width Adjust
   Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_WA_currforward").value = String.Format("%d",Curr_Forw)  
+  ValidateCurrent MOTOR_WIDTH_ADJ,Curr_Forw,"text_WA_currforward"    
   Command_Get_Param CanReadArg , $(PAR_WA_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_WA_currbackward").value = String.Format("%d",Curr_Back)
+  ValidateCurrent MOTOR_WIDTH_ADJ,Curr_Back,"text_WA_currbackward"    
   
   'shuttle
   Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_shuttle_currforward").value = String.Format("%d",Curr_Forw)  
+  ValidateCurrent MOTOR_SHUTTLE,Curr_Forw,"text_shuttle_currforward"    
   Command_Get_Param CanReadArg , $(PAR_SHUTTLE_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_shuttle_currbackward").value = String.Format("%d",Curr_Back)
+  ValidateCurrent MOTOR_SHUTTLE,Curr_Back,"text_shuttle_currbackward"    
 
   'belt
   Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_FORW)
   Curr_Forw = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_belt_currforward").value = String.Format("%d",Curr_Forw)  
+  ValidateCurrent MOTOR_CONVEYOR,Curr_Forw,"text_belt_currforward"
   Command_Get_Param CanReadArg , $(PAR_CONV_CURRENT_BACKW)
   Curr_Back = Lang.MakeLong4(CanReadArg.Data(4),CanReadArg.Data(5),CanReadArg.Data(6),CanReadArg.Data(7))
-  Visual.Select("text_belt_currbackward").value = String.Format("%d",Curr_Back)
+  ValidateCurrent MOTOR_CONVEYOR,Curr_Back,"text_belt_currbackward"    
+End Function
+
+'-------------------------------------------------------
+Function ValidateCurrent ( Axis , Curr , Element)
+  Dim Min,Max
+  'Show value
+  Visual.Select(Element).value = String.Format("%d",Curr)
+
+  Select Case Axis  
+  Case MOTOR_WIDTH_ADJ:    
+    Min = MOTOR_WA_LIM_L
+    Max = MOTOR_WA_LIM_H
+  Case MOTOR_SHUTTLE:
+    Min = MOTOR_S_LIM_L
+    Max = MOTOR_S_LIM_H
+  Case MOTOR_CONVEYOR:
+    Min = MOTOR_C_LIM_L
+    Max = MOTOR_C_LIM_H  
+  End Select
+  
+  If Curr > Min AND Curr < Max Then
+     Visual.Select(Element).Style.Background = "Green"
+  Else
+     Visual.Select(Element).Style.Background = "Red"  
+  End If
   
 End Function
 
